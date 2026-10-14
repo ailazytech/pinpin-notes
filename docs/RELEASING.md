@@ -43,25 +43,40 @@
    - `PinPin-Notes-0.2.0-x64.exe`
    - `PinPin-Notes-0.2.0-x64.exe.sha256`
 
-   打開草稿，把 `CHANGELOG.md` 這一版的內容貼進說明，確認後發佈。
-6. **線上更新**：把版本、執行檔網址、SHA-256（workflow 的 Summary 有）填進 `site/public/feed.json` 的 `app`；重要的修正設 `critical: true`。網站部署之後，開著自動檢查的使用者會在系統匣看到「更新到 vX」（格式和規則見 [UPDATES.md](UPDATES.md)）
-7. **官網**
-   - `site/src/lib/site-config.ts` 的 `downloadUrl` 指到最新版（可以用 `https://github.com/OWNER/pinpin-notes/releases/latest`，之後就不用每次改）
-   - 有新功能的話更新功能介紹、截圖（`promo/remotion` 的 `npm run screens`）、問答
-   - `cd site; vp build`，把 `site/dist/` 部署到 Pages
+   打開草稿，把 `CHANGELOG.md` 這一版的內容貼進說明。重要的修正要讓使用者自動更新的話，先在 `site/public/feed.json` 把 `app.critical` 設成 `true` 並推上 main。
+6. **發佈**：按下草稿的「Publish release」。這會觸發 `.github/workflows/site.yml`，自動：
+   - 把這版的 exe 放上官網：`https://pinpin.aiverything.app/download/PinPin-Notes-x64.exe`（下載按鈕）和 `…/download/PinPin-Notes-0.2.0-x64.exe`（線上更新用）
+   - 把 `feed.json` 的 `app.version`、`url`、`sha256` 換成這一版（`notes`、`critical`、廣告、貼紙包照 repo 裡的）
+   - 編譯網站、部署到 Cloudflare Pages
 
-## 官網部署
+   部署完，開著自動檢查的使用者會在系統匣看到「更新到 vX」（規則見 [UPDATES.md](UPDATES.md)）
+7. **官網內容**：有新功能的話更新功能介紹、截圖（`promo/remotion` 的 `npm run screens`）、問答，推上 main 就會自動部署
 
-`site/` 是純靜態網站：`vite.config.ts` 用相對路徑（`base: "./"`）、hash 路由（`#/custom`），所以 `site/dist/` 放在任何靜態主機的任何子路徑都能用，不需要伺服器改寫規則。
+## 官網部署（Cloudflare Pages）
+
+`site/` 是純靜態網站：`vite.config.ts` 用相對路徑（`base: "./"`）、hash 路由（`#/custom`），不需要伺服器改寫規則。網址 `https://pinpin.aiverything.app`（也寫在 `src/base.rs` 的 `SITE_URL`、`site-config.ts`、`index.html`）。
+
+`.github/workflows/site.yml` 在這些時候部署：推到 main 且改了 `site/`、Release 發佈、在 Actions 頁手動執行。每次部署都會把**最新已發佈 Release** 的 exe 放進 `site/public/download/`（repo 是私人的，GitHub Release 的檔案外人下載不到，所以由官網提供下載）。還沒有任何 Release 時，下載按鈕顯示「準備中」。
+
+第一次設定：
+
+1. Cloudflare → My Profile → API Tokens → Create Token，權限 **Account → Cloudflare Pages → Edit**
+2. GitHub repo → Settings → Secrets and variables → Actions，新增
+   - `CLOUDFLARE_API_TOKEN`：上一步的 token
+   - `CLOUDFLARE_ACCOUNT_ID`：Cloudflare 首頁右側的 Account ID
+3. 在 Actions 頁手動跑一次 **Site**（第一次會自動建立 Pages 專案 `pinpin-notes`）
+4. Cloudflare → Workers & Pages → pinpin-notes → Custom domains → 加 `pinpin.aiverything.app`（`aiverything.app` 的 DNS 在 Cloudflare 上會自動設好 CNAME）
+
+本機預覽：
 
 ```powershell
 cd site
-vp install
-vp build      # 輸出到 site/dist/
-vp preview    # 本機預覽
+pnpm install
+pnpm run build    # 輸出到 site/dist/（npm 會因 packageManager 設定報錯，要用 pnpm）
+pnpm exec vp preview
 ```
 
-部署：把 `site/dist/` 整個資料夾上傳到 Pages（GitHub Pages、Cloudflare Pages、Firebase Hosting 等都可以）。
+圖示：`public/` 的 `favicon.ico`（16～256 多尺寸）、`favicon-32.png`、`icon-192.png`、`icon-512.png`（PWA）、`apple-touch-icon.png`（iOS 主畫面，要不透明底，用 `scripts/apple-touch-icon.ps1` 從 icon-512 產生）、`og.png`（社群分享預覽 1200×630）。
 
 ## 熱修（hotfix）
 

@@ -15,7 +15,7 @@
 - ست لغات: English و繁體中文 و简体中文 و日本語 و한국어 والعربية (من اليمين إلى اليسار)
 - مفتوح المصدر (MIT)، وبياناتك تبقى على جهازك فقط
 
-🌐 الموقع: **[pinpin.aiverything.app](https://pinpin.aiverything.app)** · 📦 التنزيل: GitHub Releases (قريبًا) · 📝 [سجل التغييرات](CHANGELOG.md)
+🌐 الموقع: **[pinpin.aiverything.app](https://pinpin.aiverything.app)** · 📦 التنزيل: [من الموقع](https://pinpin.aiverything.app) (قريبًا) · 📝 [سجل التغييرات](CHANGELOG.md)
 
 ## الميزات
 

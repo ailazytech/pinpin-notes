@@ -16,8 +16,12 @@ export const siteConfig = {
   /** Custom work enquiries */
   contactEmail: "ailazytech@gmail.com",
 
-  /** TODO: GitHub Releases download URL (e.g. https://github.com/…/releases/latest) */
-  downloadUrl: "",
+  /**
+   * Download link for the latest pinpin.exe. Filled in at build time by .github/workflows/site.yml,
+   * which copies the latest published release into public/download/ (the repo is private, so
+   * GitHub release assets aren't publicly downloadable). Empty = the button shows “coming soon”.
+   */
+  downloadUrl: (import.meta.env.VITE_DOWNLOAD_URL as string | undefined) ?? "",
 
   /** TODO: source repository URL */
   githubUrl: "",

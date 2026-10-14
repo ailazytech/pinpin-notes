@@ -1,6 +1,7 @@
 name: Release
 
 # 推 v* tag（例如 v0.2.0）時編譯，建立草稿 Release；說明從 CHANGELOG.md 貼上後再手動發佈。
+# 按下「發佈」會觸發 site.yml：把這版的 .exe 放上官網（/download/）、更新 feed.json、部署到 Cloudflare Pages。
 on:
   push:
     tags: ["v*"]
@@ -24,8 +25,7 @@ jobs:
           Copy-Item target/release/pinpin.exe $name
           (Get-FileHash $name -Algorithm SHA256).Hash.ToLower() + "  $name" | Out-File "$name.sha256" -Encoding ascii
           "ASSET=$name" | Out-File $env:GITHUB_ENV -Append
-          # 給 site/public/feed.json 用
-          "### feed.json`n- version: $version`n- url: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/$name`n- sha256: $((Get-FileHash $name -Algorithm SHA256).Hash.ToLower())" | Out-File $env:GITHUB_STEP_SUMMARY -Append
+          "### $name`n- sha256: $((Get-FileHash $name -Algorithm SHA256).Hash.ToLower())`n- 發佈這個草稿後，site.yml 會把它放上官網並更新 feed.json" | Out-File $env:GITHUB_STEP_SUMMARY -Append
       - uses: softprops/action-gh-release@v2
         with:
           draft: true

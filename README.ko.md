@@ -13,7 +13,7 @@ Windows 바탕화면 메모 앱. 압정, 마스킹 테이프, 스티커를 마�
 - 6개 언어: English, 繁體中文, 简体中文, 日本語, 한국어, العربية(오른쪽에서 왼쪽)
 - 오픈 소스(MIT), 데이터는 내 컴퓨터에만 저장
 
-🌐 웹사이트: **[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 다운로드: GitHub Releases(준비 중)　📝 [변경 기록](CHANGELOG.md)
+🌐 웹사이트: **[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 다운로드: [웹사이트](https://pinpin.aiverything.app)(준비 중)　📝 [변경 기록](CHANGELOG.md)
 
 ## 기능
 

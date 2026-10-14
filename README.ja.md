@@ -13,7 +13,7 @@ Windows デスクトップの付箋アプリ。画鋲、マスキングテープ
 - 6 言語：English、繁體中文、简体中文、日本語、한국어、العربية（右から左）
 - オープンソース（MIT）、データは自分のパソコンにだけ保存
 
-🌐 公式サイト：**[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 ダウンロード：GitHub Releases（準備中）　📝 [更新履歴](CHANGELOG.md)
+🌐 公式サイト：**[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 ダウンロード：[公式サイト](https://pinpin.aiverything.app)（準備中）　📝 [更新履歴](CHANGELOG.md)
 
 ## 機能
 

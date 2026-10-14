@@ -13,7 +13,7 @@ Windows 桌面便利貼：圖釘、紙膠帶、貼紙拖來拖去，手寫、透
 - 六種語言：English、繁中、简中、日本語、한국어、العربية（由右到左）
 - 開源（MIT），資料只存在自己的電腦
 
-🌐 官網：**[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 下載：GitHub Releases（準備中）　📝 [更新紀錄](CHANGELOG.md)
+🌐 官網：**[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 下載：[官網](https://pinpin.aiverything.app)（準備中）　📝 [更新紀錄](CHANGELOG.md)
 
 ## 功能
 

@@ -13,7 +13,7 @@ A cozy sticky-notes app for the Windows desktop — pins, washi tape, stickers, 
 - Six languages: English, 繁體中文, 简体中文, 日本語, 한국어, العربية (right-to-left)
 - Open source (MIT); your data stays on your own computer
 
-🌐 Website: **[pinpin.aiverything.app](https://pinpin.aiverything.app)** · 📦 Download: GitHub Releases (coming soon) · 📝 [Changelog](CHANGELOG.md)
+🌐 Website: **[pinpin.aiverything.app](https://pinpin.aiverything.app)** · 📦 Download: [from the website](https://pinpin.aiverything.app) (coming soon) · 📝 [Changelog](CHANGELOG.md)
 
 ## Features
 

@@ -29,3 +29,6 @@ assets/deco-src/couplets/src
 
 # 給 AI 接手開發用的內部筆記（含本機路徑、個人偏好），不公開
 docs/HANDOFF.md
+
+# 網站的下載檔由 .github/workflows/site.yml 在部署時放進來
+site/public/download/
