@@ -66,7 +66,7 @@
 | 專案名稱 | `pinpin-notes` |
 | 生產分支 | `main` |
 | Framework 預設 | 無 |
-| 組建命令 | `corepack enable && pnpm install --frozen-lockfile && node scripts/fetch-release.mjs && pnpm run build` |
+| 組建命令 | `node scripts/fetch-release.mjs && pnpm run build`（Cloudflare 看到 `pnpm-lock.yaml` 會先自己 `pnpm install`） |
 | 組建輸出目錄 | `dist` |
 | 根目錄 → 路徑 | `site` |
 | 環境變數 | `NODE_VERSION` = `22`；`GITHUB_TOKEN` = 下面第 1 步的 token（按「加密」） |
