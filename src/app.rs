@@ -45,6 +45,19 @@ impl Default for Settings {
 }
 
 /// 自動檢查、接收推送兩個開關。
+/// 排下一次自動檢查：一天最多一次，用一個長計時器等到時間（不輪詢、重開不重算）。
+/// 開程式時已經到期的話，等 60 秒再查（不跟開機搶資源）。關掉自動檢查就取消。
+fn schedule_update() {
+    let main = main_hwnd();
+    unsafe {
+        let _ = KillTimer(Some(main), TIMER_UPDATE);
+        if update_flags().0 {
+            let secs = update::due_in().max(60);
+            SetTimer(Some(main), TIMER_UPDATE, (secs * 1000) as u32, None);
+        }
+    }
+}
+
 pub fn update_flags() -> (bool, bool) {
     SETTINGS.with(|s| {
         let s = s.borrow();
@@ -284,9 +297,7 @@ pub fn run() {
         if arg("--updated") {
             crate::toast::show(i18n::tf("toast.updated", &[("version", update::VERSION)]), false, 3);
         }
-        if update_flags().0 {
-            SetTimer(Some(main), TIMER_UPDATE, 60_000, None);
-        }
+        schedule_update();
         if arg("--new-note") {
             notes::new_text("", Some(cursor_pos()));
         }
@@ -403,9 +414,11 @@ unsafe extern "system" fn main_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
         WM_TIMER if wp.0 == TIMER_UPDATE => {
             let _ = KillTimer(Some(hwnd), TIMER_UPDATE);
             let (auto, push) = update_flags();
-            if auto {
+            // 期間手動查過、或開小舖時查過，就不用再查
+            if auto && update::due_in() == 0 {
                 update::check(false, push);
             }
+            schedule_update();
             LRESULT(0)
         }
         update::WM_UPDATE => {
@@ -538,7 +551,10 @@ fn tray_menu() {
         id if (M_LANG..M_LANG + langs.len() as u32).contains(&id) => set_language(&langs[(id - M_LANG) as usize].0),
         M_UPDATE_CHECK => update::check(true, s.update_push),
         M_UPDATE_NOW => update::install_now(),
-        M_UPDATE_AUTO => update_settings(|s| s.update_auto = !s.update_auto),
+        M_UPDATE_AUTO => {
+            update_settings(|s| s.update_auto = !s.update_auto);
+            schedule_update();
+        }
         M_UPDATE_PUSH => {
             update_settings(|s| s.update_push = !s.update_push);
             notes::reload_remote();

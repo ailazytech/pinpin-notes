@@ -129,6 +129,33 @@ pub fn dir() -> PathBuf {
     data_dir().join("update")
 }
 
+/// 自動檢查最多一天一次（成功、失敗都算；重開程式不會重算）。
+pub const INTERVAL_SECS: u64 = 86_400;
+
+fn last_attempt_path() -> PathBuf {
+    dir().join("last_check")
+}
+
+fn now_secs() -> u64 {
+    std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0)
+}
+
+/// 記下「剛剛試過一次」（離線、網址掛了也記，免得每次重開都重試）。
+fn mark_attempt() {
+    let _ = std::fs::create_dir_all(dir());
+    let _ = std::fs::write(last_attempt_path(), now_secs().to_string());
+}
+
+/// 距離下一次自動檢查還有幾秒（0 = 現在就可以查）。
+pub fn due_in() -> u64 {
+    let last = std::fs::read_to_string(last_attempt_path()).ok().and_then(|s| s.trim().parse::<u64>().ok());
+    match last {
+        // 時鐘被往回調（last 在未來）就當作現在可以查
+        Some(last) if last <= now_secs() => INTERVAL_SECS.saturating_sub(now_secs() - last),
+        _ => 0,
+    }
+}
+
 /// feed 的網址：環境變數 PINPIN_FEED（開發用）→ base::FEED_URL → 官網/feed.json；都沒有 = 不檢查。
 pub fn feed_url() -> String {
     if let Ok(u) = std::env::var("PINPIN_FEED") {
@@ -309,6 +336,7 @@ pub fn check(manual: bool, push: bool) {
         }
         return;
     }
+    mark_attempt();
     std::thread::spawn(move || {
         let result = sync(push);
         let (error, app_ready) = match result {
@@ -344,14 +372,9 @@ pub fn check_now(push: bool) -> String {
     }
 }
 
-/// 打開貼紙小舖時呼叫：距離上次檢查超過一天才查。
+/// 打開貼紙小舖時呼叫：距離上次嘗試超過一天才查。
 pub fn maybe_check(push: bool) {
-    let fresh = std::fs::metadata(dir().join("feed.json"))
-        .and_then(|m| m.modified())
-        .ok()
-        .and_then(|t| t.elapsed().ok())
-        .is_some_and(|age| age.as_secs() < 86_400);
-    if !fresh {
+    if due_in() == 0 {
         check(false, push);
     }
 }
