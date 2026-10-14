@@ -4,6 +4,8 @@
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · **日本語** · [한국어](README.ko.md) · [العربية](README.ar.md)
 
+[![GitHub stars](https://img.shields.io/github/stars/ailazytech/pinpin-notes?style=flat&logo=github&label=Stars)](https://github.com/ailazytech/pinpin-notes/stargazers) [![GitHub watchers](https://img.shields.io/github/watchers/ailazytech/pinpin-notes?style=flat&logo=github&label=Watchers)](https://github.com/ailazytech/pinpin-notes/watchers) [![GitHub followers](https://img.shields.io/github/followers/ailazytech?style=flat&logo=github&label=Followers)](https://github.com/ailazytech) [![Latest release](https://img.shields.io/github/v/release/ailazytech/pinpin-notes?style=flat&label=Release)](https://pinpin.fast01.net) [![CI](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://pinpin.fast01.net) [![Rust](https://img.shields.io/badge/Rust-stable-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
+
 > **デスクトップの小さなメモが、いつもそばに。**
 
 Windows デスクトップの付箋アプリ。画鋲、マスキングテープ、ステッカーを自由に貼れて、手書き、透明スローガン、ポモドーロタイマーも。普段はほとんど電力を使いません。

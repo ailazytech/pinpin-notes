@@ -4,6 +4,8 @@
 
 **English** · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md)
 
+[![GitHub stars](https://img.shields.io/github/stars/ailazytech/pinpin-notes?style=flat&logo=github&label=Stars)](https://github.com/ailazytech/pinpin-notes/stargazers) [![GitHub watchers](https://img.shields.io/github/watchers/ailazytech/pinpin-notes?style=flat&logo=github&label=Watchers)](https://github.com/ailazytech/pinpin-notes/watchers) [![GitHub followers](https://img.shields.io/github/followers/ailazytech?style=flat&logo=github&label=Followers)](https://github.com/ailazytech) [![Latest release](https://img.shields.io/github/v/release/ailazytech/pinpin-notes?style=flat&label=Release)](https://pinpin.fast01.net) [![CI](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://pinpin.fast01.net) [![Rust](https://img.shields.io/badge/Rust-stable-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
+
 > **Little notes that stick with you.**
 
 A cozy sticky-notes app for the Windows desktop — pins, washi tape, stickers, handwriting, transparent slogans and pomodoro timers, with almost zero idle CPU.
@@ -97,6 +99,10 @@ The pre-rename `PinBoard.Main` window still answers for now. Vibotype uses this 
 Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md); releases are described in [docs/RELEASING.md](docs/RELEASING.md).
 
 Want your own pet stickers or timer character? See the custom page on [the website](https://pinpin.fast01.net/#/custom), or email ailazytech@gmail.com.
+
+## Star history
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ailazytech/pinpin-notes&type=Date)](https://star-history.com/#ailazytech/pinpin-notes&Date)
 
 ## License
 
