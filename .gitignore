@@ -32,3 +32,6 @@ docs/HANDOFF.md
 
 # 網站的下載檔由 .github/workflows/site.yml 在部署時放進來
 site/public/download/
+
+# wrangler 本機模擬的暫存
+site/.wrangler/

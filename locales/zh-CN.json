@@ -389,6 +389,7 @@
   "tray.update_now": "⬆ 更新到 {version}（重新启动）",
   "tray.update_auto": "自动检查更新",
   "tray.update_push": "接收推送（新贴纸、广告、重要更新）",
+  "tray.usage_stats": "发送匿名使用统计（版本、语言、Windows 版本）",
   "toast.update_checking": "正在检查更新…",
   "toast.update_off": "还没有设置更新来源",
   "toast.update_failed": "检查更新失败，稍后再试",

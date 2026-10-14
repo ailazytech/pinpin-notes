@@ -13,7 +13,7 @@ A cozy sticky-notes app for the Windows desktop — pins, washi tape, stickers, 
 - One `.exe` (about 11 MB), no installer, Windows 10 / 11
 - 0% CPU when idle, about 15 MB of memory (no idle timers at all — it only redraws when something changes)
 - Six languages: English, 繁體中文, 简体中文, 日本語, 한국어, العربية (right-to-left)
-- Open source (MIT); your data stays on your own computer
+- Open source (MIT); your notes stay on your own computer — at most one network request a day, optional anonymous usage stats ([privacy](docs/PRIVACY.md))
 
 🌐 Website: **[pinpin.fast01.net](https://pinpin.fast01.net)** · 📦 Download: [from the website](https://pinpin.fast01.net) (coming soon) · 📝 [Changelog](CHANGELOG.md)
 

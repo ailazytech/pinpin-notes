@@ -389,6 +389,7 @@
   "tray.update_now": "⬆ 更新到 {version}（重新啟動）",
   "tray.update_auto": "自動檢查更新",
   "tray.update_push": "接收推送（新貼紙、廣告、重要更新）",
+  "tray.usage_stats": "傳送匿名使用統計（版本、語言、Windows 版本）",
   "toast.update_checking": "正在檢查更新…",
   "toast.update_off": "還沒有設定更新來源",
   "toast.update_failed": "檢查更新失敗，稍後再試",

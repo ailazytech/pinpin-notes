@@ -389,6 +389,7 @@
   "tray.update_now": "⬆ Update to {version} (restart)",
   "tray.update_auto": "Check for updates automatically",
   "tray.update_push": "Receive pushed content (new stickers, ads, critical updates)",
+  "tray.usage_stats": "Send anonymous usage stats (version, language, Windows version)",
   "toast.update_checking": "Checking for updates…",
   "toast.update_off": "No update source configured yet",
   "toast.update_failed": "Couldn't check for updates. Try again later.",

@@ -44,10 +44,9 @@
    - `PinPin-Notes-0.2.0-x64.exe.sha256`
 
    打開草稿，把 `CHANGELOG.md` 這一版的內容貼進說明。重要的修正要讓使用者自動更新的話，先在 `site/public/feed.json` 把 `app.critical` 設成 `true` 並推上 main。
-6. **發佈**：按下草稿的「Publish release」。這會觸發 `.github/workflows/site.yml`，自動：
+6. **發佈**：按下草稿的「Publish release」。`.github/workflows/site.yml` 會透過部署掛鉤叫 Cloudflare 重新建置官網，建置時 `site/scripts/fetch-release.mjs` 自動：
    - 把這版的 exe 放上官網：`https://pinpin.fast01.net/download/PinPin-Notes-x64.exe`（下載按鈕）和 `…/download/PinPin-Notes-0.2.0-x64.exe`（線上更新用）
    - 把 `feed.json` 的 `app.version`、`url`、`sha256` 換成這一版（`notes`、`critical`、廣告、貼紙包照 repo 裡的）
-   - 編譯網站、部署到 Cloudflare Pages
 
    部署完，開著自動檢查的使用者會在系統匣看到「更新到 vX」（規則見 [UPDATES.md](UPDATES.md)）
 7. **官網內容**：有新功能的話更新功能介紹、截圖（`promo/remotion` 的 `npm run screens`）、問答，推上 main 就會自動部署
@@ -56,16 +55,30 @@
 
 `site/` 是純靜態網站：`vite.config.ts` 用相對路徑（`base: "./"`）、hash 路由（`#/custom`），不需要伺服器改寫規則。網址 `https://pinpin.fast01.net`（也寫在 `src/base.rs` 的 `SITE_URL`、`site-config.ts`、`index.html`）。
 
-`.github/workflows/site.yml` 在這些時候部署：推到 main 且改了 `site/`、Release 發佈、在 Actions 頁手動執行。每次部署都會把**最新已發佈 Release** 的 exe 放進 `site/public/download/`（repo 是私人的，GitHub Release 的檔案外人下載不到，所以由官網提供下載）。還沒有任何 Release 時，下載按鈕顯示「準備中」。
+用 Cloudflare Pages 的 **Git 整合**：推到 `main` 就由 Cloudflare 自己建置、部署。每次建置前，`site/scripts/fetch-release.mjs` 會把**最新已發佈 Release** 的 exe 放進 `site/public/download/`（repo 是私人的，GitHub Release 的檔案外人下載不到，所以由官網提供下載）。還沒有 Release、或沒設 `GITHUB_TOKEN` 時就跳過，下載按鈕顯示「準備中」。發佈 Release 不會推 main，所以由 `site.yml` 呼叫部署掛鉤補一次建置。
 
-第一次設定：
+`site/functions/` 是 Pages Functions：`feed.json.ts` 記匿名使用統計（見 [PRIVACY.md](PRIVACY.md)），`api/stats.ts` 給統計頁 `/stats.html` 用。`site/wrangler.toml` 設定輸出資料夾和 Analytics Engine 的綁定。
 
-1. Cloudflare → My Profile → API Tokens → Create Token，權限 **Account → Cloudflare Pages → Edit**
-2. GitHub repo → Settings → Secrets and variables → Actions，新增
-   - `CLOUDFLARE_API_TOKEN`：上一步的 token
-   - `CLOUDFLARE_ACCOUNT_ID`：Cloudflare 首頁右側的 Account ID
-3. 在 Actions 頁手動跑一次 **Site**（第一次會自動建立 Pages 專案 `pinpin-notes`）
-4. Cloudflare → Workers & Pages → pinpin-notes → Custom domains → 加 `pinpin.fast01.net`（`fast01.net` 的 DNS 在 Cloudflare 上會自動設好 CNAME）
+第一次設定（Cloudflare → Workers & Pages → 建立 → Pages → 連接到 Git → 選 `ailazytech/pinpin-notes`）：
+
+| 欄位 | 值 |
+|---|---|
+| 專案名稱 | `pinpin-notes` |
+| 生產分支 | `main` |
+| Framework 預設 | 無 |
+| 組建命令 | `corepack enable && pnpm install --frozen-lockfile && node scripts/fetch-release.mjs && pnpm run build` |
+| 組建輸出目錄 | `dist` |
+| 根目錄 → 路徑 | `site` |
+| 環境變數 | `NODE_VERSION` = `22`；`GITHUB_TOKEN` = 下面第 1 步的 token（按「加密」） |
+
+1. GitHub → Settings → Developer settings → **Fine-grained tokens** → 新增：Resource owner `ailazytech`、只選 `pinpin-notes`、權限 **Contents: Read-only**。填進上表的 `GITHUB_TOKEN`
+2. 建好後：pinpin-notes → **自訂網域** → 加 `pinpin.fast01.net`（`fast01.net` 的 DNS 在 Cloudflare 上會自動設 CNAME；不在的話到 DNS 商加 CNAME 指向 `pinpin-notes.pages.dev`）
+3. pinpin-notes → 設定 → 組建 → **部署掛鉤** → 新增（分支 `main`），把網址存成 GitHub repo 的 Actions secret `CLOUDFLARE_DEPLOY_HOOK`
+4. 使用統計（選用）：
+   - Workers & Pages → Analytics Engine 第一次用要按啟用；`wrangler.toml` 的綁定會自動接上資料集 `pinpin_usage`
+   - My Profile → API Tokens → 建一個權限 **Account Analytics: Read** 的 token
+   - pinpin-notes → 設定 → 變數和祕密，新增（加密）：`STATS_KEY`（自己訂一串長密碼）、`CF_ACCOUNT_ID`、`CF_STATS_TOKEN`（上面的 token）
+   - 打開 `https://pinpin.fast01.net/stats.html`，輸入 `STATS_KEY` 就看得到每日、7 日、30 日不重複使用者和版本、語言、Windows、國家分布
 
 本機預覽：
 

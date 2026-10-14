@@ -389,6 +389,7 @@
   "tray.update_now": "⬆ {version}(으)로 업데이트(다시 시작)",
   "tray.update_auto": "자동으로 업데이트 확인",
   "tray.update_push": "푸시 받기(새 스티커, 광고, 중요 업데이트)",
+  "tray.usage_stats": "익명 사용 통계 보내기(버전, 언어, Windows 버전)",
   "toast.update_checking": "업데이트 확인 중…",
   "toast.update_off": "업데이트 주소가 아직 설정되지 않았어요",
   "toast.update_failed": "업데이트를 확인하지 못했어요. 나중에 다시 시도해 주세요",

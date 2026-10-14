@@ -1,22 +1,15 @@
 name: Site
 
-# Build the website and deploy it to Cloudflare Pages (https://pinpin.fast01.net).
+# The website is built and deployed by Cloudflare Pages' own Git integration
+# (project pinpin-notes, root directory site/, see docs/RELEASING.md): every push to main redeploys it.
 #
-# - Push to main that touches site/          → redeploy the site
-# - A GitHub Release is published              → put that release's pinpin.exe on the site and update feed.json
-# - Manual run (Actions → Site → Run workflow)
+# Publishing a GitHub Release doesn't push to main, so this asks Cloudflare to rebuild through a
+# deploy hook. The build (site/scripts/fetch-release.mjs) then puts the new .exe on the website
+# and updates feed.json.
 #
-# The repo is private, so release assets on GitHub can't be downloaded by the public.
-# Every deploy therefore copies the latest *published* release's .exe into site/public/download/:
-#   /download/PinPin-Notes-x64.exe               (stable link for the download button)
-#   /download/PinPin-Notes-<version>-x64.exe     (versioned link used by feed.json for online updates)
-#
-# Needs repository secrets CLOUDFLARE_API_TOKEN (permission: Cloudflare Pages → Edit) and CLOUDFLARE_ACCOUNT_ID.
+# Needs repository secret CLOUDFLARE_DEPLOY_HOOK (Cloudflare → pinpin-notes → Settings → Builds → Deploy hooks).
 
 on:
-  push:
-    branches: [main]
-    paths: ["site/**", ".github/workflows/site.yml"]
   release:
     types: [published]
   workflow_dispatch:
@@ -24,81 +17,17 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: site-deploy
-  cancel-in-progress: false
-
-env:
-  SITE_URL: https://pinpin.fast01.net
-  PAGES_PROJECT: pinpin-notes
-
 jobs:
-  deploy:
+  rebuild:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: site
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Latest release → public/download, feed.json
+      - name: Trigger a Cloudflare Pages build
         env:
-          GH_TOKEN: ${{ github.token }}
+          HOOK: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK }}
         run: |
-          set -euo pipefail
-          tag=$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName --jq .tagName 2>/dev/null || true)
-          if [ -z "$tag" ]; then
-            echo "No published release yet — the download button stays “coming soon”."
+          if [ -z "$HOOK" ]; then
+            echo "::warning::CLOUDFLARE_DEPLOY_HOOK not set — rebuild the site in Cloudflare by hand (Deployments → Retry)"
             exit 0
           fi
-          version="${tag#v}"
-          mkdir -p public/download
-          gh release download "$tag" --repo "$GITHUB_REPOSITORY" --pattern '*.exe' --dir /tmp/release --clobber
-          exe=$(ls /tmp/release/*.exe | head -n 1)
-          versioned="PinPin-Notes-${version}-x64.exe"
-          cp "$exe" "public/download/$versioned"
-          cp "$exe" "public/download/PinPin-Notes-x64.exe"
-          sha=$(sha256sum "$exe" | cut -d' ' -f1)
-          # Online updates: point feed.json at this version (notes / critical / ads / packs stay as committed)
-          jq --arg v "$version" --arg u "$SITE_URL/download/$versioned" --arg s "$sha" \
-            '.app.version = $v | .app.url = $u | .app.sha256 = $s' public/feed.json > /tmp/feed.json
-          mv /tmp/feed.json public/feed.json
-          echo "VITE_DOWNLOAD_URL=$SITE_URL/download/PinPin-Notes-x64.exe" >> "$GITHUB_ENV"
-          {
-            echo "### Download"
-            echo "- release: $tag"
-            echo "- $SITE_URL/download/PinPin-Notes-x64.exe"
-            echo "- sha256: $sha"
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: npm install -g pnpm@12.11.2
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
-
-      # No Cloudflare secrets yet → build only (no red ✗ on every push until deployment is set up)
-      - name: Cloudflare secrets set?
-        id: cf
-        env:
-          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-          if [ -n "$CF_TOKEN" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"
-          else echo "::notice::CLOUDFLARE_API_TOKEN not set — site built but not deployed (see docs/RELEASING.md)"; fi
-
-      - name: Create the Pages project if it doesn't exist yet
-        if: steps.cf.outputs.ready == 'true'
-        working-directory: .
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx --yes wrangler@4 pages project create "$PAGES_PROJECT" --production-branch main || true
-
-      - name: Deploy to Cloudflare Pages
-        if: steps.cf.outputs.ready == 'true'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy site/dist --project-name=${{ env.PAGES_PROJECT }} --branch=main --commit-dirty=true
+          curl -fsS -X POST "$HOOK" > /dev/null
+          echo "Cloudflare Pages build triggered"

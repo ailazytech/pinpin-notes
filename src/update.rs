@@ -337,8 +337,10 @@ pub fn check(manual: bool, push: bool) {
         return;
     }
     mark_attempt();
+    // 網址在主執行緒組好（要讀設定、語言；背景執行緒讀不到）
+    let url = request_url();
     std::thread::spawn(move || {
-        let result = sync(push);
+        let result = sync(push, &url);
         let (error, app_ready) = match result {
             Ok(r) => (None, r),
             Err(e) => {
@@ -356,7 +358,7 @@ pub fn check(manual: bool, push: bool) {
 
 /// 開發用：在目前的執行緒同步跑一次，回傳結果文字。
 pub fn check_now(push: bool) -> String {
-    match sync(push) {
+    match sync(push, &request_url()) {
         Ok(app_ready) => {
             let feed = state(|s| s.feed.clone()).unwrap_or_default();
             format!(
@@ -379,13 +381,68 @@ pub fn maybe_check(push: bool) {
     }
 }
 
-/// 抓 feed、下載推送內容；回傳是不是自動下載好了重要更新。
-fn sync(push: bool) -> Result<bool> {
+/// 這次要抓的網址：feed 網址；開著匿名使用統計的話，後面帶上版本、語言、Windows 組建號、安裝碼。
+/// 沒有多送任何請求，就是每天那一次 feed.json（官網的 functions/feed.json.ts 記下來）。
+fn request_url() -> String {
     let url = feed_url();
+    if url.is_empty() || !crate::app::usage_stats_enabled() {
+        return url;
+    }
+    let sep = if url.contains('?') { '&' } else { '?' };
+    let lang = crate::i18n::current();
+    format!("{url}{sep}v={}&l={}&os={}&id={}", query(VERSION), query(&lang), windows_build(), install_id())
+}
+
+/// 網址參數只留安全的字元（版本、語言代碼、數字、十六進位）。
+fn query(s: &str) -> String {
+    s.chars().filter(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '-' | '_')).take(32).collect()
+}
+
+/// 這台安裝的隨機代碼（第一次用到時產生，存在 update\install_id）。
+/// 只用來算「有幾個不重複的安裝」，和電腦、帳號、檔案都沒有關係；刪掉檔案就換一個。
+fn install_id() -> String {
+    let path = dir().join("install_id");
+    if let Ok(id) = std::fs::read_to_string(&path) {
+        let id = id.trim();
+        if id.len() == 32 && id.chars().all(|c| c.is_ascii_hexdigit()) {
+            return id.to_string();
+        }
+    }
+    let id: String = crate::notes::random_bytes(16).iter().map(|b| format!("{b:02x}")).collect();
+    let _ = std::fs::create_dir_all(dir());
+    let _ = std::fs::write(&path, &id);
+    id
+}
+
+/// Windows 組建號（19045 = Windows 10 22H2、22000 以上 = Windows 11）。
+fn windows_build() -> String {
+    use windows::Win32::System::Registry::{RegGetValueW, HKEY_LOCAL_MACHINE, RRF_RT_REG_SZ};
+    let mut buf = [0u16; 32];
+    let mut size = (buf.len() * 2) as u32;
+    let ok = unsafe {
+        RegGetValueW(
+            HKEY_LOCAL_MACHINE,
+            windows::core::w!("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion"),
+            windows::core::w!("CurrentBuildNumber"),
+            RRF_RT_REG_SZ,
+            None,
+            Some(buf.as_mut_ptr().cast()),
+            Some(&mut size),
+        )
+    };
+    if ok.is_err() {
+        return "0".into();
+    }
+    let n = (size as usize / 2).saturating_sub(1).min(buf.len());
+    query(&String::from_utf16_lossy(&buf[..n]))
+}
+
+/// 抓 feed、下載推送內容；回傳是不是自動下載好了重要更新。
+fn sync(push: bool, url: &str) -> Result<bool> {
     if url.is_empty() {
         bail!("off");
     }
-    let bytes = http_get(&url, 2 << 20)?;
+    let bytes = http_get(url, 2 << 20)?;
     let feed: Feed = serde_json::from_slice(&bytes).context("feed.json 格式不對")?;
     std::fs::create_dir_all(dir())?;
     crate::base::write_atomic(&dir().join("feed.json"), &bytes)?;

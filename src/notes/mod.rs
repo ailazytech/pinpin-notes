@@ -2888,3 +2888,8 @@ pub fn make_logo(src: &str, dir: &str) {
     println!("{msg}");
     crate::base::log_info(msg);
 }
+
+/// 安全的亂數（CNG），給 update.rs 產生匿名安裝碼用。
+pub fn random_bytes(n: usize) -> Vec<u8> {
+    crypto::random(n)
+}

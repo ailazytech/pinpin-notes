@@ -1,0 +1,9 @@
+# Cloudflare Pages project for https://pinpin.fast01.net (deployed by .github/workflows/site.yml)
+name = "pinpin-notes"
+pages_build_output_dir = "./dist"
+compatibility_date = "2026-10-01"
+
+# Anonymous usage stats written by functions/feed.json.ts, read by functions/api/stats.ts
+[[analytics_engine_datasets]]
+binding = "USAGE"
+dataset = "pinpin_usage"

@@ -36,15 +36,21 @@ struct Settings {
     update_auto: bool,
     /// 接收推送：線上廣告、新貼紙包、重要更新（自動下載、下次啟動套用）
     update_push: bool,
+    /// 匿名使用統計：每天那一次檢查更新時順便帶上版本、語言、Windows 版本、隨機安裝碼（見 docs/PRIVACY.md）
+    usage_stats: bool,
 }
 
 impl Default for Settings {
     fn default() -> Self {
-        Settings { lang: String::new(), autostart: true, desktop_menu: true, update_auto: true, update_push: true }
+        Settings { lang: String::new(), autostart: true, desktop_menu: true, update_auto: true, update_push: true, usage_stats: true }
     }
 }
 
-/// 自動檢查、接收推送兩個開關。
+/// 匿名使用統計開著嗎（update.rs 在主執行緒組網址時問）。
+pub fn usage_stats_enabled() -> bool {
+    SETTINGS.with(|s| s.borrow().usage_stats)
+}
+
 /// 排下一次自動檢查：一天最多一次，用一個長計時器等到時間（不輪詢、重開不重算）。
 /// 開程式時已經到期的話，等 60 秒再查（不跟開機搶資源）。關掉自動檢查就取消。
 fn schedule_update() {
@@ -58,6 +64,7 @@ fn schedule_update() {
     }
 }
 
+/// 自動檢查、接收推送兩個開關。
 pub fn update_flags() -> (bool, bool) {
     SETTINGS.with(|s| {
         let s = s.borrow();
@@ -468,6 +475,7 @@ const M_UPDATE_CHECK: u32 = 20;
 const M_UPDATE_NOW: u32 = 21;
 const M_UPDATE_AUTO: u32 = 22;
 const M_UPDATE_PUSH: u32 = 23;
+const M_USAGE_STATS: u32 = 24;
 const M_LANG_SYSTEM: u32 = 99;
 const M_LANG: u32 = 100;
 
@@ -519,6 +527,7 @@ fn tray_menu() {
                 MenuItem::Separator,
                 MenuItem::checked(M_UPDATE_AUTO, t("tray.update_auto"), s.update_auto),
                 MenuItem::checked(M_UPDATE_PUSH, t("tray.update_push"), s.update_push),
+                MenuItem::checked(M_USAGE_STATS, t("tray.usage_stats"), s.usage_stats),
             ],
         },
         MenuItem::Separator,
@@ -559,6 +568,7 @@ fn tray_menu() {
             update_settings(|s| s.update_push = !s.update_push);
             notes::reload_remote();
         }
+        M_USAGE_STATS => update_settings(|s| s.usage_stats = !s.usage_stats),
         M_EXIT => unsafe {
             tray::remove(main_hwnd());
             let _ = DestroyWindow(main_hwnd());

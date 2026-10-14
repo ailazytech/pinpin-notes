@@ -389,6 +389,7 @@
   "tray.update_now": "⬆ {version} に更新（再起動）",
   "tray.update_auto": "自動でアップデートを確認",
   "tray.update_push": "配信を受け取る（新ステッカー・お知らせ・重要な更新）",
+  "tray.usage_stats": "匿名の利用統計を送る（バージョン、言語、Windows のバージョン）",
   "toast.update_checking": "アップデートを確認中…",
   "toast.update_off": "更新元がまだ設定されていません",
   "toast.update_failed": "確認できませんでした。あとでもう一度お試しください",

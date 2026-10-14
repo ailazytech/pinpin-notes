@@ -13,7 +13,7 @@ Windows 桌面便利贴：图钉、纸胶带、贴纸拖来拖去，手写、透
 - 单个 `.exe`（约 11 MB）、免安装，Windows 10 / 11
 - 空闲时 0% CPU、约 15 MB 内存（没有任何空闲计时器，只在画面变化时重绘）
 - 六种语言：English、繁中、简中、日本語、한국어、العربية（从右到左）
-- 开源（MIT），数据只保存在自己的电脑上
+- 开源（MIT），便利贴只保存在自己的电脑上；每天最多联网一次，匿名使用统计可以关闭（[隐私说明](docs/PRIVACY.md)）
 
 🌐 官网：**[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 下载：[官网](https://pinpin.fast01.net)（准备中）　📝 [更新日志](CHANGELOG.md)
 
