@@ -10,6 +10,9 @@
 export const siteConfig = {
   name: "PinPin Notes",
 
+  /** Canonical site URL (no trailing slash). Also set in index.html and src/base.rs (SITE_URL). */
+  url: "https://pinpin.aiverything.app",
+
   /** Custom work enquiries */
   contactEmail: "ailazytech@gmail.com",
 

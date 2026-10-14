@@ -13,8 +13,8 @@ pub const DISPLAY_NAME: &str = "PinPin Notes";
 /// 改名前的資料夾（PinBoard），第一次啟動時搬過來
 const OLD_APP_NAME: &str = "PinBoard";
 
-/// 官網（部署好再填，結尾不要斜線）。空的時候「訂製」改成直接寫信。
-pub const SITE_URL: &str = "";
+/// 官網（結尾不要斜線）。空的時候「訂製」改成直接寫信，線上更新也不檢查。
+pub const SITE_URL: &str = "https://pinpin.aiverything.app";
 /// 線上更新的 feed（空的 = 用官網/feed.json）。也可以直接指到 GitHub 上的檔案，例如
 /// https://raw.githubusercontent.com/OWNER/pinpin-notes/main/site/public/feed.json
 pub const FEED_URL: &str = "";
