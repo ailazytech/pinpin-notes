@@ -1,0 +1,22 @@
+name: 功能建議 / Feature request
+description: 想要的新功能、新樣式、新語言 / A new feature, style or language
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解決什麼 / What problem does it solve
+      description: 先說使用情境，比具體做法更重要。 / Describe the situation first; it matters more than the exact solution.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: 想法 / Your idea
+  - type: checkboxes
+    id: principles
+    attributes:
+      label: PinPin 的原則 / Principles
+      options:
+        - label: 我知道 PinPin 閒置時不能耗電、資料只存在本機 / I understand PinPin must stay idle-free and local-only
+          required: true

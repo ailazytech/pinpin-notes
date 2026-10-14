@@ -1,0 +1,31 @@
+# Rust
+/target
+
+# 網站（Vite+）
+site/node_modules
+site/dist
+site/*.local
+
+# 宣傳影片（Remotion）：渲染輸出可以重跑，不進版控
+promo/remotion/node_modules
+promo/remotion/out
+promo/stills
+promo/pinpin-promo.mp4
+
+# Logo 設計過程的候選稿
+assets/logo/candidates
+
+# 系統、編輯器
+*.stackdump
+*.log
+Thumbs.db
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# 商家的春聯作品只給本機驗證寫法用，不能公開散佈
+assets/deco-src/couplets/src
+
+# 給 AI 接手開發用的內部筆記（含本機路徑、個人偏好），不公開
+docs/HANDOFF.md

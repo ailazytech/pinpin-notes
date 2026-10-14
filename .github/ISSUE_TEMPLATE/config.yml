@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 訂製貼紙、計時器角色 / Custom stickers & timer characters
+    url: mailto:ailazytech@gmail.com
+    about: 訂製服務請直接寄信 / Email us for custom work
+  - name: 安全性問題 / Security issue
+    url: mailto:ailazytech@gmail.com
+    about: 請不要開公開 issue / Please don't open a public issue

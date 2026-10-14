@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "app": {
+    "version": "0.1.0",
+    "url": "",
+    "sha256": "",
+    "critical": false,
+    "min_version": "",
+    "notes": { "zh-TW": "第一個公開版本", "en": "First public release" }
+  },
+  "ads": [],
+  "packs": []
+}

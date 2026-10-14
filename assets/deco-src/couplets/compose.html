@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1254" height="1254"></canvas>
+<script>
+// 春聯貼紙合成：ink/ 裡生圖的毛筆字（白紙黑墨）→ 漸層金字，疊到紅紙上。
+// ?ink=ink/xxx.png&shape=diamond|strip
+//   diamond：疊到 frame-diamond.png（對稱的空白斗方）
+//   strip：程式畫一條灑金紅紙（細金框＋白色割邊）
+// 墨色越黑金越不透明，飛白的乾筆紋理會留下來。
+const q = new URLSearchParams(location.search);
+const W = 1254, C = W / 2;
+const c = document.getElementById("c");
+const g = c.getContext("2d");
+const load = (src) => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
+
+// 固定亂數，同一張每次產生都一樣
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+function strip(x, y, w, h) {
+  // 白色割邊
+  g.fillStyle = "#fff";
+  g.beginPath(); g.roundRect(x - 22, y - 22, w + 44, h + 44, 26); g.fill();
+  // 紅紙：上下微微漸層
+  const gr = g.createLinearGradient(0, y, 0, y + h);
+  gr.addColorStop(0, "#d4141c"); gr.addColorStop(0.5, "#c8101a"); gr.addColorStop(1, "#b80d16");
+  g.fillStyle = gr;
+  g.beginPath(); g.roundRect(x, y, w, h, 6); g.fill();
+  g.save();
+  g.beginPath(); g.roundRect(x, y, w, h, 6); g.clip();
+  // 紙纖維
+  for (let i = 0; i < 2600; i++) {
+    g.fillStyle = `rgba(${rnd() < 0.5 ? "90,0,0" : "255,90,80"},${0.05 + rnd() * 0.06})`;
+    g.fillRect(x + rnd() * w, y + rnd() * h, 1 + rnd() * 3, 1);
+  }
+  // 灑金
+  for (let i = 0; i < 260; i++) {
+    const s = 1.5 + rnd() * 4.5;
+    g.fillStyle = `rgba(${235 + rnd() * 20},${190 + rnd() * 40},${90 + rnd() * 50},${0.55 + rnd() * 0.4})`;
+    g.beginPath();
+    g.ellipse(x + rnd() * w, y + rnd() * h, s, s * (0.4 + rnd() * 0.6), rnd() * 3, 0, Math.PI * 2);
+    g.fill();
+  }
+  g.restore();
+  // 細金框（雙線）
+  g.strokeStyle = "#e9b949";
+  g.lineWidth = 4;
+  g.beginPath(); g.roundRect(x + 16, y + 16, w - 32, h - 32, 4); g.stroke();
+  g.lineWidth = 1.5;
+  g.beginPath(); g.roundRect(x + 26, y + 26, w - 52, h - 52, 3); g.stroke();
+}
+
+async function goldGlyph(src, bx, by, bw, bh) {
+  const ref = await load(src);
+  const t = document.createElement("canvas");
+  t.width = ref.width; t.height = ref.height;
+  const tg = t.getContext("2d");
+  tg.drawImage(ref, 0, 0);
+  const im = tg.getImageData(0, 0, t.width, t.height);
+  const d = im.data;
+  let x0 = t.width, y0 = t.height, x1 = 0, y1 = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    const lum = (d[i] + d[i + 1] + d[i + 2]) / 3;
+    const a = Math.max(0, Math.min(1, (225 - lum) / 150));
+    d[i + 3] = Math.round(a * 255);
+    if (a > 0.5) {
+      const p = i / 4, x = p % t.width, y = (p - x) / t.width;
+      if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }
+  }
+  tg.putImageData(im, 0, 0);
+  // 漸層金：亮金到深金，中間一道光
+  const gr = tg.createLinearGradient(0, y0, 0, y1);
+  gr.addColorStop(0, "#fff3b0"); gr.addColorStop(0.18, "#f7d266"); gr.addColorStop(0.5, "#e8b43c");
+  gr.addColorStop(0.62, "#fbe08a"); gr.addColorStop(1, "#c98a1a");
+  tg.globalCompositeOperation = "source-in";
+  tg.fillStyle = gr;
+  tg.fillRect(0, 0, t.width, t.height);
+  const gw = x1 - x0 + 1, gh = y1 - y0 + 1;
+  const k = Math.min(bw / gw, bh / gh);
+  const dw = gw * k, dh = gh * k, dx = bx + (bw - dw) / 2, dy = by + (bh - dh) / 2;
+  // 深紅陰影讓金字浮起來
+  g.save();
+  g.shadowColor = "rgba(70,0,0,0.6)";
+  g.shadowOffsetX = 3; g.shadowOffsetY = 5; g.shadowBlur = 6;
+  g.drawImage(t, x0, y0, gw, gh, dx, dy, dw, dh);
+  g.restore();
+}
+
+(async () => {
+  const shape = q.get("shape");
+  if (shape === "diamond") {
+    g.drawImage(await load("frame-diamond.png"), 0, 0, W, W);
+    await goldGlyph(q.get("ink"), C - 300, C - 300, 600, 600);
+  } else {
+    const h = 1150, w = 360, x = C - w / 2, y = C - h / 2;
+    strip(x, y, w, h);
+    await goldGlyph(q.get("ink"), x + 46, y + 60, w - 92, h - 120);
+  }
+  document.title = "done";
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+name: Bug 回報 / Bug report
+description: 哪裡壞掉了、跟預期不一樣 / Something is broken
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: 發生了什麼 / What happened
+      description: 跟你預期的有什麼不同？可以附截圖。 / What did you expect instead? Screenshots welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 重現步驟 / Steps to reproduce
+      placeholder: |
+        1. 系統匣右鍵 → 新增蕃茄鐘
+        2. 右鍵 → 樣式 → 沙漏
+        3. …
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: PinPin Notes 版本 / Version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows 版本與螢幕縮放 / Windows version and display scale
+      placeholder: "Windows 11 23H2，150%"
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: 紀錄檔 / Log
+      description: "%APPDATA%\\PinPin\\pinpin.log 的最後幾行（請先確認沒有私人內容） / Last lines of the log (check for private content first)"
+      render: text

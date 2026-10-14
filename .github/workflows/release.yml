@@ -1,0 +1,35 @@
+name: Release
+
+# 推 v* tag（例如 v0.2.0）時編譯，建立草稿 Release；說明從 CHANGELOG.md 貼上後再手動發佈。
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo test --release
+      - run: cargo build --release
+      - name: Package
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart("v")
+          $name = "PinPin-Notes-$version-x64.exe"
+          Copy-Item target/release/pinpin.exe $name
+          (Get-FileHash $name -Algorithm SHA256).Hash.ToLower() + "  $name" | Out-File "$name.sha256" -Encoding ascii
+          "ASSET=$name" | Out-File $env:GITHUB_ENV -Append
+          # 給 site/public/feed.json 用
+          "### feed.json`n- version: $version`n- url: https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/$name`n- sha256: $((Get-FileHash $name -Algorithm SHA256).Hash.ToLower())" | Out-File $env:GITHUB_STEP_SUMMARY -Append
+      - uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          name: PinPin Notes ${{ github.ref_name }}
+          files: |
+            ${{ env.ASSET }}
+            ${{ env.ASSET }}.sha256

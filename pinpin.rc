@@ -1,0 +1,2 @@
+// 執行檔和系統匣的圖示（pinpin.exe --make-logo assets/logo/source.png assets/logo 產生）
+1 ICON "assets/logo/pinpin.ico"
