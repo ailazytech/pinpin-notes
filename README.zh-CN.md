@@ -13,7 +13,7 @@ Windows 桌面便利贴：图钉、纸胶带、贴纸拖来拖去，手写、透
 - 六种语言：English、繁中、简中、日本語、한국어、العربية（从右到左）
 - 开源（MIT），数据只保存在自己的电脑上
 
-🌐 官网：**[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 下载：[官网](https://pinpin.aiverything.app)（准备中）　📝 [更新日志](CHANGELOG.md)
+🌐 官网：**[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 下载：[官网](https://pinpin.fast01.net)（准备中）　📝 [更新日志](CHANGELOG.md)
 
 ## 功能
 
@@ -46,7 +46,7 @@ Windows 桌面便利贴：图钉、纸胶带、贴纸拖来拖去，手写、透
 
 编译、开发用参数、项目结构以及其他程序如何调用 PinPin，请看[英文版 README](README.md#building)。欢迎提交 issue 和 PR，见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-想要自己的宠物贴纸或计时器角色？见[官网定制页](https://pinpin.aiverything.app/#/custom)，或发邮件到 ailazytech@gmail.com。
+想要自己的宠物贴纸或计时器角色？见[官网定制页](https://pinpin.fast01.net/#/custom)，或发邮件到 ailazytech@gmail.com。
 
 ## 许可
 

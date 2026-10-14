@@ -13,7 +13,7 @@ Windows デスクトップの付箋アプリ。画鋲、マスキングテープ
 - 6 言語：English、繁體中文、简体中文、日本語、한국어、العربية（右から左）
 - オープンソース（MIT）、データは自分のパソコンにだけ保存
 
-🌐 公式サイト：**[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 ダウンロード：[公式サイト](https://pinpin.aiverything.app)（準備中）　📝 [更新履歴](CHANGELOG.md)
+🌐 公式サイト：**[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 ダウンロード：[公式サイト](https://pinpin.fast01.net)（準備中）　📝 [更新履歴](CHANGELOG.md)
 
 ## 機能
 
@@ -46,7 +46,7 @@ Windows デスクトップの付箋アプリ。画鋲、マスキングテープ
 
 ビルド方法、開発用オプション、プロジェクト構成、ほかのアプリから PinPin を呼ぶ方法は[英語版 README](README.md#building) をご覧ください。Issue と Pull Request を歓迎します（[CONTRIBUTING.md](CONTRIBUTING.md)）。
 
-自分のペットのステッカーやタイマーのキャラクターが欲しい方は[公式サイトのオーダーページ](https://pinpin.aiverything.app/#/custom)、または ailazytech@gmail.com まで。
+自分のペットのステッカーやタイマーのキャラクターが欲しい方は[公式サイトのオーダーページ](https://pinpin.fast01.net/#/custom)、または ailazytech@gmail.com まで。
 
 ## ライセンス
 

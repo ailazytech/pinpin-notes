@@ -15,7 +15,7 @@
 - ست لغات: English و繁體中文 و简体中文 و日本語 و한국어 والعربية (من اليمين إلى اليسار)
 - مفتوح المصدر (MIT)، وبياناتك تبقى على جهازك فقط
 
-🌐 الموقع: **[pinpin.aiverything.app](https://pinpin.aiverything.app)** · 📦 التنزيل: [من الموقع](https://pinpin.aiverything.app) (قريبًا) · 📝 [سجل التغييرات](CHANGELOG.md)
+🌐 الموقع: **[pinpin.fast01.net](https://pinpin.fast01.net)** · 📦 التنزيل: [من الموقع](https://pinpin.fast01.net) (قريبًا) · 📝 [سجل التغييرات](CHANGELOG.md)
 
 ## الميزات
 
@@ -48,7 +48,7 @@
 
 طريقة البناء وخيارات التطوير وبنية المشروع وكيفية مخاطبة PinPin من برامج أخرى موجودة في [README بالإنجليزية](README.md#building). نرحّب بالمشكلات وطلبات الدمج (راجع [CONTRIBUTING.md](CONTRIBUTING.md)).
 
-هل تريد ملصقات لحيوانك الأليف أو شخصية خاصة للمؤقّت؟ زر [صفحة الطلبات المخصّصة](https://pinpin.aiverything.app/#/custom) أو راسل ailazytech@gmail.com.
+هل تريد ملصقات لحيوانك الأليف أو شخصية خاصة للمؤقّت؟ زر [صفحة الطلبات المخصّصة](https://pinpin.fast01.net/#/custom) أو راسل ailazytech@gmail.com.
 
 ## الترخيص
 

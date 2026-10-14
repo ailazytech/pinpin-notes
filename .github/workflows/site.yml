@@ -1,6 +1,6 @@
 name: Site
 
-# Build the website and deploy it to Cloudflare Pages (https://pinpin.aiverything.app).
+# Build the website and deploy it to Cloudflare Pages (https://pinpin.fast01.net).
 #
 # - Push to main that touches site/          → redeploy the site
 # - A GitHub Release is published              → put that release's pinpin.exe on the site and update feed.json
@@ -29,7 +29,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SITE_URL: https://pinpin.aiverything.app
+  SITE_URL: https://pinpin.fast01.net
   PAGES_PROJECT: pinpin-notes
 
 jobs:
@@ -78,7 +78,17 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm run build
 
+      # No Cloudflare secrets yet → build only (no red ✗ on every push until deployment is set up)
+      - name: Cloudflare secrets set?
+        id: cf
+        env:
+          CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -n "$CF_TOKEN" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"
+          else echo "::notice::CLOUDFLARE_API_TOKEN not set — site built but not deployed (see docs/RELEASING.md)"; fi
+
       - name: Create the Pages project if it doesn't exist yet
+        if: steps.cf.outputs.ready == 'true'
         working-directory: .
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -86,6 +96,7 @@ jobs:
         run: npx --yes wrangler@4 pages project create "$PAGES_PROJECT" --production-branch main || true
 
       - name: Deploy to Cloudflare Pages
+        if: steps.cf.outputs.ready == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

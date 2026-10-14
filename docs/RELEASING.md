@@ -45,7 +45,7 @@
 
    打開草稿，把 `CHANGELOG.md` 這一版的內容貼進說明。重要的修正要讓使用者自動更新的話，先在 `site/public/feed.json` 把 `app.critical` 設成 `true` 並推上 main。
 6. **發佈**：按下草稿的「Publish release」。這會觸發 `.github/workflows/site.yml`，自動：
-   - 把這版的 exe 放上官網：`https://pinpin.aiverything.app/download/PinPin-Notes-x64.exe`（下載按鈕）和 `…/download/PinPin-Notes-0.2.0-x64.exe`（線上更新用）
+   - 把這版的 exe 放上官網：`https://pinpin.fast01.net/download/PinPin-Notes-x64.exe`（下載按鈕）和 `…/download/PinPin-Notes-0.2.0-x64.exe`（線上更新用）
    - 把 `feed.json` 的 `app.version`、`url`、`sha256` 換成這一版（`notes`、`critical`、廣告、貼紙包照 repo 裡的）
    - 編譯網站、部署到 Cloudflare Pages
 
@@ -54,7 +54,7 @@
 
 ## 官網部署（Cloudflare Pages）
 
-`site/` 是純靜態網站：`vite.config.ts` 用相對路徑（`base: "./"`）、hash 路由（`#/custom`），不需要伺服器改寫規則。網址 `https://pinpin.aiverything.app`（也寫在 `src/base.rs` 的 `SITE_URL`、`site-config.ts`、`index.html`）。
+`site/` 是純靜態網站：`vite.config.ts` 用相對路徑（`base: "./"`）、hash 路由（`#/custom`），不需要伺服器改寫規則。網址 `https://pinpin.fast01.net`（也寫在 `src/base.rs` 的 `SITE_URL`、`site-config.ts`、`index.html`）。
 
 `.github/workflows/site.yml` 在這些時候部署：推到 main 且改了 `site/`、Release 發佈、在 Actions 頁手動執行。每次部署都會把**最新已發佈 Release** 的 exe 放進 `site/public/download/`（repo 是私人的，GitHub Release 的檔案外人下載不到，所以由官網提供下載）。還沒有任何 Release 時，下載按鈕顯示「準備中」。
 
@@ -65,7 +65,7 @@
    - `CLOUDFLARE_API_TOKEN`：上一步的 token
    - `CLOUDFLARE_ACCOUNT_ID`：Cloudflare 首頁右側的 Account ID
 3. 在 Actions 頁手動跑一次 **Site**（第一次會自動建立 Pages 專案 `pinpin-notes`）
-4. Cloudflare → Workers & Pages → pinpin-notes → Custom domains → 加 `pinpin.aiverything.app`（`aiverything.app` 的 DNS 在 Cloudflare 上會自動設好 CNAME）
+4. Cloudflare → Workers & Pages → pinpin-notes → Custom domains → 加 `pinpin.fast01.net`（`fast01.net` 的 DNS 在 Cloudflare 上會自動設好 CNAME）
 
 本機預覽：
 

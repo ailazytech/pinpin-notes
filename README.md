@@ -13,7 +13,7 @@ A cozy sticky-notes app for the Windows desktop — pins, washi tape, stickers, 
 - Six languages: English, 繁體中文, 简体中文, 日本語, 한국어, العربية (right-to-left)
 - Open source (MIT); your data stays on your own computer
 
-🌐 Website: **[pinpin.aiverything.app](https://pinpin.aiverything.app)** · 📦 Download: [from the website](https://pinpin.aiverything.app) (coming soon) · 📝 [Changelog](CHANGELOG.md)
+🌐 Website: **[pinpin.fast01.net](https://pinpin.fast01.net)** · 📦 Download: [from the website](https://pinpin.fast01.net) (coming soon) · 📝 [Changelog](CHANGELOG.md)
 
 ## Features
 
@@ -96,7 +96,7 @@ The pre-rename `PinBoard.Main` window still answers for now. Vibotype uses this 
 
 Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md); releases are described in [docs/RELEASING.md](docs/RELEASING.md).
 
-Want your own pet stickers or timer character? See the custom page on [the website](https://pinpin.aiverything.app/#/custom), or email ailazytech@gmail.com.
+Want your own pet stickers or timer character? See the custom page on [the website](https://pinpin.fast01.net/#/custom), or email ailazytech@gmail.com.
 
 ## License
 

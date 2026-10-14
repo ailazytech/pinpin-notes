@@ -13,7 +13,7 @@ Windows 桌面便利貼：圖釘、紙膠帶、貼紙拖來拖去，手寫、透
 - 六種語言：English、繁中、简中、日本語、한국어、العربية（由右到左）
 - 開源（MIT），資料只存在自己的電腦
 
-🌐 官網：**[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 下載：[官網](https://pinpin.aiverything.app)（準備中）　📝 [更新紀錄](CHANGELOG.md)
+🌐 官網：**[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 下載：[官網](https://pinpin.fast01.net)（準備中）　📝 [更新紀錄](CHANGELOG.md)
 
 ## 功能
 
@@ -46,7 +46,7 @@ Windows 桌面便利貼：圖釘、紙膠帶、貼紙拖來拖去，手寫、透
 
 編譯、開發用參數、專案結構和其他程式怎麼呼叫 PinPin，請看[英文版 README](README.md#building)。歡迎 issue 和 PR，見 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-想要自己的寵物貼紙或計時器角色？見[官網訂製頁](https://pinpin.aiverything.app/#/custom)，或寄信到 ailazytech@gmail.com。
+想要自己的寵物貼紙或計時器角色？見[官網訂製頁](https://pinpin.fast01.net/#/custom)，或寄信到 ailazytech@gmail.com。
 
 ## 授權
 

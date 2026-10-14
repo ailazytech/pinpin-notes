@@ -13,7 +13,7 @@ Windows 바탕화면 메모 앱. 압정, 마스킹 테이프, 스티커를 마�
 - 6개 언어: English, 繁體中文, 简体中文, 日本語, 한국어, العربية(오른쪽에서 왼쪽)
 - 오픈 소스(MIT), 데이터는 내 컴퓨터에만 저장
 
-🌐 웹사이트: **[pinpin.aiverything.app](https://pinpin.aiverything.app)**　📦 다운로드: [웹사이트](https://pinpin.aiverything.app)(준비 중)　📝 [변경 기록](CHANGELOG.md)
+🌐 웹사이트: **[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 다운로드: [웹사이트](https://pinpin.fast01.net)(준비 중)　📝 [변경 기록](CHANGELOG.md)
 
 ## 기능
 
@@ -46,7 +46,7 @@ Windows 바탕화면 메모 앱. 압정, 마스킹 테이프, 스티커를 마�
 
 빌드 방법, 개발용 옵션, 프로젝트 구조, 다른 프로그램에서 PinPin을 호출하는 방법은 [영어 README](README.md#building)를 보세요. 이슈와 풀 리퀘스트를 환영합니다([CONTRIBUTING.md](CONTRIBUTING.md)).
 
-반려동물 스티커나 타이머 캐릭터를 원하시면 [웹사이트의 맞춤 제작 페이지](https://pinpin.aiverything.app/#/custom)나 ailazytech@gmail.com으로 연락 주세요.
+반려동물 스티커나 타이머 캐릭터를 원하시면 [웹사이트의 맞춤 제작 페이지](https://pinpin.fast01.net/#/custom)나 ailazytech@gmail.com으로 연락 주세요.
 
 ## 라이선스
 
