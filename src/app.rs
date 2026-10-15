@@ -1,7 +1,7 @@
 //! 常駐主程式：看不見的主視窗負責系統匣、單一執行個體、和其他程式（Vibotype、桌面右鍵）的溝通。
 //!
 //! 其他程式要新增便利貼或加星號：找到 `PinPin.Main` 視窗（舊名 `PinBoard.Main` 也還收得到），送 WM_COPYDATA（dwData = COPYDATA_TAG），
-//! 內容是 UTF-8 JSON：`{"cmd":"note"|"star","text":"…","source":"chrome.exe","x":100,"y":200}`。
+//! 內容是 UTF-8 JSON：`{"cmd":"note"|"star","text":"…","source":"chrome.exe","title":"…","x":100,"y":200}`。
 
 use std::cell::RefCell;
 use std::ffi::c_void;
@@ -42,7 +42,8 @@ struct Settings {
 
 impl Default for Settings {
     fn default() -> Self {
-        Settings { lang: String::new(), autostart: true, desktop_menu: true, update_auto: true, update_push: true, usage_stats: true }
+        // 開機啟動、桌面右鍵會寫登錄檔，預設關著，使用者在系統匣自己打開
+        Settings { lang: String::new(), autostart: false, desktop_menu: false, update_auto: true, update_push: true, usage_stats: true }
     }
 }
 
@@ -369,6 +370,8 @@ struct Command {
     cmd: String,
     text: String,
     source: String,
+    /// 來源視窗的標題（選填，舊版 Vibotype 不會送）
+    title: String,
     x: Option<i32>,
     y: Option<i32>,
 }
@@ -386,7 +389,7 @@ fn on_copydata(data: &COPYDATASTRUCT) {
     match cmd.cmd.as_str() {
         "note" => notes::new_text(&cmd.text, at),
         "star" => {
-            let count = notes::star(&cmd.text, &cmd.source);
+            let count = notes::star(&cmd.text, &cmd.source, &cmd.title);
             if count > 0 && !notes::starred_visible() {
                 crate::toast::show(tf("toast.starred", &[("count", &count.to_string())]), false, 2);
             }

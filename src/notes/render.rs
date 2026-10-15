@@ -54,6 +54,8 @@ pub enum Btn {
     Ink,
     /// 蕃茄鐘重來
     Reset,
+    /// 拍立得：拖著轉角度（點一下擺正）
+    Turn,
 }
 
 #[derive(Clone, Copy)]
@@ -211,7 +213,9 @@ pub fn layout_ex(note: &Note, scale: f32, cache: &mut assets::Cache, bar: bool) 
     let (mut l, mut t, mut r, mut b) = if note.kind == Kind::Sticker {
         (f32::MAX, f32::MAX, f32::MIN, f32::MIN)
     } else {
-        (-SHADOW_L, -SHADOW_T, pw + SHADOW_R, ph + SHADOW_B)
+        // 轉了角度：陰影往下的偏移在沒轉的畫布上會變成斜的，左右上多留一點
+        let tilt = if note.angle != 0.0 { 12.0 } else { 0.0 };
+        (-SHADOW_L - tilt, -SHADOW_T - tilt, pw + SHADOW_R + tilt, ph + SHADOW_B)
     };
     for a in &note.items {
         let (x0, y0, x1, y1) = attach_bounds(a, cache);
@@ -248,6 +252,82 @@ pub fn logical(v: i32, scale: f32) -> i32 {
 pub struct ImageCache {
     pub original: Pixels,
     pub scaled: Option<Pixels>,
+}
+
+/// 整張轉了角度：沒轉的畫布和轉過的視窗之間的座標換算。
+/// 便利貼照常畫在沒轉的畫布上（版面、滑鼠判斷都用畫布座標），最後整張繞紙張中心轉過去再交給視窗。
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Rot {
+    sin: f32,
+    cos: f32,
+    /// 旋轉中心（畫布座標，紙張中心）
+    cx: f32,
+    cy: f32,
+    /// 視窗左上角在「轉過的畫布」上的位置（視窗座標 = 轉過的畫布座標 − m）
+    pub mx: i32,
+    pub my: i32,
+    /// 視窗大小
+    pub w: i32,
+    pub h: i32,
+}
+
+impl Rot {
+    /// `degrees` 順時針。畫布大小 w×h，繞 (cx, cy) 轉。
+    pub fn new(degrees: f32, cx: f32, cy: f32, w: i32, h: i32) -> Rot {
+        let (sin, cos) = degrees.to_radians().sin_cos();
+        let mut r = Rot { sin, cos, cx, cy, ..Default::default() };
+        let (mut l, mut t, mut rr, mut b) = (f32::MAX, f32::MAX, f32::MIN, f32::MIN);
+        for (x, y) in [(0.0, 0.0), (w as f32, 0.0), (0.0, h as f32), (w as f32, h as f32)] {
+            let (qx, qy) = r.turn(x, y);
+            (l, t, rr, b) = (l.min(qx), t.min(qy), rr.max(qx), b.max(qy));
+        }
+        (r.mx, r.my) = (l.floor() as i32, t.floor() as i32);
+        (r.w, r.h) = (rr.ceil() as i32 - r.mx, b.ceil() as i32 - r.my);
+        r
+    }
+    /// 畫布座標轉過去（還沒減掉 m）
+    fn turn(&self, x: f32, y: f32) -> (f32, f32) {
+        let (dx, dy) = (x - self.cx, y - self.cy);
+        (self.cx + dx * self.cos - dy * self.sin, self.cy + dx * self.sin + dy * self.cos)
+    }
+    /// 視窗座標 → 畫布座標
+    pub fn to_canvas(&self, x: f32, y: f32) -> (f32, f32) {
+        let (dx, dy) = (x + self.mx as f32 - self.cx, y + self.my as f32 - self.cy);
+        (self.cx + dx * self.cos + dy * self.sin, self.cy - dx * self.sin + dy * self.cos)
+    }
+    /// 畫布座標 → 視窗座標
+    pub fn to_window(&self, x: f32, y: f32) -> (f32, f32) {
+        let (qx, qy) = self.turn(x, y);
+        (qx - self.mx as f32, qy - self.my as f32)
+    }
+    /// 轉完之後要「往下」dy 的位移，在沒轉的畫布上是哪個方向（陰影用）
+    fn down(&self, dy: f32) -> (f32, f32) {
+        (dy * self.sin, dy * self.cos)
+    }
+    /// 把沒轉的畫布（預乘 BGRA）轉過去，雙線性取樣，邊緣自然反鋸齒。
+    fn apply(&self, src: &[u8], w: i32, h: i32, dst: &mut [u8]) {
+        for y in 0..self.h {
+            for x in 0..self.w {
+                let (u, v) = self.to_canvas(x as f32 + 0.5, y as f32 + 0.5);
+                let (u, v) = (u - 0.5, v - 0.5);
+                let (x0, y0) = (u.floor() as i32, v.floor() as i32);
+                let (tx, ty) = (u - x0 as f32, v - y0 as f32);
+                let mut acc = [0f32; 4];
+                for (xx, yy, k) in [(x0, y0, (1.0 - tx) * (1.0 - ty)), (x0 + 1, y0, tx * (1.0 - ty)), (x0, y0 + 1, (1.0 - tx) * ty), (x0 + 1, y0 + 1, tx * ty)] {
+                    if k > 0.0 && xx >= 0 && yy >= 0 && xx < w && yy < h {
+                        let i = ((yy * w + xx) * 4) as usize;
+                        for c in 0..4 {
+                            acc[c] += src[i + c] as f32 * k;
+                        }
+                    }
+                }
+                let o = ((y * self.w + x) * 4) as usize;
+                for c in 0..4 {
+                    dst[o + c] = acc[c].round().min(255.0) as u8;
+                }
+            }
+        }
+    }
 }
 
 /// 附件的動畫：哪一個（None = 全部）、進度 0～1。
@@ -296,6 +376,8 @@ pub struct Scene<'a> {
     pub ink: Option<InkView<'a>>,
     /// 字的顏色（None = 依紙色自動）
     pub text_color: Option<Rgb>,
+    /// 整張的角度（度；0 = 不轉。編輯圖說、手寫時擺正）
+    pub angle: f32,
 }
 
 /// 蕃茄鐘的短動畫（進度 0～1）。
@@ -373,6 +455,33 @@ pub struct Hits {
     /// 手寫工具列的按鈕和整條的範圍
     pub ink_buttons: Vec<(ink::InkBtn, RECT)>,
     pub bar: RECT,
+    /// 整張轉了角度（上面的座標都是沒轉的畫布座標，滑鼠要先用它換算）
+    pub rot: Option<Rot>,
+}
+
+impl Hits {
+    /// 視窗座標 → 畫布座標（沒轉就一樣）
+    pub fn to_canvas(&self, x: i32, y: i32) -> (i32, i32) {
+        match &self.rot {
+            Some(r) => {
+                let (u, v) = r.to_canvas(x as f32 + 0.5, y as f32 + 0.5);
+                (u.floor() as i32, v.floor() as i32)
+            }
+            None => (x, y),
+        }
+    }
+    /// 畫布座標 → 視窗座標
+    pub fn to_window(&self, x: f32, y: f32) -> (f32, f32) {
+        self.rot.map_or((x, y), |r| r.to_window(x, y))
+    }
+    /// 視窗左上角相對「沒轉時的視窗左上角」的位移（沒轉就是 0）
+    pub fn offset(&self) -> (i32, i32) {
+        self.rot.map_or((0, 0), |r| (r.mx, r.my))
+    }
+    /// 視窗大小
+    pub fn window_size(&self) -> (i32, i32) {
+        self.rot.map_or((self.layout.w, self.layout.h), |r| (r.w, r.h))
+    }
 }
 
 /// 畫好的結果要交給誰。
@@ -413,6 +522,13 @@ pub fn present(target: Target, mut scene: Scene) -> Hits {
     };
     let has_paper = !matches!(note.kind, Kind::Sticker | Kind::Timer);
     let clear = has_paper && effective_paper(note) == Paper::Clear;
+    let turn = scene.angle.rem_euclid(360.0);
+    if turn > 0.01 && turn < 359.99 {
+        let c = ((paper.left + paper.right) as f32 / 2.0, (paper.top + paper.bottom) as f32 / 2.0);
+        hits.rot = Some(Rot::new(scene.angle, c.0, c.1, w, h));
+    }
+    let rot = hits.rot;
+    let down = |dy: f32| rot.map_or((0.0, dy), |r| r.down(dy));
 
     unsafe {
         let screen = GetDC(None);
@@ -460,11 +576,13 @@ pub fn present(target: Target, mut scene: Scene) -> Hits {
             // ── 陰影：貼著時小而淡，拿起來時大而散 ──
             let lift = scene.lift.clamp(0.0, 1.0);
             let lerp = |a: f32, b: f32| a + (b - a) * lift;
-            canvas.shadow(paper, 0.0, s * lerp(3.0, 12.0), s * lerp(7.0, 18.0), lerp(0.26, 0.30));
+            let (ox, oy) = down(s * lerp(3.0, 12.0));
+            canvas.shadow(paper, ox, oy, s * lerp(7.0, 18.0), lerp(0.26, 0.30));
             if lift < 0.99 && note.texture == Texture::Sticky {
                 // 底部兩角翹起的陰影（便利貼只有上緣有黏膠）
                 let bottom = RECT { left: paper.left + px(6.0), top: paper.bottom - px(14.0), right: paper.right - px(6.0), bottom: paper.bottom };
-                canvas.shadow(bottom, 0.0, s * 5.0, s * 5.0, 0.22 * (1.0 - lift));
+                let (ox, oy) = down(s * 5.0);
+                canvas.shadow(bottom, ox, oy, s * 5.0, 0.22 * (1.0 - lift));
             }
 
             // ── 紙張 ──
@@ -527,12 +645,49 @@ pub fn present(target: Target, mut scene: Scene) -> Hits {
         }
         let _ = GdiFlush();
 
+        // ── 轉了角度：整張轉過去，交給系統的換成轉過的那張 ──
+        let mut turned: Option<(HDC, HBITMAP, HGDIOBJ, *mut u8)> = None;
+        let (mut w, mut h) = (w, h);
+        if let Some(rot) = hits.rot {
+            let mut tbmi = bmi;
+            tbmi.bmiHeader.biWidth = rot.w;
+            tbmi.bmiHeader.biHeight = -rot.h;
+            let mut tbits: *mut core::ffi::c_void = std::ptr::null_mut();
+            let tmem = CreateCompatibleDC(Some(screen));
+            match CreateDIBSection(Some(tmem), &tbmi, DIB_RGB_COLORS, &mut tbits, None, 0) {
+                Ok(tdib) => {
+                    let old = SelectObject(tmem, tdib.into());
+                    let dst = std::slice::from_raw_parts_mut(tbits as *mut u8, (rot.w * rot.h * 4) as usize);
+                    rot.apply(canvas.buf, w, h, dst);
+                    turned = Some((tmem, tdib, old, tbits as *mut u8));
+                    (w, h) = (rot.w, rot.h);
+                }
+                Err(_) => {
+                    let _ = DeleteDC(tmem);
+                    hits.rot = None;
+                }
+            }
+        }
+        let (src_dc, src_buf): (HDC, &[u8]) = match turned {
+            Some((tmem, _, _, tbits)) => (tmem, std::slice::from_raw_parts(tbits, (w * h * 4) as usize)),
+            None => (mem, &canvas.buf[..]),
+        };
+        let offset = hits.offset();
+        let release_turned = || {
+            if let Some((tmem, tdib, old, _)) = turned {
+                SelectObject(tmem, old);
+                let _ = DeleteObject(tdib.into());
+                let _ = DeleteDC(tmem);
+            }
+        };
+
         // ── 交給系統 ──
         let (hwnd, pos) = match target {
-            Target::Window(hwnd, pos) => (hwnd, pos),
+            Target::Window(hwnd, pos) => (hwnd, pos.map(|p| POINT { x: p.x + offset.0, y: p.y + offset.1 })),
             Target::Buffer(out) => {
                 out.clear();
-                out.extend_from_slice(canvas.buf);
+                out.extend_from_slice(src_buf);
+                release_turned();
                 SelectObject(mem, old_bmp);
                 let _ = DeleteObject(dib.into());
                 let _ = DeleteDC(mem);
@@ -548,12 +703,13 @@ pub fn present(target: Target, mut scene: Scene) -> Hits {
             Some(screen),
             pos.as_ref().map(|p| p as *const POINT),
             Some(&size),
-            Some(mem),
+            Some(src_dc),
             Some(&src),
             COLORREF(0),
             Some(&blend),
             ULW_ALPHA,
         );
+        release_turned();
         SelectObject(mem, old_bmp);
         let _ = DeleteObject(dib.into());
         let _ = DeleteDC(mem);
@@ -1240,6 +1396,10 @@ unsafe fn draw_buttons(hdc: HDC, canvas: &mut Canvas, scene: &Scene, paper: RECT
         list.push((b, g, x, top_y));
         x -= size + gap;
     }
+    // 左上角：拍立得轉角度（拖著轉、點一下擺正）
+    if scene.note.kind == Kind::Image {
+        list.push((Btn::Turn, "\u{E7AD}", paper.left + px(6.0), top_y));
+    }
     // 右下角：字大、字小（圖片便利貼沒有）
     if scene.note.kind != Kind::Image {
         let mut x = paper.right - px(20.0) - size;
@@ -1545,5 +1705,53 @@ pub fn text_rows(note: &Note, lay: &Layout, s: f32, fonts: &Fonts) -> Vec<(i32, 
             .collect();
         let _ = DeleteDC(hdc);
         rows
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn turned_window_maps_back_to_canvas() {
+        // 300×400 的畫布繞 (150, 180) 轉 25°
+        let r = Rot::new(25.0, 150.0, 180.0, 300, 400);
+        // 轉完的外框比原本大，四個角都落在視窗裡
+        assert!(r.w > 300 && r.h > 400);
+        for (x, y) in [(0.0, 0.0), (300.0, 0.0), (0.0, 400.0), (300.0, 400.0)] {
+            let (wx, wy) = r.to_window(x, y);
+            assert!(wx >= -0.01 && wy >= -0.01 && wx <= r.w as f32 + 0.01 && wy <= r.h as f32 + 0.01, "角 ({x},{y}) → ({wx},{wy})");
+        }
+        // 來回換算回到原點
+        for (x, y) in [(10.0, 20.0), (150.0, 180.0), (299.0, 5.0), (77.0, 333.0)] {
+            let (wx, wy) = r.to_window(x, y);
+            let (bx, by) = r.to_canvas(wx, wy);
+            assert!((bx - x).abs() < 0.01 && (by - y).abs() < 0.01);
+        }
+        // 順時針：中心正右邊的點轉到右下
+        let (wx, wy) = r.to_window(250.0, 180.0);
+        let (cx, cy) = r.to_window(150.0, 180.0);
+        assert!(wx > cx && wy > cy);
+        // 陰影的偏移：在畫布上往左下偏，轉完剛好往正下方
+        let (ox, oy) = r.down(10.0);
+        let (ax, ay) = r.to_window(150.0 + ox, 180.0 + oy);
+        assert!((ax - cx).abs() < 0.01 && (ay - cy - 10.0).abs() < 0.01);
+    }
+
+    #[test]
+    fn turned_pixels_keep_the_paper() {
+        // 實心方塊轉 90°：中心還是不透明，四角（原本畫布外）是透明
+        let (w, h) = (40, 20);
+        let src = vec![255u8; (w * h * 4) as usize];
+        let r = Rot::new(90.0, 20.0, 10.0, w, h);
+        assert_eq!((r.w, r.h), (20, 40));
+        let mut dst = vec![0u8; (r.w * r.h * 4) as usize];
+        r.apply(&src, w, h, &mut dst);
+        let at = |x: i32, y: i32| dst[((y * r.w + x) * 4 + 3) as usize];
+        assert_eq!(at(10, 20), 255);
+        assert_eq!(at(10, 1), 255);
+        let hits = Hits { rot: Some(r), ..Default::default() };
+        assert_eq!(hits.window_size(), (20, 40));
+        assert_eq!(hits.to_canvas(10, 20), (20, 9));
     }
 }

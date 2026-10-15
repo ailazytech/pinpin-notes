@@ -10,7 +10,7 @@ export const en = {
 
   nav: {
     order: "Couplets",
-    custom: "Custom",
+    custom: "Custom Stickers",
     home: "Home",
     features: "Features",
     donate: "Donate",
@@ -69,7 +69,7 @@ export const en = {
     downloadNote: "Single .exe · about 11 MB · no installer",
     explore: "Explore features",
     downloadPending:
-      "The GitHub Releases link is being finalized — the button wakes up the moment it lands.",
+      "GitHub Releases link is being finalized — star the repo to get notified on release.",
     stats: [
       { value: "0%", label: "idle CPU" },
       { value: "≈ 15 MB", label: "memory" },
@@ -121,7 +121,7 @@ export const en = {
       { id: "detail-context", title: "Tray & menus", blurb: "Always at hand" },
       { id: "detail-export", title: "Export / Import", blurb: "One JSON carries all" },
       { id: "langs", title: "Six languages", blurb: "RTL included" },
-      { id: "power", title: "Power sipping", blurb: "0% idle CPU" },
+      { id: "power", title: "Power sipping", blurb: "0% idle CPU, ~15 MB memory" },
     ],
   },
 
@@ -341,7 +341,7 @@ export const en = {
       {
         id: "detail-starred",
         title: "Starred notebook",
-        desc: "Paired with Vibotype: select text in any app, press ★, and it lands in one notebook with a timestamp and the source program.",
+        desc: "Paired with Vibotype: select text in any app, press ★, and it lands in one notebook with a timestamp, the source program and its window title.",
       },
       {
         id: "detail-export",
@@ -356,7 +356,7 @@ export const en = {
       {
         id: "detail-context",
         title: "Right where you are",
-        desc: "Desktop right-click creates notes and timers; the tray menu does everything else. Autostart is one click, and only one PinPin ever runs.",
+        desc: "Turn on the desktop right-click menu in the tray to create notes and timers from the desktop; the tray menu does everything else. Autostart is one click too (both are off by default), and only one PinPin ever runs.",
       },
       {
         id: "detail-langs",
@@ -368,17 +368,17 @@ export const en = {
 
   power: {
     eyebrow: "Power",
-    title: "Quiet as paper",
-    desc: "No background timers, ever. PinPin paints only when something changes — animations stop the moment they finish, bitmaps are released as soon as they're drawn, and stickers only decode when first used.",
+    title: "Just like real paper, it sits there quietly",
+    desc: "No polling, no idle spinning. PinPin paints only when something changes — animations stop the moment they finish, bitmaps are released as soon as they're drawn, and stickers only decode when first used.",
     stats: [
       { value: "0%", label: "idle CPU" },
       { value: "≈ 15 MB", label: "memory" },
       { value: "11 MB", label: "single .exe" },
-      { value: "0", label: "network calls" },
+      { value: "≤ 1", label: "update check a day (optional)" },
     ],
     footnote: "Measured on a quiet desktop with a few notes pinned.",
     points: [
-      "Not a single timer runs while idle",
+      "Nothing polls or spins while idle",
       "Animations end — and stop drawing",
       "Repaints only while the mouse actually moves",
       "Layered windows hand the pixels to the system",
@@ -413,15 +413,16 @@ export const en = {
   download: {
     eyebrow: "Download",
     title: "Take it to your desktop",
-    sub: "One small file. No installer, no account, no network — just a pocketful of paper.",
+    sub: "One small file. No installer, no account — it just sits quietly in a little corner, keeping you warm.",
     button: "Download pinpin.exe",
     size: "about 11 MB",
     pending: "The GitHub Releases link is being finalized — the button wakes up the moment it lands.",
-    reqTitle: "Requirements & facts",
+    reqTitle: "Requirements & privacy",
     reqs: [
       "Windows 10 or 11, 64-bit",
       "A single pinpin.exe — no installer, no .NET, no runtimes",
-      "No account, no cloud, no network use",
+      "No account, no cloud — your notes never leave your PC",
+      "At most one update check a day; turn it off from the tray",
       "Your data lives in %APPDATA%\\PinPin\\",
       "MIT License — free, forever",
     ],
@@ -436,7 +437,7 @@ export const en = {
     languageTitle: "Language",
     links: {
       order: "Couplet orders",
-      custom: "Custom work",
+      custom: "Custom stickers",
       home: "Home",
       qa: "Q&A",
       donate: "Donate",
@@ -451,7 +452,7 @@ export const en = {
   donate: {
     eyebrow: "Donate",
     title: "Buy PinPin a boba",
-    sub: "PinPin is free, open source, and stays that way — no ads, no cloud fees, no accounts. If it makes your desk feel cozier, a small treat keeps the pins polished.",
+    sub: "PinPin is free, open source, and stays that way — no third-party ads, no cloud fees, no accounts. If it makes your desk feel cozier, a small treat keeps the pins polished.",
     tiersTitle: "Pick a treat",
     tiers: [
       { name: "A little sticker", amount: "$1", desc: "A tiny sparkle — thank you!" },
@@ -498,7 +499,7 @@ export const en = {
       {
         cat: "general",
         q: "Is PinPin really free?",
-        a: "Yes — MIT open source. Free to use, share and modify. No ads, no accounts, no upsells.",
+        a: "Yes — MIT open source. Free to use, share and modify. No third-party ads, no accounts, no upsells.",
       },
       {
         cat: "general",
@@ -518,7 +519,7 @@ export const en = {
       {
         cat: "data",
         q: "Is there cloud sync?",
-        a: "No — PinPin never touches the network. To move to another PC, export a JSON file on one and import it on the other; encrypted notes stay encrypted.",
+        a: "No. Your notes stay on your PC and are never uploaded. PinPin checks for updates at most once a day (with anonymous usage stats); both can be turned off from the tray. To move to another PC, export a JSON file on one and import it on the other; encrypted notes stay encrypted.",
       },
       {
         cat: "data",
@@ -533,7 +534,7 @@ export const en = {
       {
         cat: "data",
         q: "How do password notes work?",
-        a: "Each note can have its own password. Content is encrypted with PBKDF2-SHA256 (200,000 rounds) + AES-256-GCM using Windows' built-in crypto. Locked notes display a decoy to-do list; the key lives only in memory and re-locks on exit.",
+        a: "Each note can have its own password. Content is encrypted with PBKDF2-SHA256 (200,000 rounds) + AES-256-GCM using Windows' built-in crypto. Locked notes display a decoy shopping or chores list; the key lives only in memory and re-locks on exit.",
       },
       {
         cat: "notes",
@@ -543,7 +544,7 @@ export const en = {
       {
         cat: "notes",
         q: "What can handwriting do?",
-        a: "Four pens — fountain, highlighter, chalk, crayon — with 8 colors and 3 widths, plus an eraser and undo. Strokes sit above text and below pins, and are simplified on save so files stay tiny.",
+        a: "Four pens — fountain, highlighter, chalk, crayon — with 8 colors and 3 widths, plus an eraser and undo. Strokes sit above text and below pins.",
       },
       {
         cat: "notes",
@@ -578,26 +579,26 @@ export const en = {
       {
         cat: "general",
         q: "Can it start with Windows?",
-        a: "Yes, autostart toggles from the tray menu. Only one PinPin runs at a time — launching it again simply creates a new note.",
+        a: "Yes, autostart toggles from the tray menu (off by default). Only one PinPin runs at a time — launching it again simply creates a new note.",
       },
       {
         cat: "general",
         q: "How do I uninstall?",
-        a: "Delete pinpin.exe and, if you like, the %APPDATA%\\PinPin folder. That's the entire footprint.",
+        a: "If you turned on autostart or the desktop right-click menu, turn them off in the tray first. Then delete pinpin.exe and, if you like, the %APPDATA%\\PinPin folder. That's the entire footprint.",
       },
       {
         cat: "notes",
         q: "What is Vibotype?",
-        a: "A companion tool by the same author. Select text in any app, press ★, and it's collected into PinPin's starred notebook with a timestamp and the source program.",
+        a: "A companion tool by the same author. Select text in any app, press ★, and it's collected into PinPin's starred notebook with a timestamp, the source program and its window title.",
       },
     ],
   },
 
   order: {
-    eyebrow: "Spring couplets · made to order",
+    eyebrow: "Handwritten couplets · shipped worldwide",
     title: "Your own gold-calligraphy spring couplets",
-    sub: "Pick a classic blessing or tell us your own words. We write it in bold gold brush calligraphy on red paper and ship it to your door — for your home, your shop, or as a gift.",
-    shipping: "Worldwide shipping",
+    sub: "We write code, and we write calligraphy — bringing the warmth of paper into the physical world. Pick a traditional greeting or tell us your custom words. We write in bold gold calligraphy on red paper and ship it to your door — for your home, your shop, or as a gift.",
+    shipping: "Worldwide tracked shipping",
     stylesTitle: "Styles",
     styles: [
       {
@@ -639,15 +640,15 @@ export const en = {
     notes: [
       "We reply with a price and delivery time within 1–2 working days; nothing is charged before you confirm.",
       "Every character is checked against traditional forms before writing.",
-      "Shipping is tracked; overseas delivery usually takes 7–14 days.",
-      "For Lunar New Year, please order at least 3 weeks ahead.",
+      "Every parcel is tracked: about 2–3 working days within Taiwan, about 7–14 overseas (depends on destination and carrier — we confirm it in the quote).",
+      "Lunar New Year is our busy season: order 3 weeks ahead within Taiwan, 6 weeks for overseas. We close orders early once we're full.",
     ],
     mailSubject: "PinPin couplet order",
   },
 
   commission: {
-    "eyebrow": "Custom work",
-    "title": "Your pet, on your desk",
+    "eyebrow": "Custom stickers & assets",
+    "title": "Bring your pets and art to your desktop",
     "sub": "Send us a photo, a drawing or just an idea — we turn it into die-cut stickers, washi tape or a pomodoro timer character made just for you, ready to import into PinPin.",
     "packagesTitle": "Pick a package",
     "popular": "Most loved",

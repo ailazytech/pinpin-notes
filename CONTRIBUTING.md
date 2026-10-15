@@ -30,7 +30,7 @@ src/notes/assets.rs  內建素材表、解碼快取
 src/notes/stickers.rs 去背、白邊、自製貼紙與群組
 src/notes/shop.rs    貼紙小舖視窗
 src/notes/ink.rs     手寫
-src/notes/timer.rs   蕃茄鐘
+src/notes/timer.rs   番茄鐘
 src/notes/crypto.rs  密碼便利貼（Windows CNG：PBKDF2 + AES-GCM）
 src/notes/backup.rs  匯出／匯入
 src/notes/promo.rs, sprites.rs  宣傳影片、網站截圖用的離屏繪圖
@@ -40,7 +40,7 @@ src/notes/promo.rs, sprites.rs  宣傳影片、網站截圖用的離屏繪圖
 
 這些是 PinPin 的核心承諾，PR 違反就不會合併：
 
-1. **閒置不耗電**：不准有閒置時的計時器或輪詢。只在畫面真的要變時重畫；動畫用 `SetCoalescableTimer`，播完就關。蕃茄鐘只在跑的時候有計時器
+1. **閒置不耗電**：不准有閒置時的計時器或輪詢。只在畫面真的要變時重畫；動畫用 `SetCoalescableTimer`，播完就關。番茄鐘只在跑的時候有計時器
 2. **低記憶體**：圖片依顯示大小解碼後快取，不要把原圖整張留在記憶體
 3. **不刪使用者的東西**：空白便利貼不會自動刪除；刪除一律先進垃圾桶（可以復原）
 4. **劃掉永遠是紅色**，不跟著文字顏色走

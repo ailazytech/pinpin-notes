@@ -325,6 +325,9 @@ pub struct Note {
     /// 紙張大小（邏輯像素）
     pub w: i32,
     pub h: i32,
+    /// 整張的角度（度，順時針，繞紙張中心；目前只有拍立得能轉）。舊資料沒有就是 0
+    #[serde(skip_serializing_if = "is_zero")]
+    pub angle: f32,
     pub paper: Paper,
     pub texture: Texture,
     /// 字的大小（1.0 = 預設，最大 6 倍，寫標語用）
@@ -366,6 +369,7 @@ impl Default for Note {
             y: 200,
             w: 240,
             h: 220,
+            angle: 0.0,
             paper: Paper::Yellow,
             texture: Texture::Sticky,
             font: 1.0,
@@ -383,6 +387,10 @@ impl Default for Note {
             deco: None,
         }
     }
+}
+
+fn is_zero(v: &f32) -> bool {
+    *v == 0.0
 }
 
 impl Note {
@@ -570,6 +578,17 @@ mod tests {
         assert_eq!(lines[0].meta, "m");
         assert!(lines[1].done);
         assert!(!lines[2].done);
+    }
+
+    #[test]
+    fn angle_defaults_to_zero_and_round_trips() {
+        // 舊資料沒有角度 = 0°；0° 不寫出來，有角度才寫
+        let old: Note = serde_json::from_str(r#"{"id":"a","kind":"image","x":10,"y":20,"w":200,"h":240}"#).unwrap();
+        assert_eq!(old.angle, 0.0);
+        assert!(!serde_json::to_string(&old).unwrap().contains("angle"));
+        let turned = Note { angle: -12.5, ..old };
+        let back: Note = serde_json::from_str(&serde_json::to_string(&turned).unwrap()).unwrap();
+        assert_eq!(back.angle, -12.5);
     }
 
     #[test]

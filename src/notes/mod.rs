@@ -141,6 +141,8 @@ enum Down {
     Item { idx: usize, mode: ItemMode, start: POINT, orig: Attach, moved: bool, center: (f32, f32) },
     /// 右下角改大小
     Grip { start: POINT, w0: i32, h0: i32 },
+    /// 拍立得左上角的轉角度鈕：拖著轉（center = 紙張中心的螢幕座標，a0 = 開始時的角度）
+    Turn { start: POINT, center: (f32, f32), a0: f32, moved: bool },
     /// 按鈕或圓圈：放開時才處理
     Control,
 }
@@ -241,6 +243,37 @@ fn px(v: f32) -> i32 {
 
 fn lparam_point(lp: LPARAM) -> POINT {
     POINT { x: (lp.0 & 0xffff) as i16 as i32, y: ((lp.0 >> 16) & 0xffff) as i16 as i32 }
+}
+
+/// 滑鼠的視窗座標 → 畫布座標。拍立得轉了角度時，按鈕、附件、圖說這些判斷都用沒轉的畫布座標。
+fn local(hwnd: HWND, pt: POINT) -> POINT {
+    with(|m| m.win(hwnd).map(|w| w.hits.to_canvas(pt.x, pt.y))).flatten().map_or(pt, |(x, y)| POINT { x, y })
+}
+
+/// 沒轉的畫布左上角在螢幕上的位置（沒轉就是視窗左上角）。
+fn frame_origin(hwnd: HWND) -> POINT {
+    let rc = win::window_rect(hwnd);
+    let (mx, my) = with(|m| m.win(hwnd).map(|w| w.hits.offset())).flatten().unwrap_or((0, 0));
+    POINT { x: rc.left - mx, y: rc.top - my }
+}
+
+/// 游標換到「沒轉的紙」上的螢幕座標：拖附件、改大小、手寫都用它，紙轉了角度也照樣跟著游標走。
+fn frame_cursor(hwnd: HWND) -> POINT {
+    let screen = win::cursor_pos();
+    let rc = win::window_rect(hwnd);
+    let (o, p) = (frame_origin(hwnd), local(hwnd, POINT { x: screen.x - rc.left, y: screen.y - rc.top }));
+    POINT { x: o.x + p.x, y: o.y + p.y }
+}
+
+/// 角度整理到 -180～180，去掉浮點誤差。
+fn tidy_angle(a: f32) -> f32 {
+    let a = (a + 180.0).rem_euclid(360.0) - 180.0;
+    let a = (a * 10.0).round() / 10.0;
+    if a == -180.0 || a.abs() < 0.05 {
+        a.abs()
+    } else {
+        a
+    }
 }
 
 fn save_board() {
@@ -481,6 +514,7 @@ fn redraw(hwnd: HWND) {
             now_ms: store::now_ms(),
             fx,
             ink: w.ink.as_ref().map(|i| InkView { prefs, eraser: i.eraser, cur: i.cur.as_ref() }),
+            angle: if note.kind == Kind::Image && !w.editing && w.ink.is_none() { note.angle } else { 0.0 },
         };
         let hits = render::present(render::Target::Window(hwnd, Some(pos)), scene);
         w.scroll = w.scroll.clamp(0, (hits.content_h - hits.view_h).max(0));
@@ -750,13 +784,20 @@ fn ensure_starred() -> Option<()> {
 }
 
 /// 把選取的文字加進星號記事本（最新的在最上面）。回傳目前共幾則。
-pub fn star(text: &str, source: &str) -> usize {
+pub fn star(text: &str, source: &str, title: &str) -> usize {
     let text = text.split_whitespace().collect::<Vec<_>>().join(" ");
     if text.is_empty() || ensure_starred().is_none() {
         return 0;
     }
     let source = source.trim_end_matches(".exe").trim_end_matches(".EXE");
-    let meta = if source.is_empty() { now_label() } else { format!("{} · {}", now_label(), source) };
+    let title = title.split_whitespace().collect::<Vec<_>>().join(" ");
+    let title = if title.chars().count() > 40 { format!("{}…", title.chars().take(39).collect::<String>()) } else { title };
+    let mut meta = now_label();
+    for part in [source, title.as_str()] {
+        if !part.is_empty() {
+            meta = format!("{meta} · {part}");
+        }
+    }
     let (count, hwnd) = with(|m| {
         let note = m.note(STARRED_ID)?;
         note.lines.insert(0, Line { text, done: false, meta });
@@ -1259,7 +1300,7 @@ fn snap(hwnd: HWND, x: i32, y: i32, w: i32, h: i32) -> (i32, i32) {
             .iter()
             .filter(|ow| ow.hwnd != hwnd)
             .filter_map(|ow| m.board.notes.iter().find(|n| n.id == ow.id))
-            .filter(|n| n.kind != Kind::Sticker)
+            .filter(|n| n.kind != Kind::Sticker && n.angle == 0.0)
             .map(|n| RECT { left: n.x, top: n.y, right: n.x + (n.w as f32 * scale) as i32, bottom: n.y + (n.h as f32 * scale) as i32 })
             .collect()
     })
@@ -1295,11 +1336,12 @@ fn snap(hwnd: HWND, x: i32, y: i32, w: i32, h: i32) -> (i32, i32) {
 /// 把視窗搬到紙張的新位置（只動位置，不重畫）。
 fn move_paper(hwnd: HWND, x: i32, y: i32) {
     let off = with(|m| {
-        let lay: Layout = m.win(hwnd)?.hits.layout;
+        let hits = &m.win(hwnd)?.hits;
+        let (lay, (mx, my)): (Layout, _) = (hits.layout, hits.offset());
         let n = m.note_of(hwnd)?;
         n.x = x;
         n.y = y;
-        Some((lay.paper.left, lay.paper.top))
+        Some((lay.paper.left - mx, lay.paper.top - my))
     })
     .flatten();
     if let Some((ox, oy)) = off {
@@ -1323,6 +1365,7 @@ fn on_button(hwnd: HWND, btn: Btn) {
         Btn::Bigger => zoom(hwnd, 0.1),
         Btn::Ink => set_ink(hwnd, true),
         Btn::Reset => timer::reset(hwnd),
+        Btn::Turn => set_angle(hwnd, 0.0, true),
     }
 }
 
@@ -1385,6 +1428,61 @@ fn turn_item(hwnd: HWND, idx: usize, steps: i32, scale_mode: bool) {
     redraw(hwnd);
 }
 
+/// 紙張中心的螢幕座標（轉角度時不動的那一點）。
+fn paper_center(hwnd: HWND) -> (f32, f32) {
+    let rc = win::window_rect(hwnd);
+    with(|m| {
+        let hits = &m.win(hwnd)?.hits;
+        let p = hits.layout.paper;
+        let (x, y) = hits.to_window((p.left + p.right) as f32 / 2.0, (p.top + p.bottom) as f32 / 2.0);
+        Some((rc.left as f32 + x, rc.top as f32 + y))
+    })
+    .flatten()
+    .unwrap_or(((rc.left + rc.right) as f32 / 2.0, (rc.top + rc.bottom) as f32 / 2.0))
+}
+
+/// 設定拍立得的角度（只有改變時才重畫）。`save` = 馬上存檔（拖著轉的時候放開才存）。
+fn set_angle(hwnd: HWND, angle: f32, save: bool) {
+    let changed = with(|m| {
+        let n = m.note_of(hwnd).filter(|n| n.kind == Kind::Image)?;
+        let changed = n.angle != angle;
+        n.angle = angle;
+        if changed && save {
+            store::save(&m.board);
+        }
+        Some(changed)
+    })
+    .flatten();
+    if changed == Some(true) {
+        redraw(hwnd);
+    }
+}
+
+/// 拍立得的滾輪：和貼紙一樣，滾輪轉角度（一格 6°），Shift+滾輪放大縮小（繞紙張中心，附件跟著移）。
+fn turn_note(hwnd: HWND, steps: i32, resize: bool) {
+    with(|m| {
+        let s = m.scale;
+        let n = m.note_of(hwnd).filter(|n| n.kind == Kind::Image)?;
+        if resize {
+            let (w0, h0) = (n.w, n.h);
+            let w = ((w0 as f32 * (1.0 + steps as f32 * 0.08)).round() as i32).clamp(render::MIN_W, 1200);
+            let k = w as f32 / w0 as f32;
+            let h = ((h0 as f32 * k).round() as i32).max(render::MIN_H);
+            n.x += ((w0 - w) as f32 * s / 2.0).round() as i32;
+            n.y += ((h0 - h) as f32 * s / 2.0).round() as i32;
+            (n.w, n.h) = (w, h);
+            for a in &mut n.items {
+                (a.x, a.y, a.x2, a.y2) = (a.x * k, a.y * k, a.x2 * k, a.y2 * k);
+            }
+        } else {
+            n.angle = tidy_angle(n.angle + steps as f32 * 6.0);
+        }
+        store::save(&m.board);
+        Some(())
+    });
+    redraw(hwnd);
+}
+
 /// 拖附件時依游標更新位置（邏輯像素，相對紙張）。
 fn drag_item(hwnd: HWND, idx: usize, mode: ItemMode, orig: &Attach, start: POINT, now: POINT, center: (f32, f32)) {
     with(|m| {
@@ -1439,6 +1537,7 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
         WM_SETCURSOR if (lp.0 & 0xffff) as u32 == HTCLIENT => {
             let mut pt = win::cursor_pos();
             let _ = ScreenToClient(hwnd, &mut pt);
+            let pt = local(hwnd, pt);
             let ink = with(|m| m.win(hwnd).filter(|w| w.ink.is_some()).map(|w| (w.hits.layout.paper, w.hits.bar))).flatten();
             let cursor = if let Some((paper, bar)) = ink {
                 // 手寫中：紙上是十字、工具列按鈕是手指、工具列空白處可以拖
@@ -1469,7 +1568,7 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
             DefWindowProcW(hwnd, msg, wp, lp)
         }
         WM_MOUSEMOVE => {
-            let pt = lparam_point(lp);
+            let pt = local(hwnd, lparam_point(lp));
             let mut tme = TRACKMOUSEEVENT { cbSize: std::mem::size_of::<TRACKMOUSEEVENT>() as u32, dwFlags: TME_LEAVE, hwndTrack: hwnd, dwHoverTime: 0 };
             let _ = TrackMouseEvent(&mut tme);
             on_mouse_move(hwnd, pt);
@@ -1495,19 +1594,21 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
             LRESULT(0)
         }
         WM_LBUTTONDOWN => {
-            let pt = lparam_point(lp);
+            let pt = local(hwnd, lparam_point(lp));
             edit::close_for(hwnd);
             SetCapture(hwnd);
-            let screen = win::cursor_pos();
+            // real = 真的游標（拖整張、轉角度用）；screen = 換到沒轉的紙上（拖附件、改大小、手寫用）
+            let real = win::cursor_pos();
+            let screen = frame_cursor(hwnd);
             let item_down = |idx: usize, mode: ItemMode| {
                 let orig = with(|m| m.note_of(hwnd).and_then(|n| n.items.get(idx).cloned())).flatten().unwrap_or_default();
-                let rc = win::window_rect(hwnd);
-                let center = item_center(hwnd, idx).map_or((screen.x as f32, screen.y as f32), |(x, y)| (rc.left as f32 + x, rc.top as f32 + y));
+                let o = frame_origin(hwnd);
+                let center = item_center(hwnd, idx).map_or((screen.x as f32, screen.y as f32), |(x, y)| (o.x as f32 + x, o.y as f32 + y));
                 Down::Item { idx, mode, start: screen, orig, moved: false, center }
             };
             let paper_grab = || {
                 let (nx, ny) = with(|m| m.note_of(hwnd).map(|n| (n.x, n.y))).flatten().unwrap_or((0, 0));
-                Down::Paper { start: screen, grab: POINT { x: screen.x - nx, y: screen.y - ny }, moved: false, click: None }
+                Down::Paper { start: real, grab: POINT { x: real.x - nx, y: real.y - ny }, moved: false, click: None }
             };
             // 手寫中：工具列按鈕、工具列空白（拖整張）、紙上（寫字或擦掉）
             if let Some((paper, bar, eraser)) = with(|m| m.win(hwnd).and_then(|w| Some((w.hits.layout.paper, w.hits.bar, w.ink.as_ref()?.eraser)))).flatten() {
@@ -1524,6 +1625,17 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
                 } else {
                     paper_grab()
                 };
+                with(|m| {
+                    if let Some(w) = m.win(hwnd) {
+                        w.down = Some(down);
+                    }
+                });
+                return LRESULT(0);
+            }
+            // 拍立得的轉角度鈕：拖著轉，點一下擺正
+            if hit_button(hwnd, pt) == Some(Btn::Turn) {
+                let a0 = with(|m| m.note_of(hwnd).map(|n| n.angle)).flatten().unwrap_or(0.0);
+                let down = Down::Turn { start: real, center: paper_center(hwnd), a0, moved: false };
                 with(|m| {
                     if let Some(w) = m.win(hwnd) {
                         w.down = Some(down);
@@ -1586,13 +1698,13 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
             LRESULT(0)
         }
         WM_LBUTTONUP => {
-            let pt = lparam_point(lp);
+            let pt = local(hwnd, lparam_point(lp));
             let _ = ReleaseCapture();
             on_mouse_up(hwnd, pt);
             LRESULT(0)
         }
         WM_LBUTTONDBLCLK => {
-            let pt = lparam_point(lp);
+            let pt = local(hwnd, lparam_point(lp));
             if kind_of(hwnd) == Some(Kind::Timer) {
                 // 蕃茄鐘：連點兩下 = 第二次點（開始又暫停）
                 if hit_button(hwnd, pt).is_none() {
@@ -1623,7 +1735,7 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
             LRESULT(0)
         }
         WM_RBUTTONUP => {
-            let pt = lparam_point(lp);
+            let pt = local(hwnd, lparam_point(lp));
             if kind_of(hwnd) == Some(Kind::Timer) {
                 timer::menu(hwnd);
                 return LRESULT(0);
@@ -1639,12 +1751,15 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
             let steps = delta.signum();
             let mut pt = win::cursor_pos();
             let _ = ScreenToClient(hwnd, &mut pt);
+            let pt = local(hwnd, pt);
             if kind_of(hwnd) == Some(Kind::Timer) {
                 timer::adjust(hwnd, steps, GetKeyState(VK_SHIFT.0 as i32) < 0);
             } else if GetKeyState(VK_CONTROL.0 as i32) < 0 {
                 zoom(hwnd, steps as f32 * 0.1);
             } else if let Some((idx, _)) = hit_item(hwnd, pt) {
                 turn_item(hwnd, idx, steps, GetKeyState(VK_SHIFT.0 as i32) < 0);
+            } else if kind_of(hwnd) == Some(Kind::Image) && !ink_on(hwnd) {
+                turn_note(hwnd, steps, GetKeyState(VK_SHIFT.0 as i32) < 0);
             } else {
                 let changed = with(|m| {
                     let step = (render::ROW_H * 2.0 * m.scale) as i32;
@@ -1757,14 +1872,15 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
 }
 
 fn on_mouse_move(hwnd: HWND, pt: POINT) {
-    let screen = win::cursor_pos();
+    let real = win::cursor_pos();
+    let screen = frame_cursor(hwnd);
     let down = with(|m| m.win(hwnd).and_then(|w| w.down.clone())).flatten();
     match down {
         Some(Down::Ink) => ink_move(hwnd, screen),
         Some(Down::Erase) => ink_erase(hwnd, screen),
         Some(Down::Paper { start, grab, moved, click }) => {
             if !moved {
-                if (start.x - screen.x).abs().max((start.y - screen.y).abs()) <= DRAG_THRESHOLD {
+                if (start.x - real.x).abs().max((start.y - real.y).abs()) <= DRAG_THRESHOLD {
                     return;
                 }
                 // 拿起來：陰影變大
@@ -1777,15 +1893,16 @@ fn on_mouse_move(hwnd: HWND, pt: POINT) {
                 });
                 redraw(hwnd);
             }
-            let Some((sticker, pw, ph)) = with(|m| {
+            // 轉了角度的拍立得不吸附：斜的紙沒有可以對齊的邊，用外框對齊反而會留下奇怪的空隙
+            let Some((free, pw, ph)) = with(|m| {
                 let s = m.scale;
-                m.note_of(hwnd).map(|n| (n.kind == Kind::Sticker, (n.w as f32 * s) as i32, (n.h as f32 * s) as i32))
+                m.note_of(hwnd).map(|n| (n.kind == Kind::Sticker || n.angle != 0.0, (n.w as f32 * s) as i32, (n.h as f32 * s) as i32))
             })
             .flatten() else {
                 return;
             };
-            let (x, y) = (screen.x - grab.x, screen.y - grab.y);
-            let (x, y) = if sticker { (x, y) } else { snap(hwnd, x, y, pw, ph) };
+            let (x, y) = (real.x - grab.x, real.y - grab.y);
+            let (x, y) = if free { (x, y) } else { snap(hwnd, x, y, pw, ph) };
             move_paper(hwnd, x, y);
         }
         Some(Down::Item { idx, mode, start, orig, moved, center }) => {
@@ -1832,6 +1949,31 @@ fn on_mouse_move(hwnd: HWND, pt: POINT) {
                 redraw(hwnd);
             }
         }
+        Some(Down::Turn { start, center, a0, moved }) => {
+            if !moved {
+                if (start.x - real.x).abs().max((start.y - real.y).abs()) <= DRAG_THRESHOLD {
+                    return;
+                }
+                // 拿起來轉：陰影變大
+                with(|m| {
+                    if let Some(w) = m.win(hwnd) {
+                        w.lifted = true;
+                        w.anim = None;
+                        w.down = Some(Down::Turn { start, center, a0, moved: true });
+                    }
+                });
+            }
+            let toward = |p: POINT| (p.y as f32 - center.1).atan2(p.x as f32 - center.0).to_degrees();
+            let mut a = tidy_angle(a0 + toward(real) - toward(start));
+            if unsafe { GetKeyState(VK_SHIFT.0 as i32) } < 0 {
+                // Shift：一次 15°
+                a = tidy_angle((a / 15.0).round() * 15.0);
+            } else if a.abs() < 3.0 {
+                // 接近擺正就吸到 0°
+                a = 0.0;
+            }
+            set_angle(hwnd, a, false);
+        }
         Some(Down::Control) => {}
         None => {
             let hot = hit_button(hwnd, pt);
@@ -1873,7 +2015,21 @@ fn on_mouse_up(hwnd: HWND, pt: POINT) {
             start_anim(hwnd, AnimKind::Attach(Some(idx)));
         }
         Some(Down::Grip { .. }) => save_board(),
-        Some(Down::Ink) => ink_end(hwnd, win::cursor_pos()),
+        Some(Down::Turn { moved, .. }) => {
+            with(|m| {
+                if let Some(w) = m.win(hwnd) {
+                    w.lifted = false;
+                }
+            });
+            if moved {
+                save_board();
+                redraw(hwnd);
+            } else {
+                // 點一下：擺正
+                set_angle(hwnd, 0.0, true);
+            }
+        }
+        Some(Down::Ink) => ink_end(hwnd, frame_cursor(hwnd)),
         Some(Down::Erase) => {}
         Some(Down::Paper { moved: false, click, .. }) => {
             if kind_of(hwnd) == Some(Kind::Timer) {
@@ -1911,6 +2067,7 @@ const M_UNDONE_ALL: u32 = 11;
 const M_CLEAR_DONE: u32 = 12;
 const M_COPY: u32 = 20;
 const M_SAVE_IMAGE: u32 = 22;
+const M_STRAIGHTEN: u32 = 23;
 const M_NEW: u32 = 30;
 const M_PASTE: u32 = 31;
 const M_SHOP: u32 = 32;
@@ -2017,6 +2174,9 @@ fn context_menu(hwnd: HWND) {
     if image {
         items.push(MenuItem::item(M_COPY, t("menu.copy_image")));
         items.push(MenuItem::item(M_SAVE_IMAGE, t("menu.save_image")));
+        if note.angle != 0.0 {
+            items.push(MenuItem::item(M_STRAIGHTEN, t("menu.straighten")));
+        }
     } else if !sticker {
         items.push(MenuItem::item(M_COPY, t("menu.copy_text")));
     }
@@ -2051,6 +2211,7 @@ fn context_menu(hwnd: HWND) {
         }
         M_COPY => copy(hwnd),
         M_SAVE_IMAGE => save_image_as(hwnd),
+        M_STRAIGHTEN => set_angle(hwnd, 0.0, true),
         M_NEW => on_button(hwnd, Btn::New),
         M_PASTE => {
             let rc = win::window_rect(hwnd);
@@ -2311,8 +2472,8 @@ pub fn demo() {
         note.y = wa.top + px(90.0) + (i as i32 / 4) * px(300.0);
         add_and_show(note, false);
     }
-    star("Rust 的所有權讓記憶體安全不需要垃圾回收", "vivaldi.exe");
-    star("便利貼要低耗能：只在改變時重畫", "Telegram.exe");
+    star("Rust 的所有權讓記憶體安全不需要垃圾回收", "vivaldi.exe", "Ownership - The Rust Programming Language");
+    star("便利貼要低耗能：只在改變時重畫", "Telegram.exe", "");
     if !starred_visible() {
         toggle_starred();
     }
@@ -2356,7 +2517,11 @@ pub fn render_preview(path: &str) {
     let mut photo = Note { kind: Kind::Image, paper: Paper::White, w: 220, h: 238, ..Default::default() };
     photo.items = vec![Attach::tape("tape-dusty", 55.0, 2.0, 165.0, -4.0)];
     photo.lines = vec![Line::new("Star sticker")];
-    tiles.push((photo, ""));
+    tiles.push((photo.clone(), ""));
+    // 轉了角度的拍立得：平常、滑過（左上角的轉角度鈕）、拿起來（陰影要一直往下）
+    for (angle, state) in [(-8.0, ""), (12.0, "hover-turn"), (25.0, "lift")] {
+        tiles.push((Note { angle, ..photo.clone() }, state));
+    }
     let mut arabic = Note { paper: Paper::MorandiYellow, texture: Texture::Lined, w: 240, h: 170, ..Default::default() };
     arabic.items = vec![Attach::at("pin-gold", 120.0, 2.0)];
     arabic.lines = vec![Line { text: "شراء الحليب".into(), done: true, meta: String::new() }, Line::new("الرد على البريد"), Line::new("Mixed: موعد 3:00 meeting")];
@@ -2480,20 +2645,23 @@ pub fn render_preview(path: &str) {
     for (i, (note, state)) in tiles.iter().enumerate() {
         let mut buf = Vec::new();
         let mut cache = photo_px.clone().map(|p| ImageCache { original: p, scaled: None });
-        let mut lay = Layout::default();
+        let mut size = (0, 0);
         with(|m| {
             let key = m.fonts_for(note);
             let text_color = m.text_color(note);
             let Manager { fonts, assets, board, .. } = m;
             let ink_view = (*state == "ink").then(|| InkView { prefs: store::InkPrefs { tool: store::Tool::Crayon, color: 0xE21E24, size: 1 }, eraser: false, cur: None });
             let _ = board;
-            lay = render::layout_ex(note, scale, assets, ink_view.is_some());
             let scene = Scene {
                 note,
                 lines: &note.lines,
                 scale,
-                hover: matches!(*state, "hover" | "lift" | "dark"),
-                hot: (*state == "hover").then_some(Btn::Menu),
+                hover: matches!(*state, "hover" | "lift" | "dark" | "hover-turn"),
+                hot: match *state {
+                    "hover" => Some(Btn::Menu),
+                    "hover-turn" => Some(Btn::Turn),
+                    _ => None,
+                },
                 lift: if *state == "lift" { 1.0 } else { 0.0 },
                 attach_anim: (*state == "anim").then_some(AttachAnim { which: None, t: 0.3 }),
                 dragging_item: None,
@@ -2515,12 +2683,13 @@ pub fn render_preview(path: &str) {
                 now_ms: store::now_ms(),
                 fx: Fx::None,
                 ink: ink_view,
+                angle: note.angle,
             };
             let started = std::time::Instant::now();
-            render::present(render::Target::Buffer(&mut buf), scene);
+            size = render::present(render::Target::Buffer(&mut buf), scene).window_size();
             crate::base::log_info(format!("render-notes: tile {i} {state} {:.2} ms", started.elapsed().as_secs_f64() * 1000.0));
         });
-        let (w, h) = (lay.w, lay.h);
+        let (w, h) = size;
         let (ox, oy) = ((i % cols) as i32 * cell_w + (cell_w - w) / 2, (i / cols) as i32 * cell_h + (cell_h - h) / 2);
         if *state == "dark" {
             // 深色桌布：看透明紙上的粉筆

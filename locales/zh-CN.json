@@ -37,6 +37,7 @@
   "menu.remove_password": "移除密码",
   "menu.copy_image": "复制图片\tCtrl+C",
   "menu.save_image": "图片另存为…",
+  "menu.straighten": "摆正",
   "menu.copy_text": "复制文字\tCtrl+C",
   "menu.new": "新建便利贴\tCtrl+N",
   "menu.paste": "从剪贴板新建（文字或图片）\tCtrl+V",

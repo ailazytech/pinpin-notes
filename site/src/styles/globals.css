@@ -45,8 +45,10 @@
     "Yu Gothic", "Malgun Gothic", sans-serif;
   --font-display: var(--font-fraunces), "Iowan Old Style", "Palatino Linotype",
     "Songti TC", "Yu Mincho", "Noto Serif CJK TC", serif;
+  /* Caveat 只有拉丁字母；中日韓字要明確指定，不然會落到 cursive（Windows 上是標楷體） */
   --font-hand: var(--font-caveat), "Segoe Print", "Bradley Hand", "Chalkboard",
-    "Xingkai SC", cursive;
+    "PingFang TC", "Microsoft JhengHei", "Hiragino Sans", "Yu Gothic",
+    "Malgun Gothic", cursive;
   --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas,
     "Liberation Mono", monospace;
 

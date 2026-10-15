@@ -37,6 +37,7 @@
   "menu.remove_password": "إزالة كلمة المرور",
   "menu.copy_image": "نسخ الصورة\tCtrl+C",
   "menu.save_image": "حفظ الصورة باسم…",
+  "menu.straighten": "تقويم",
   "menu.copy_text": "نسخ النص\tCtrl+C",
   "menu.new": "ملاحظة جديدة\tCtrl+N",
   "menu.paste": "ملاحظة جديدة من الحافظة\tCtrl+V",

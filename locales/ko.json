@@ -37,6 +37,7 @@
   "menu.remove_password": "비밀번호 해제",
   "menu.copy_image": "이미지 복사\tCtrl+C",
   "menu.save_image": "이미지 저장…",
+  "menu.straighten": "똑바로 놓기",
   "menu.copy_text": "텍스트 복사\tCtrl+C",
   "menu.new": "새 메모\tCtrl+N",
   "menu.paste": "클립보드에서 새 메모\tCtrl+V",

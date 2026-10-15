@@ -37,6 +37,7 @@
   "menu.remove_password": "Remove password",
   "menu.copy_image": "Copy image\tCtrl+C",
   "menu.save_image": "Save image as…",
+  "menu.straighten": "Straighten",
   "menu.copy_text": "Copy text\tCtrl+C",
   "menu.new": "New note\tCtrl+N",
   "menu.paste": "New note from clipboard\tCtrl+V",

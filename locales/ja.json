@@ -37,6 +37,7 @@
   "menu.remove_password": "パスワードを解除",
   "menu.copy_image": "画像をコピー\tCtrl+C",
   "menu.save_image": "画像を保存…",
+  "menu.straighten": "まっすぐに戻す",
   "menu.copy_text": "テキストをコピー\tCtrl+C",
   "menu.new": "新しい付箋\tCtrl+N",
   "menu.paste": "クリップボードから作成\tCtrl+V",

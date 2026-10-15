@@ -32,7 +32,7 @@ A cozy sticky-notes app for the Windows desktop — pins, washi tape, stickers, 
 - **Passwords** — each note can have its own password (PBKDF2 + AES-256-GCM). Normally it shows an ordinary-looking decoy to-do list; type the password and the text scrambles back into the real one. It locks itself again when closed or restarted
 - **Starred notebook** — with the Vibotype selection toolbar, select text in any app and press ★ to collect it
 - **Export / import JSON** — move to another computer or sync by hand (pictures, handwriting, your stickers and groups included; encrypted notes stay encrypted)
-- **Desktop right-click** “New note” / “New timer” and **start with Windows** — both can be turned off in the tray menu
+- **Desktop right-click** “New note” / “New timer” and **start with Windows** — both off by default, turn them on from the tray menu
 - **Online updates** — checks for new versions quietly (shown only in the tray menu); critical updates download automatically and apply on next launch; new sticker packs and shop banners can arrive online too. All of it can be turned off (see [docs/UPDATES.md](docs/UPDATES.md))
 - **Languages** — add your own without rebuilding (see [locales/README.md](locales/README.md))
 

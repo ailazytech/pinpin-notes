@@ -84,6 +84,7 @@ impl Kit {
             fonts: &self.fonts[&key],
             now_ms: o.now_ms,
             fx: o.fx,
+            angle: 0.0,
             ink: o.ink,
             text_color: n.color.map(|c| Rgb((c >> 16) as u8, (c >> 8) as u8, c as u8)),
         };

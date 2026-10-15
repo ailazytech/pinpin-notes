@@ -204,6 +204,7 @@ impl Studio {
                 fonts: &self.fonts[&key],
                 now_ms: look.now_ms,
                 fx: look.fx,
+                angle: 0.0,
                 ink: look.ink,
                 text_color: n.color.map(|c| Rgb((c >> 16) as u8, (c >> 8) as u8, c as u8)),
             };

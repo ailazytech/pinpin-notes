@@ -43,13 +43,14 @@ PinPin 的資料全部在使用者自己的電腦上，沒有任何網路傳輸�
 | `image` | string | 圖片檔名（`kind = image`；`lines[0]` 是圖說） |
 | `x`, `y` | i32 | 紙張左上角，螢幕座標（實際像素） |
 | `w`, `h` | i32 | 紙張大小（邏輯像素，100% 縮放的像素） |
+| `angle` | f32 | 整張的角度（度，順時針，繞紙張中心；-180～180）。目前只有拍立得能轉；0 不寫出，舊資料沒有就是 0 |
 | `paper` | 見下 | 紙色 |
 | `texture` | `sticky` \| `plain` \| `grid` \| `lined` \| `dots` \| `washi` \| `fiber` | 紙質 |
 | `font` | f32 | 字的大小倍率，0.7～6 |
 | `face`, `color`, `bold` | 可為 null | 這張自己的文字樣式；null = 跟著 `Board.text` |
 | `items` | `Attach[]` | 圖釘、夾子、紙膠帶、貼紙 |
 | `strokes` | `Stroke[]` | 手寫 |
-| `timer` | `Timer` \| null | 蕃茄鐘設定（`kind = timer`） |
+| `timer` | `Timer` \| null | 番茄鐘設定（`kind = timer`） |
 | `layer` | `normal` \| `top` \| `desktop` | 視窗層級：一般、永遠在最上層、貼在桌面底層 |
 | `hidden` | bool | 收起來（星號記事本用） |
 | `secret` | `Secret` \| null | 有密碼時的加密內容 |
@@ -90,7 +91,7 @@ PinPin 的資料全部在使用者自己的電腦上，沒有任何網路傳輸�
 | `end_ms` | 跑的時候：結束的時間（Unix 毫秒）；0 = 沒在跑 |
 | `left_ms` | 沒在跑的時候：還剩幾毫秒 |
 | `finished` | 上一段剛結束、還沒開始下一段 |
-| `done` | 今天完成了幾個蕃茄 |
+| `done` | 今天完成了幾個番茄 |
 
 用結束時間而不是剩餘秒數存，所以關掉程式再開，倒數還是對的。
 
@@ -114,8 +115,8 @@ PinPin 的資料全部在使用者自己的電腦上，沒有任何網路傳輸�
 | 欄位 | 預設 | 說明 |
 |---|---|---|
 | `lang` | `""` | 介面語言代碼；空字串 = 跟隨系統 |
-| `autostart` | `true` | 開機啟動（HKCU `Run\PinPin`） |
-| `desktop_menu` | `true` | 桌面右鍵選單（HKCU `DesktopBackground\Shell\PinPinNewNote`、`PinPinNewTimer`） |
+| `autostart` | `false` | 開機啟動（HKCU `Run\PinPin`） |
+| `desktop_menu` | `false` | 桌面右鍵選單（HKCU `DesktopBackground\Shell\PinPinNewNote`、`PinPinNewTimer`） |
 
 ## 匯出檔（`Bundle`）
 
