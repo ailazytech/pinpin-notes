@@ -69,3 +69,7 @@ for id in polaroid stickers paste lucky timer; do npx remotion render clip-$id o
 ```
 
 小舖卡片、控制點的位置寫死在 `Clips.tsx`（`tile(...)`、`shopPt(...)`、`BOX`）；小舖版面或貼紙順序改了要跟著調。
+
+## 官網分享圖（Open Graph）
+
+`node scripts/og.mjs`：用宣傳片片尾（`Film.tsx` 的 `EndStill`，合成 `og-<語言>`）輸出六種語言的分享圖到 `site/public/og/<語言>.png`（1200×630），英文版另存一份 `site/public/og.png`。片尾的標語在 `Film.tsx` 的 `END_TEXT`。
