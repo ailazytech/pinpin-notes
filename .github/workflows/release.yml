@@ -17,7 +17,7 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Tag must be on main
@@ -42,7 +42,7 @@ jobs:
           "$hash  $name" | Out-File "$name.sha256" -Encoding ascii
           "ASSET=$name" | Out-File $env:GITHUB_ENV -Append
           "### $name`n- sha256: $hash`n- 發佈這個草稿後，site.yml 會叫 Cloudflare 重建官網，下載按鈕和 feed.json 會換成這一版" | Out-File $env:GITHUB_STEP_SUMMARY -Append
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           draft: true
           name: PinPin Notes ${{ github.ref_name }}
