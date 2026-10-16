@@ -408,6 +408,28 @@ export const Film: React.FC = () => {
   );
 };
 
+/** The end card's words in every website language; scripts/og.mjs renders one share image per language. */
+export const END_TEXT: Record<string, {tagline: string; sub: string; font: string}> = {
+  en: {tagline: 'Little notes that stick with you.', sub: 'Free & open source · 6 languages · almost zero idle CPU', font: FONT},
+  'zh-TW': {tagline: '桌面上的小紙條，一直陪著你。', sub: '貼貼 · 免費開源 · 6 種語言 · 閒置幾乎不耗電', font: `"Microsoft JhengHei UI", "Microsoft JhengHei", ${FONT}`},
+  'zh-CN': {tagline: '桌面上的小纸条，一直陪着你。', sub: '贴贴 · 免费开源 · 6 种语言 · 闲置几乎不耗电', font: `"Microsoft YaHei UI", "Microsoft YaHei", ${FONT}`},
+  ja: {tagline: 'デスクトップの小さなメモが、いつもそばに。', sub: '無料・オープンソース · 6 言語 · アイドル時の CPU はほぼゼロ', font: `"Yu Gothic UI", "Meiryo UI", ${FONT}`},
+  ko: {tagline: '바탕화면의 작은 메모가 늘 곁에 있어요.', sub: '무료 오픈소스 · 6개 언어 · 대기 중 CPU 거의 0%', font: `"Malgun Gothic", ${FONT}`},
+  ar: {tagline: 'ملاحظات صغيرة تبقى معك.', sub: 'مجاني ومفتوح المصدر · 6 لغات · استهلاك شبه معدوم للمعالج', font: FONT},
+};
+const EndLang = React.createContext('en');
+/** the moment the end card is complete (tagline and sub-line in), before the fade */
+const STILL_AT = 22.5;
+
+/** The finished board with the end card in one language — the source of the website's share images. */
+export const EndStill: React.FC<{lang: string}> = ({lang}) => (
+  <EndLang.Provider value={lang}>
+    <AbsoluteFill style={{backgroundColor: NIGHT}}>
+      <Scene t={STILL_AT} />
+    </AbsoluteFill>
+  </EndLang.Provider>
+);
+
 const STROKE_FILTERS = (
   <defs>
     <filter id="chalk" x="-10%" y="-10%" width="120%" height="120%">
@@ -578,6 +600,8 @@ const Scene: React.FC<{t: number}> = ({t}) => {
 };
 
 const EndCard: React.FC<{t: number}> = ({t}) => {
+  const lang = React.useContext(EndLang);
+  const words = END_TEXT[lang] ?? END_TEXT.en;
   if (t < T.logo - 0.4) return null;
   const veil = prog(t, [T.logo - 0.4, T.logo + 0.2]);
   const logo = springAt(t, T.logo, 13, 6);
@@ -605,11 +629,11 @@ const EndCard: React.FC<{t: number}> = ({t}) => {
         <path d={underline} fill="none" stroke="#e2241e" strokeWidth={9} strokeLinecap="round" strokeDasharray={ev.strokeDasharray} strokeDashoffset={ev.strokeDashoffset} />
       </svg>
       {t >= T.wordmark[0] - 0.15 && t < T.endUnderline[1] + 0.15 && <ToolIcon hand={{tool: 'pen', x: penX, y: t < T.wordmark[1] ? uy - 60 : uy, dx: 1, dy: 0}} t={t} />}
-      <div style={{position: 'absolute', left: 0, right: 0, top: 690, textAlign: 'center', fontFamily: FONT, fontSize: 40, fontWeight: 600, color: PAPER, opacity: tag, transform: `translateY(${(1 - tag) * 20}px)`}}>
-        Little notes that stick with you.
+      <div lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{position: 'absolute', left: 0, right: 0, top: 690, textAlign: 'center', fontFamily: words.font, fontSize: 40, fontWeight: 600, color: PAPER, opacity: tag, transform: `translateY(${(1 - tag) * 20}px)`}}>
+        {words.tagline}
       </div>
-      <div style={{position: 'absolute', left: 0, right: 0, top: 752, textAlign: 'center', fontFamily: FONT, fontSize: 27, color: '#c9bfb6', opacity: cubicOut(prog(t, [T.endUnderline[1] + 0.25, T.endUnderline[1] + 0.8]))}}>
-        Free &amp; open source · 6 languages · almost zero idle CPU
+      <div lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} style={{position: 'absolute', left: 0, right: 0, top: 752, textAlign: 'center', fontFamily: words.font, fontSize: 27, color: '#c9bfb6', opacity: cubicOut(prog(t, [T.endUnderline[1] + 0.25, T.endUnderline[1] + 0.8]))}}>
+        {words.sub}
       </div>
       <AbsoluteFill style={{background: NIGHT, opacity: fade}} />
     </AbsoluteFill>
