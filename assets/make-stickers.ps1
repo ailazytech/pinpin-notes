@@ -38,6 +38,8 @@ $jobs = @(
   @('couplets\final\生意興隆.png', '_', 'cn-shengyi', 1, 1, 440),
   @('couplets\final\金玉滿堂.png', '_', 'cn-jinyu', 1, 1, 440),
   @('couplets\final\紫氣東來.png', '_', 'cn-ziqi', 1, 1, 440),
+  # 金榜題名沒有商家作品可對照：合體字逐個部件檢查過（金、木＋旁、是、頁、名）
+  @('couplets\final\金榜題名-合體.png', '_', 'cn-jinbang', 1, 1, 440),
   @('couplets\final\千祥雲集.png', '_', 'cl-qianxiang', 1, 1, 640),
   @('couplets\final\大吉大利.png', '_', 'cl-daji', 1, 1, 640),
   @('couplets\final\五穀豐登.png', '_', 'cl-wugu', 1, 1, 640),
@@ -53,6 +55,7 @@ $jobs = @(
   @('couplets\final\歲歲平安.png', '_', 'cl-suisui', 1, 1, 640),
   @('couplets\final\福星高照.png', '_', 'cl-fuxing', 1, 1, 640),
   @('couplets\final\學業進步.png', '_', 'cl-xueye', 1, 1, 640),
+  @('couplets\final\金榜題名.png', '_', 'cl-jinbang', 1, 1, 640),
   # 貓狗（每隻眼神不同）
   @('sheet2-pets-a.png',  'cat', 'calico,tuxedo,siamese,british', 2, 2, 300),
   @('sheet2-pets-b.png',  'cat', 'ragdoll,american,black,fold', 2, 2, 300),

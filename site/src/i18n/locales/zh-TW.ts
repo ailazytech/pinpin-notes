@@ -78,7 +78,7 @@ export const zhTW: Dictionary = {
   },
 
   marquee: {
-    label: "146 張內建貼紙的其中幾張",
+    label: "148 張內建貼紙的其中幾張",
     hint: "把貼紙拖下來貼在任何地方 · 點一下後，滾輪轉角度、Shift＋滾輪調大小",
     reset: "全部歸位",
   },
@@ -101,7 +101,7 @@ export const zhTW: Dictionary = {
     cards: [
       { id: "notes", title: "便利貼本體", blurb: "17 色、7 種紙質手感" },
       { id: "todo", title: "紅筆待辦清單", blurb: "手寫筆觸，溫柔劃掉" },
-      { id: "shop", title: "貼紙小舖", blurb: "圖釘、夾子、紙膠帶與 146 張免費貼紙" },
+      { id: "shop", title: "貼紙小舖", blurb: "圖釘、夾子、紙膠帶與 148 張免費貼紙" },
       { id: "custom", title: "自製貼紙", blurb: "任意圖片，自動去背留白邊" },
       { id: "handwriting", title: "手寫", blurb: "四種筆，真實筆觸" },
       { id: "transparent", title: "透明標語", blurb: "字直接寫在桌布上" },
@@ -149,9 +149,9 @@ export const zhTW: Dictionary = {
       id: "shop",
       eyebrow: "03",
       title: "貼紙小舖（全場免費）",
-      desc: "一間永遠免費的小舖：圖釘、夾子、紙膠帶，和 146 張貼紙分成八區——日常小可愛、招財祝福（附空聚寶盆，金豆金飾一個個放進去）、各國招財小物、盆栽、金字毛筆春聯、貓狗品種、文青小機車和台灣小物，新貼紙包還會線上送來。拖到便利貼上，或直接貼在桌面。",
+      desc: "一間永遠免費的小舖：圖釘、夾子、紙膠帶，和 148 張貼紙分成八區——日常小可愛、招財祝福（附空聚寶盆，金豆金飾一個個放進去）、各國招財小物、盆栽、金字毛筆春聯、貓狗品種、文青小機車和台灣小物，新貼紙包還會線上送來。拖到便利貼上，或直接貼在桌面。",
       bullets: [
-        "8 款圖釘 · 7 款夾子 · 8 款紙膠帶 · 146 張貼紙，全部免費",
+        "8 款圖釘 · 7 款夾子 · 8 款紙膠帶 · 148 張貼紙，全部免費",
         "貼紙可以不依附紙張、直接住在桌面上",
         "貼上時有「落下、壓一下、彈回」的動畫",
         "旋轉與縮放控制點；按住 Shift 讓旋轉一次 15°",
@@ -459,9 +459,7 @@ export const zhTW: Dictionary = {
     methodsTitle: "挑一種說謝謝的方式",
     methodsPending: "金流管道建置中——若想支持，歡迎先到 GitHub 給專案點顆星！",
     methods: [
-      { name: "PayPal", note: "連結即將公布" },
       { name: "Ko-fi", note: "連結即將公布" },
-      { name: "GitHub Sponsors", note: "連結即將公布" },
     ],
     otherTitle: "其他幫上忙的方式",
     others: [

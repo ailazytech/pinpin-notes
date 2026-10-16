@@ -80,7 +80,7 @@ export const zhCN: Dictionary = {
   },
 
   marquee: {
-    label: "146 张内置贴纸里的几张",
+    label: "148 张内置贴纸里的几张",
     hint: "把贴纸拖下来贴在任何地方 · 点一下后，滚轮转角度、Shift＋滚轮调大小",
     reset: "全部归位",
   },
@@ -103,7 +103,7 @@ export const zhCN: Dictionary = {
     cards: [
       { id: "notes", title: "便签本体", blurb: "17 色、7 种纸质手感" },
       { id: "todo", title: "红笔待办清单", blurb: "手写笔触，温柔划掉" },
-      { id: "shop", title: "贴纸小店", blurb: "图钉、夹子、和纸胶带与 146 张免费贴纸" },
+      { id: "shop", title: "贴纸小店", blurb: "图钉、夹子、和纸胶带与 148 张免费贴纸" },
       { id: "custom", title: "自制贴纸", blurb: "任意图片，自动抠图留白边" },
       { id: "handwriting", title: "自由手写", blurb: "四种笔款，真实笔触" },
       { id: "transparent", title: "桌面透明标语", blurb: "文字写在壁纸上，无框无扰" },
@@ -151,9 +151,9 @@ export const zhCN: Dictionary = {
       id: "shop",
       eyebrow: "03",
       title: "贴纸小店（全场免费）",
-      desc: "一间永远免费的小店：图钉、夹子、和纸胶带，还有 146 张贴纸分成八区——日常小可爱、招财祝福（附空聚宝盆，金豆金饰一个个放进去）、各国招财小物、盆栽、金字毛笔春联、猫狗品种、文艺小摩托和台湾小物，新贴纸包还会在线送来。拖到便签上，或直接贴在桌面。",
+      desc: "一间永远免费的小店：图钉、夹子、和纸胶带，还有 148 张贴纸分成八区——日常小可爱、招财祝福（附空聚宝盆，金豆金饰一个个放进去）、各国招财小物、盆栽、金字毛笔春联、猫狗品种、文艺小摩托和台湾小物，新贴纸包还会在线送来。拖到便签上，或直接贴在桌面。",
       bullets: [
-        "8 款图钉 · 7 款夹子 · 8 卷和纸胶带 · 146 张贴纸，全部免费",
+        "8 款图钉 · 7 款夹子 · 8 卷和纸胶带 · 148 张贴纸，全部免费",
         "贴纸可以不依附任何纸张，直接摆在桌面上",
         "贴上时有“落下、压一下、弹回”的动画",
         "旋转与缩放控制点；按住 Shift 让旋转一次 15°",
@@ -461,9 +461,7 @@ export const zhCN: Dictionary = {
     methodsTitle: "挑一种说谢谢的方式",
     methodsPending: "赞助渠道筹备中——若想支持，欢迎先到 GitHub 给项目点颗星！",
     methods: [
-      { name: "PayPal", note: "链接即将公布" },
       { name: "Ko-fi", note: "链接即将公布" },
-      { name: "GitHub Sponsors", note: "链接即将公布" },
     ],
     otherTitle: "其他帮忙的方式",
     others: [

@@ -3009,6 +3009,14 @@ pub fn export_sprites(dir: &str, picture: Option<&str>) {
     }
 }
 
+/// `--export-clips 資料夾 原圖資料夾`：特點短片（拍立得、貼紙、貼上做貼紙、春聯）的素材（開發用）。
+pub fn export_clips(dir: &str, src: &str) {
+    match sprites::export_clips(dir, src) {
+        Ok(()) => crate::base::log_info(format!("export-clips：{dir}")),
+        Err(e) => crate::base::log_error(format!("export-clips：{e:#}")),
+    }
+}
+
 /// `--make-logo 原圖 資料夾`：Logo（去背、去掉灰影子、細白邊）→ 各尺寸 PNG 和多尺寸 .ico（開發用）。
 pub fn make_logo(src: &str, dir: &str) {
     let result = (|| -> anyhow::Result<String> {

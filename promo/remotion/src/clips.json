@@ -1,0 +1,971 @@
+{
+  "fps": 30,
+  "samples": {
+    "click": {
+      "file": "sfx/mouse-click.wav",
+      "volume": 0.45
+    },
+    "whoosh": {
+      "file": "sfx/whoosh.wav",
+      "volume": 0.5
+    },
+    "zin": {
+      "file": "sfx/whoosh.wav",
+      "volume": 0.3,
+      "rate": 0.75
+    },
+    "swell": {
+      "file": "sfx/whoosh.wav",
+      "volume": 0.35,
+      "rate": 0.6
+    },
+    "paper": {
+      "file": "sfx/page-turn.wav",
+      "volume": 0.35
+    },
+    "shutter": {
+      "file": "sfx/shutter-modern.wav",
+      "volume": 0.45
+    }
+  },
+  "clips": {
+    "polaroid": {
+      "duration": 9.2,
+      "music": {
+        "bpm": 120,
+        "quiet": [],
+        "night": [
+          0,
+          0
+        ],
+        "end": 8.01,
+        "intro": 0.9,
+        "style": "cute"
+      },
+      "T": {
+        "catDrag": [
+          0.47,
+          1.235
+        ],
+        "catDrop": 1.235,
+        "catKnob": [
+          1.456,
+          1.796
+        ],
+        "catRot": [
+          1.864,
+          2.51
+        ],
+        "corgiThumb": [
+          3.114,
+          3.59
+        ],
+        "corgiDrag": [
+          3.692,
+          4.44
+        ],
+        "corgiDrop": 4.44,
+        "corgiKnob": [
+          4.644,
+          4.984
+        ],
+        "corgiRot": [
+          5.052,
+          5.698
+        ],
+        "away": [
+          5.885,
+          6.48
+        ],
+        "pullOut": [
+          5.97,
+          7.075
+        ]
+      },
+      "events": [
+        {
+          "t": 0.47,
+          "kind": "click"
+        },
+        {
+          "t": 0.538,
+          "kind": "whoosh",
+          "dur": 0.646
+        },
+        {
+          "t": 1.215,
+          "kind": "shutter"
+        },
+        {
+          "t": 1.235,
+          "kind": "plop"
+        },
+        {
+          "t": 1.269,
+          "kind": "paper"
+        },
+        {
+          "t": 1.864,
+          "kind": "click"
+        },
+        {
+          "t": 2,
+          "kind": "tick"
+        },
+        {
+          "t": 2.153,
+          "kind": "tick"
+        },
+        {
+          "t": 2.306,
+          "kind": "tick"
+        },
+        {
+          "t": 2.459,
+          "kind": "tick"
+        },
+        {
+          "t": 3.114,
+          "kind": "zin"
+        },
+        {
+          "t": 3.165,
+          "kind": "whoosh",
+          "dur": 0.425
+        },
+        {
+          "t": 3.692,
+          "kind": "click"
+        },
+        {
+          "t": 3.76,
+          "kind": "whoosh",
+          "dur": 0.612
+        },
+        {
+          "t": 4.42,
+          "kind": "shutter"
+        },
+        {
+          "t": 4.44,
+          "kind": "plop"
+        },
+        {
+          "t": 4.474,
+          "kind": "paper"
+        },
+        {
+          "t": 5.052,
+          "kind": "click"
+        },
+        {
+          "t": 5.188,
+          "kind": "tick"
+        },
+        {
+          "t": 5.341,
+          "kind": "tick"
+        },
+        {
+          "t": 5.494,
+          "kind": "tick"
+        },
+        {
+          "t": 5.647,
+          "kind": "tick"
+        },
+        {
+          "t": 5.97,
+          "kind": "swell",
+          "dur": 1.105
+        },
+        {
+          "t": 7.075,
+          "kind": "ding"
+        }
+      ]
+    },
+    "stickers": {
+      "duration": 10.22,
+      "music": {
+        "bpm": 120,
+        "quiet": [],
+        "night": [
+          0,
+          0
+        ],
+        "end": 9.03,
+        "intro": 0.9,
+        "style": "cute"
+      },
+      "T": {
+        "catDrag": [
+          0.47,
+          1.116
+        ],
+        "catDrop": 1.116,
+        "shibaTile": [
+          1.686,
+          2.026
+        ],
+        "shibaDrag": [
+          2.094,
+          2.74
+        ],
+        "shibaDrop": 2.74,
+        "select": 3.046,
+        "toResize": [
+          3.165,
+          3.42
+        ],
+        "resize": [
+          3.488,
+          4.066
+        ],
+        "toRotate": [
+          4.134,
+          4.372
+        ],
+        "rotate": [
+          4.44,
+          5.035
+        ],
+        "burst": [
+          5.375,
+          0.612
+        ],
+        "zoomOut": [
+          5.12,
+          5.715
+        ],
+        "pullOut": [
+          8.01,
+          8.775
+        ]
+      },
+      "events": [
+        {
+          "t": 0.47,
+          "kind": "click"
+        },
+        {
+          "t": 0.521,
+          "kind": "whoosh",
+          "dur": 0.544
+        },
+        {
+          "t": 1.116,
+          "kind": "plop"
+        },
+        {
+          "t": 1.686,
+          "kind": "zin"
+        },
+        {
+          "t": 2.094,
+          "kind": "click"
+        },
+        {
+          "t": 2.145,
+          "kind": "whoosh",
+          "dur": 0.544
+        },
+        {
+          "t": 2.74,
+          "kind": "plop"
+        },
+        {
+          "t": 3.046,
+          "kind": "click"
+        },
+        {
+          "t": 3.488,
+          "kind": "click"
+        },
+        {
+          "t": 4.066,
+          "kind": "tick"
+        },
+        {
+          "t": 4.44,
+          "kind": "click"
+        },
+        {
+          "t": 4.576,
+          "kind": "tick"
+        },
+        {
+          "t": 4.729,
+          "kind": "tick"
+        },
+        {
+          "t": 4.882,
+          "kind": "tick"
+        },
+        {
+          "t": 5.12,
+          "kind": "whoosh",
+          "dur": 0.51
+        },
+        {
+          "t": 5.825,
+          "kind": "plop"
+        },
+        {
+          "t": 6.437,
+          "kind": "plop"
+        },
+        {
+          "t": 7.049,
+          "kind": "plop"
+        },
+        {
+          "t": 7.661,
+          "kind": "plop"
+        },
+        {
+          "t": 8.01,
+          "kind": "swell",
+          "dur": 0.85
+        },
+        {
+          "t": 8.775,
+          "kind": "ding"
+        }
+      ]
+    },
+    "paste": {
+      "duration": 12.49,
+      "music": {
+        "bpm": 120,
+        "quiet": [],
+        "night": [
+          0,
+          0
+        ],
+        "end": 11.3,
+        "intro": 0.9,
+        "style": "cute"
+      },
+      "T": {
+        "animeDrag": [
+          0.47,
+          1.184
+        ],
+        "animeMade": 1.184,
+        "swap": 1.524,
+        "idolBack": [
+          1.524,
+          1.796
+        ],
+        "idolDrag": [
+          1.864,
+          2.578
+        ],
+        "idolMade": 2.578,
+        "toClose": [
+          2.748,
+          3.088
+        ],
+        "close": 3.156,
+        "closing": [
+          3.19,
+          3.462
+        ],
+        "tile3": [
+          3.83,
+          4.136
+        ],
+        "animeOut": [
+          4.204,
+          4.884
+        ],
+        "animeDrop": 4.884,
+        "tile4": [
+          5.454,
+          5.76
+        ],
+        "idolOut": [
+          5.828,
+          6.508
+        ],
+        "idolDrop": 6.508,
+        "select": 6.814,
+        "toRotate": [
+          7.866,
+          8.104
+        ],
+        "rotate": [
+          8.172,
+          8.818
+        ],
+        "away": [
+          8.954,
+          9.362
+        ],
+        "deselect": 9.43,
+        "pullOut": [
+          9.515,
+          10.45
+        ],
+        "toResize": [
+          6.92,
+          7.15
+        ],
+        "resize": [
+          7.22,
+          7.82
+        ]
+      },
+      "events": [
+        {
+          "t": 0.47,
+          "kind": "click"
+        },
+        {
+          "t": 0.521,
+          "kind": "whoosh",
+          "dur": 0.612
+        },
+        {
+          "t": 1.184,
+          "kind": "snip",
+          "dur": 0.306
+        },
+        {
+          "t": 1.32,
+          "kind": "chime"
+        },
+        {
+          "t": 1.864,
+          "kind": "click"
+        },
+        {
+          "t": 1.915,
+          "kind": "whoosh",
+          "dur": 0.612
+        },
+        {
+          "t": 2.578,
+          "kind": "snip",
+          "dur": 0.306
+        },
+        {
+          "t": 2.714,
+          "kind": "chime"
+        },
+        {
+          "t": 3.156,
+          "kind": "click"
+        },
+        {
+          "t": 3.19,
+          "kind": "zin"
+        },
+        {
+          "t": 4.204,
+          "kind": "click"
+        },
+        {
+          "t": 4.255,
+          "kind": "whoosh",
+          "dur": 0.578
+        },
+        {
+          "t": 4.884,
+          "kind": "plop"
+        },
+        {
+          "t": 5.454,
+          "kind": "zin"
+        },
+        {
+          "t": 5.828,
+          "kind": "click"
+        },
+        {
+          "t": 5.879,
+          "kind": "whoosh",
+          "dur": 0.578
+        },
+        {
+          "t": 6.508,
+          "kind": "plop"
+        },
+        {
+          "t": 6.814,
+          "kind": "click"
+        },
+        {
+          "t": 7.22,
+          "kind": "click"
+        },
+        {
+          "t": 7.34,
+          "kind": "tick"
+        },
+        {
+          "t": 7.49,
+          "kind": "tick"
+        },
+        {
+          "t": 7.64,
+          "kind": "tick"
+        },
+        {
+          "t": 7.79,
+          "kind": "tick"
+        },
+        {
+          "t": 8.172,
+          "kind": "click"
+        },
+        {
+          "t": 8.308,
+          "kind": "tick"
+        },
+        {
+          "t": 8.461,
+          "kind": "tick"
+        },
+        {
+          "t": 8.614,
+          "kind": "tick"
+        },
+        {
+          "t": 8.767,
+          "kind": "tick"
+        },
+        {
+          "t": 9.43,
+          "kind": "click"
+        },
+        {
+          "t": 9.515,
+          "kind": "swell",
+          "dur": 0.935
+        },
+        {
+          "t": 10.45,
+          "kind": "ding"
+        }
+      ]
+    },
+    "lucky": {
+      "duration": 12.8,
+      "music": {
+        "bpm": 120,
+        "quiet": [],
+        "night": [
+          0,
+          0
+        ],
+        "end": 11.6,
+        "intro": 0.9,
+        "style": "cute"
+      },
+      "T": {
+        "wangDrag": [
+          0.5,
+          1.15
+        ],
+        "wangDrop": 1.15,
+        "toList1": [
+          1.45,
+          1.75
+        ],
+        "scroll1": [
+          1.8,
+          2.25
+        ],
+        "rijinTile": [
+          2.3,
+          2.55
+        ],
+        "rijinDrag": [
+          2.6,
+          3.25
+        ],
+        "rijinDrop": 3.25,
+        "toList2": [
+          3.55,
+          3.85
+        ],
+        "scroll2": [
+          3.9,
+          4.4
+        ],
+        "tianguanTile": [
+          4.45,
+          4.7
+        ],
+        "tianguanDrag": [
+          4.75,
+          5.4
+        ],
+        "tianguanDrop": 5.4,
+        "toList3": [
+          5.7,
+          6
+        ],
+        "scroll3": [
+          6.05,
+          6.5
+        ],
+        "jinbangTile": [
+          6.55,
+          6.8
+        ],
+        "jinbangDrag": [
+          6.85,
+          7.5
+        ],
+        "jinbangDrop": 7.5,
+        "focus": [
+          7.65,
+          8.1
+        ],
+        "select": 8.15,
+        "toResize": [
+          8.22,
+          8.45
+        ],
+        "resize": [
+          8.5,
+          9.15
+        ],
+        "toRotate": [
+          9.22,
+          9.45
+        ],
+        "rotate": [
+          9.5,
+          10.1
+        ],
+        "away": [
+          10.2,
+          10.55
+        ],
+        "deselect": 10.6,
+        "pullOut": [
+          10.6,
+          11.6
+        ]
+      },
+      "events": [
+        {
+          "t": 0.5,
+          "kind": "click"
+        },
+        {
+          "t": 0.55,
+          "kind": "whoosh"
+        },
+        {
+          "t": 1.15,
+          "kind": "plop"
+        },
+        {
+          "t": 1.2,
+          "kind": "sparkle"
+        },
+        {
+          "t": 1.45,
+          "kind": "zin"
+        },
+        {
+          "t": 1.85,
+          "kind": "tick"
+        },
+        {
+          "t": 1.98,
+          "kind": "tick"
+        },
+        {
+          "t": 2.11,
+          "kind": "tick"
+        },
+        {
+          "t": 2.24,
+          "kind": "tick"
+        },
+        {
+          "t": 2.6,
+          "kind": "click"
+        },
+        {
+          "t": 2.65,
+          "kind": "whoosh"
+        },
+        {
+          "t": 3.25,
+          "kind": "plop"
+        },
+        {
+          "t": 3.3,
+          "kind": "sparkle"
+        },
+        {
+          "t": 3.55,
+          "kind": "zin"
+        },
+        {
+          "t": 3.95,
+          "kind": "tick"
+        },
+        {
+          "t": 4.08,
+          "kind": "tick"
+        },
+        {
+          "t": 4.21,
+          "kind": "tick"
+        },
+        {
+          "t": 4.34,
+          "kind": "tick"
+        },
+        {
+          "t": 4.75,
+          "kind": "click"
+        },
+        {
+          "t": 4.8,
+          "kind": "whoosh"
+        },
+        {
+          "t": 5.4,
+          "kind": "plop"
+        },
+        {
+          "t": 5.45,
+          "kind": "sparkle"
+        },
+        {
+          "t": 5.7,
+          "kind": "zin"
+        },
+        {
+          "t": 6.1,
+          "kind": "tick"
+        },
+        {
+          "t": 6.23,
+          "kind": "tick"
+        },
+        {
+          "t": 6.36,
+          "kind": "tick"
+        },
+        {
+          "t": 6.49,
+          "kind": "tick"
+        },
+        {
+          "t": 6.85,
+          "kind": "click"
+        },
+        {
+          "t": 6.9,
+          "kind": "whoosh"
+        },
+        {
+          "t": 7.5,
+          "kind": "plop"
+        },
+        {
+          "t": 7.55,
+          "kind": "sparkle"
+        },
+        {
+          "t": 7.58,
+          "kind": "ding"
+        },
+        {
+          "t": 8.15,
+          "kind": "click"
+        },
+        {
+          "t": 8.5,
+          "kind": "click"
+        },
+        {
+          "t": 8.62,
+          "kind": "tick"
+        },
+        {
+          "t": 8.77,
+          "kind": "tick"
+        },
+        {
+          "t": 8.92,
+          "kind": "tick"
+        },
+        {
+          "t": 9.07,
+          "kind": "tick"
+        },
+        {
+          "t": 9.5,
+          "kind": "click"
+        },
+        {
+          "t": 9.62,
+          "kind": "tick"
+        },
+        {
+          "t": 9.77,
+          "kind": "tick"
+        },
+        {
+          "t": 9.92,
+          "kind": "tick"
+        },
+        {
+          "t": 10.07,
+          "kind": "tick"
+        },
+        {
+          "t": 10.6,
+          "kind": "click"
+        },
+        {
+          "t": 10.6,
+          "kind": "swell"
+        },
+        {
+          "t": 11.6,
+          "kind": "chime"
+        }
+      ]
+    },
+    "timer": {
+      "duration": 11.52,
+      "music": {
+        "bpm": 120,
+        "quiet": [],
+        "night": [
+          0,
+          0
+        ],
+        "end": 10.33,
+        "intro": 0.9,
+        "style": "cute"
+      },
+      "T": {
+        "appear": [
+          0.555,
+          0.204
+        ],
+        "burst": [
+          2.34,
+          0.51
+        ],
+        "whip": [
+          4.89,
+          5.4
+        ],
+        "countdown": [
+          5.57,
+          0.51
+        ],
+        "ring": [
+          7.61,
+          8.97
+        ],
+        "pullOut": [
+          9.14,
+          10.16
+        ]
+      },
+      "events": [
+        {
+          "t": 0.555,
+          "kind": "plop"
+        },
+        {
+          "t": 0.759,
+          "kind": "plop"
+        },
+        {
+          "t": 0.963,
+          "kind": "plop"
+        },
+        {
+          "t": 1.167,
+          "kind": "plop"
+        },
+        {
+          "t": 1.371,
+          "kind": "plop"
+        },
+        {
+          "t": 1.575,
+          "kind": "plop"
+        },
+        {
+          "t": 2.34,
+          "kind": "click"
+        },
+        {
+          "t": 2.85,
+          "kind": "click"
+        },
+        {
+          "t": 3.36,
+          "kind": "click"
+        },
+        {
+          "t": 3.87,
+          "kind": "click"
+        },
+        {
+          "t": 4.38,
+          "kind": "click"
+        },
+        {
+          "t": 4.89,
+          "kind": "whoosh",
+          "dur": 0.51
+        },
+        {
+          "t": 5.57,
+          "kind": "tick"
+        },
+        {
+          "t": 6.08,
+          "kind": "tick"
+        },
+        {
+          "t": 6.59,
+          "kind": "tick"
+        },
+        {
+          "t": 7.1,
+          "kind": "tick"
+        },
+        {
+          "t": 7.61,
+          "kind": "plop"
+        },
+        {
+          "t": 7.61,
+          "kind": "bell"
+        },
+        {
+          "t": 7.95,
+          "kind": "bell"
+        },
+        {
+          "t": 9.14,
+          "kind": "swell",
+          "dur": 1.02
+        },
+        {
+          "t": 10.16,
+          "kind": "chime"
+        }
+      ]
+    }
+  }
+}

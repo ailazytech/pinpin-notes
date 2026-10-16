@@ -183,6 +183,14 @@ pub fn run() {
             }
             return;
         }
+        // `--export-clips 資料夾 原圖資料夾`：特點短片的素材（開發用）
+        if let Some(i) = std::env::args().position(|a| a == "--export-clips") {
+            let args: Vec<String> = std::env::args().collect();
+            if let (Some(dir), Some(src)) = (args.get(i + 1), args.get(i + 2)) {
+                notes::export_clips(dir, src);
+            }
+            return;
+        }
         // `--make-logo 原圖 資料夾`：Logo 各尺寸和 .ico（開發用）
         if let Some(i) = std::env::args().position(|a| a == "--make-logo") {
             let args: Vec<String> = std::env::args().collect();

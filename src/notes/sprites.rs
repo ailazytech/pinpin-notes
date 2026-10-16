@@ -23,6 +23,8 @@ struct Kit {
     fonts: HashMap<String, Fonts>,
     dir: std::path::PathBuf,
     manifest: serde_json::Map<String, Value>,
+    /// 上一張的位移（轉角度的拍立得）
+    last_off: (i32, i32),
 }
 
 #[derive(Default)]
@@ -33,6 +35,12 @@ struct Opts<'a> {
     now_ms: u64,
     /// 圖片便利貼（拍立得）的圖
     image: Option<Pixels>,
+    /// 滑過的樣子（按鈕、轉角度鈕）
+    hover: bool,
+    /// 選取中的附件（外框、控制點）
+    selected: Option<usize>,
+    /// 整張轉的角度（拍立得）
+    angle: f32,
 }
 
 /// 預乘的 BGRA → 沒預乘的（存 PNG 用）。
@@ -67,12 +75,12 @@ impl Kit {
             note: n,
             lines: &n.lines,
             scale: S,
-            hover: false,
+            hover: o.hover,
             hot: None,
             lift: 0.0,
             attach_anim: None,
             dragging_item: None,
-            selected: None,
+            selected: o.selected,
             strike: None,
             scramble: o.scramble.map(|(from, to, t)| Scramble { from, to, t }),
             unlocked: false,
@@ -84,12 +92,15 @@ impl Kit {
             fonts: &self.fonts[&key],
             now_ms: o.now_ms,
             fx: o.fx,
-            angle: 0.0,
+            angle: o.angle,
             ink: o.ink,
             text_color: n.color.map(|c| Rgb((c >> 16) as u8, (c >> 8) as u8, c as u8)),
         };
-        render::present(render::Target::Buffer(&mut out), scene);
-        (unpremultiply(&out, lay.w, lay.h), lay, rows)
+        // 轉過角度的話，輸出的大小和位置跟著變（視窗座標 = 原本的座標 + offset）
+        let hits = render::present(render::Target::Buffer(&mut out), scene);
+        let (w, h) = hits.window_size();
+        self.last_off = hits.offset();
+        (unpremultiply(&out, w, h), lay, rows)
     }
 
     fn save(&self, name: &str, p: &Pixels) -> anyhow::Result<String> {
@@ -105,7 +116,7 @@ impl Kit {
         let r = lay.paper;
         self.manifest.insert(
             name.into(),
-            json!({ "file": file, "w": p.w, "h": p.h, "paper": [r.left, r.top, r.right, r.bottom], "rows": rows }),
+            json!({ "file": file, "w": p.w, "h": p.h, "paper": [r.left, r.top, r.right, r.bottom], "rows": rows, "off": [self.last_off.0, self.last_off.1] }),
         );
         Ok(())
     }
@@ -164,7 +175,7 @@ pub fn export(dir: &str, picture: Option<&str>) -> anyhow::Result<()> {
     crate::i18n::set("en");
     let dir = Path::new(dir).to_path_buf();
     std::fs::create_dir_all(&dir)?;
-    let mut kit = Kit { assets: assets::Cache::new(S), fonts: HashMap::new(), dir: dir.clone(), manifest: serde_json::Map::new() };
+    let mut kit = Kit { assets: assets::Cache::new(S), fonts: HashMap::new(), dir: dir.clone(), manifest: serde_json::Map::new(), last_off: (0, 0) };
     let o = Opts::default;
 
     // ── 便利貼 ──
@@ -290,5 +301,77 @@ pub fn export(dir: &str, picture: Option<&str>) -> anyhow::Result<()> {
 
     let manifest = json!({ "scale": S, "sprites": Value::Object(kit.manifest) });
     std::fs::write(dir.join("sprites.json"), serde_json::to_vec_pretty(&manifest)?)?;
+    Ok(())
+}
+
+/// `--export-clips 資料夾 原圖資料夾`：特點短片（沒有字幕）的素材，寫進 `clips.json`。
+/// 原圖資料夾要有 pet-cat.png、pet-corgi.png（拍立得）、anime.png、idol.png（貼上做貼紙）。
+pub fn export_clips(dir: &str, src: &str) -> anyhow::Result<()> {
+    crate::i18n::set("en");
+    let dir = Path::new(dir).to_path_buf();
+    let src = Path::new(src);
+    std::fs::create_dir_all(&dir)?;
+    let mut kit = Kit { assets: assets::Cache::new(S), fonts: HashMap::new(), dir: dir.clone(), manifest: serde_json::Map::new(), last_off: (0, 0) };
+
+    // ── 寵物照片 → 拍立得（大小、膠帶和 new_image 一樣）；每 1° 一張（滑過的 -h、沒滑過的 -a），轉角度時用 ──
+    for pet in ["cat", "corgi"] {
+        let img = image::decode_file(&src.join(format!("pet-{pet}.png")))?;
+        let frame_w = 300.0f32;
+        let frame_h = (frame_w * img.h as f32 / img.w as f32).clamp(60.0, 420.0);
+        let mut photo = Note { kind: Kind::Image, paper: Paper::White, w: (frame_w + 20.0) as i32, h: (frame_h + 48.0) as i32, v: store::VERSION, ..Default::default() };
+        let w = photo.w as f32;
+        photo.items = vec![Attach::tape("tape-pink", w / 2.0 - 55.0, 2.0, w / 2.0 + 55.0, -4.0)];
+        kit.note(&format!("polaroid-{pet}"), &photo, Opts { image: Some(img.clone()), ..Default::default() })?;
+        for a in -12..=12 {
+            kit.note(&format!("polaroid-{pet}-h{a}"), &photo, Opts { image: Some(img.clone()), hover: true, angle: a as f32, ..Default::default() })?;
+            kit.note(&format!("polaroid-{pet}-a{a}"), &photo, Opts { image: Some(img.clone()), angle: a as f32, ..Default::default() })?;
+        }
+        kit.picture(&format!("photo-{pet}"), &img, 2.0)?;
+    }
+
+    // ── 貼上任何圖片做成貼紙（和小舖的 Ctrl+V 同一套去背、白邊）──
+    for name in ["anime", "idol"] {
+        let img = image::decode_file(&src.join(format!("{name}.png")))?;
+        kit.assets.insert(&format!("my-{name}"), stickers::make_sticker(&img));
+        kit.picture(&format!("photo-{name}"), &img, 2.0)?;
+    }
+
+    // ── 直接貼在桌面上的貼紙：一般和選取中（外框、控制點）──
+    for name in ["st-cat", "st-shiba", "st-heart", "st-star", "st-thumbsup", "st-fire", "cn-wang", "cn-rijin", "cn-jinbang", "cl-tianguan", "cl-jinbang", "my-anime", "my-idol"] {
+        let n = Note { kind: Kind::Sticker, items: vec![Attach { asset: name.into(), ..Default::default() }], v: store::VERSION, ..Default::default() };
+        kit.note(&format!("dk-{name}"), &n, Opts::default())?;
+        kit.note(&format!("dk-{name}-sel"), &n, Opts { selected: Some(0), ..Default::default() })?;
+    }
+
+    // ── 番茄鐘：六種造型各走 8 秒（tm-<造型>-<秒>）；番茄最後 4 秒倒數、時間到的波紋 ──
+    let base = store::now_ms() / 1000 * 1000;
+    for (name, style, left) in [
+        ("tomato", TimerStyle::Tomato, 24 * 60 + 59u64),
+        ("hourglass", TimerStyle::Hourglass, 9 * 60 + 12),
+        ("led", TimerStyle::Led, 18 * 60 + 5),
+        ("alarm", TimerStyle::Alarm, 12 * 60 + 48),
+        ("cat", TimerStyle::Cat, 21 * 60 + 30),
+        ("dog", TimerStyle::Dog, 14 * 60 + 40),
+    ] {
+        for i in 0..8u64 {
+            let t = Timer { end_ms: base + (left - i) * 1000 + 500, done: 2, ..Default::default() };
+            kit.note(&format!("tm-{name}-{i}"), &timer(style, t), Opts { now_ms: base, ..Default::default() })?;
+        }
+    }
+    for left in 0..=3u64 {
+        let t = Timer { end_ms: base + left * 1000, done: 2, ..Default::default() };
+        kit.note(&format!("tm-end-{left}"), &timer(TimerStyle::Tomato, t), Opts { now_ms: base, ..Default::default() })?;
+    }
+    for i in 0..16 {
+        let t = Timer { phase: Phase::Break, left_ms: 5 * 60_000, finished: true, done: 3, ..Default::default() };
+        kit.note(&format!("tm-ring-{i}"), &timer(TimerStyle::Tomato, t), Opts { fx: Fx::Ring(i as f32 / 15.0), now_ms: base, ..Default::default() })?;
+    }
+
+    // ── 貼貼紙用的便利貼 ──
+    let plan = note(Paper::MilkTea, Texture::Dots, &["Weekend plans", "Picnic at the park", "Bake cookies"], vec![Attach::at("pin-red", 140.0, 2.0)], 280, 230);
+    kit.note("note-plan", &plan, Opts::default())?;
+
+    let manifest = json!({ "scale": S, "sprites": Value::Object(kit.manifest) });
+    std::fs::write(dir.join("clips.json"), serde_json::to_vec_pretty(&manifest)?)?;
     Ok(())
 }

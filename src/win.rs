@@ -80,6 +80,11 @@ pub fn active_work_area() -> RECT {
 
 /// 系統 DPI 縮放比例（100% = 1.0）。
 pub fn dpi_scale() -> f32 {
+    // PINPIN_DPI=2：離屏畫圖（宣傳素材）用指定的縮放，開發用
+    static FORCED: std::sync::OnceLock<Option<f32>> = std::sync::OnceLock::new();
+    if let Some(s) = *FORCED.get_or_init(|| std::env::var("PINPIN_DPI").ok().and_then(|v| v.parse().ok())) {
+        return s;
+    }
     unsafe { GetDpiForSystem().max(96) as f32 / 96.0 }
 }
 

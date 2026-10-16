@@ -35,3 +35,6 @@ site/public/download/
 
 # wrangler 本機模擬的暫存
 site/.wrangler/
+
+promo/remotion/public/clips
+promo/remotion/public/audio/clip-*.wav

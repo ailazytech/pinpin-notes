@@ -26,11 +26,9 @@ export const siteConfig = {
   /** TODO: source repository URL */
   githubUrl: "",
 
-  /** Donation links — TODO. Empty string renders as “coming soon”. */
+  /** Donation link (Ko-fi). Empty string = “coming soon”. */
   donate: {
-    paypal: "",
-    kofi: "",
-    githubSponsors: "",
+    kofi: "https://ko-fi.com/ailazytech",
   },
 
   /**

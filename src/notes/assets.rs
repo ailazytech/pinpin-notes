@@ -171,6 +171,7 @@ pub static ASSETS: &[Asset] = &[
     sticker!("cn-shengyi", 4, 110.0),
     sticker!("cn-jinyu", 4, 110.0),
     sticker!("cn-ziqi", 4, 110.0),
+    sticker!("cn-jinbang", 4, 110.0),
     sticker!("cl-qianxiang", 4, 150.0),
     sticker!("cl-daji", 4, 150.0),
     sticker!("cl-wugu", 4, 150.0),
@@ -186,6 +187,7 @@ pub static ASSETS: &[Asset] = &[
     sticker!("cl-suisui", 4, 150.0),
     sticker!("cl-fuxing", 4, 150.0),
     sticker!("cl-xueye", 4, 150.0),
+    sticker!("cl-jinbang", 4, 150.0),
     // 貓狗品種（每隻眼神不同）
     sticker!("cat-calico", 5, 75.0),
     sticker!("cat-tuxedo", 5, 75.0),

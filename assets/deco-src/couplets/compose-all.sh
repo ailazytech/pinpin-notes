@@ -10,7 +10,7 @@ enc() { node -e "process.stdout.write(encodeURIComponent(process.argv[1]))" "$1"
 for f in ink/*.png; do
   n=$(basename "$f" .png)
   case "$n" in
-    一帆風順|日日見財|日進斗金|生意興隆|招財進寶|金玉滿堂|紫氣東來|黃金萬兩) shape=diamond ;;
+    一帆風順|日日見財|日進斗金|生意興隆|招財進寶|金玉滿堂|紫氣東來|黃金萬兩|金榜題名-合體) shape=diamond ;;
     *) shape=strip ;;
   esac
   "$CHROME" --headless=new --hide-scrollbars --allow-file-access-from-files --force-device-scale-factor=1 \

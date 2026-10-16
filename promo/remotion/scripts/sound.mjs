@@ -3,13 +3,16 @@
 // drops out during the film's quiet hold, darkens at night and ducks under every hit. One shared room (reverb).
 //
 //   node scripts/sound.mjs   →   public/audio/score.wav  (44.1 kHz, 16-bit stereo)
+//   node scripts/sound.mjs <timeline.json> <out.wav>  — the feature clips use this (scripts/clip-sounds.mjs)
 
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const TL = JSON.parse(fs.readFileSync(path.join(here, '../src/timeline.json'), 'utf8'));
+const TL = JSON.parse(fs.readFileSync(process.argv[2] ?? path.join(here, '../src/timeline.json'), 'utf8'));
+/** seconds the music takes to open up (low-pass sweep) */
+const INTRO = TL.music.intro ?? 2.2;
 const SR = 44100;
 const N = Math.ceil(TL.duration * SR) + SR; // a second of tail
 const TAU = Math.PI * 2;
@@ -225,6 +228,31 @@ const SFX = {
     }
     return out;
   },
+  // feature clips: a bubbly "bloop" when something lands (pitch springs up), with a tiny glint on top
+  plop() {
+    const n = Math.floor(0.3 * SR);
+    const out = new Float32Array(n);
+    let ph = 0;
+    for (let i = 0; i < n; i++) {
+      const t = i / SR;
+      ph += (TAU * (240 + 620 * (1 - Math.exp(-t / 0.028)))) / SR;
+      out[i] = (Math.sin(ph) + 0.25 * Math.sin(2 * ph)) * env(t, 0.002, 0.075) * 0.75 + Math.sin(TAU * 2637 * t) * env(t - 0.03, 0.001, 0.05) * (t > 0.03 ? 0.12 : 0);
+    }
+    return out;
+  },
+  // three quick music-box notes going up (C7 E7 G7)
+  sparkle() {
+    const n = Math.floor(0.6 * SR);
+    const out = new Float32Array(n);
+    [2093, 2637, 3136].forEach((f, k) => {
+      const s0 = Math.floor(k * 0.055 * SR);
+      for (let i = 0; s0 + i < n; i++) {
+        const t = i / SR;
+        out[s0 + i] += (Math.sin(TAU * f * t) + 0.2 * Math.sin(TAU * 3 * f * t)) * env(t, 0.001, 0.14) * 0.22;
+      }
+    });
+    return out;
+  },
   pop() {
     const n = Math.floor(0.2 * SR);
     const out = new Float32Array(n);
@@ -313,7 +341,7 @@ const CHORDS = [
 ];
 const BASS = [41, 40, 38, 36];
 const inQuiet = (t) => TL.music.quiet.some(([a, b]) => t > a && t < b);
-const end = TL.T.endUnderline[1];
+const end = TL.music.end ?? TL.T.endUnderline[1];
 
 const addTone = (buf, t0, f, dur, gain, bright = 1.0) => {
   const s0 = Math.floor(t0 * SR);
@@ -376,6 +404,58 @@ for (let t = bar * 0.75; t < end - 0.3; t += beat / 2) {
   }
 }
 
+// feature clips (music.style "cute"): a bouncy marimba tune instead — I · V · vi · IV in C, arpeggio melody,
+// plucked bass, kick on 1 and 3, finger snaps on 2 and 4, a light shaker
+if (TL.music.style === 'cute') {
+  music.fill(0);
+  drums.fill(0);
+  const mallet = (buf, t0, f, decay, gain) => {
+    const s0 = Math.floor(t0 * SR);
+    for (let i = 0; i < decay * 6 * SR && s0 + i < buf.length; i++) {
+      const t = i / SR;
+      buf[s0 + i] += (Math.sin(TAU * f * t) * env(t, 0.002, decay) + 0.35 * Math.sin(TAU * 3.93 * f * t) * env(t, 0.001, 0.03)) * gain;
+    }
+  };
+  const ROOT = [48, 43, 45, 41];
+  const TUNE = [
+    [72, 76, 79, 76, 84, null, 79, 76],
+    [71, 74, 79, 74, 83, null, 79, 74],
+    [72, 76, 81, 76, 84, null, 81, 79],
+    [72, 77, 81, 77, 84, 81, 79, 77],
+  ];
+  const e8 = beat / 2;
+  for (let b = 0; b * bar < TL.duration; b++) {
+    const t0 = b * bar;
+    if (t0 >= end - 0.05) {
+      // last chord rings out
+      [60, 64, 67, 72].forEach((m, k) => mallet(music, t0 + k * 0.03, midi(m), 0.9, 0.09));
+      mallet(music, t0, midi(36), 1.0, 0.18);
+      break;
+    }
+    TUNE[b % 4].forEach((m, k) => m && mallet(music, t0 + k * e8, midi(m), 0.32, k % 2 ? 0.07 : 0.1));
+    mallet(music, t0, midi(ROOT[b % 4]), 0.45, 0.2);
+    mallet(music, t0 + beat * 2, midi(ROOT[b % 4] + 7), 0.4, 0.15);
+    for (let k = 0; k < 8; k++) {
+      const t = t0 + k * e8;
+      if (t >= end - 0.3) break;
+      const s0 = Math.floor(t * SR);
+      if (k === 0 || k === 4) {
+        let ph = 0;
+        for (let i = 0; i < 0.25 * SR; i++) {
+          const x = i / SR;
+          ph += (TAU * (55 + 80 * Math.exp(-x / 0.02))) / SR;
+          drums[s0 + i] += Math.sin(ph) * env(x, 0.001, 0.09) * 0.28;
+        }
+      }
+      if (k === 2 || k === 6) {
+        const bp = new Biquad('bp', 2600, 1.6);
+        for (let i = 0; i < 0.06 * SR; i++) drums[s0 + i] += bp.run(noise()) * env(i / SR, 0.0006, 0.018) * 0.35;
+      }
+      for (let i = 0; i < 0.04 * SR; i++) drums[s0 + i] += hatHp.run(noise()) * env(i / SR, 0.004, 0.012) * (k % 2 ? 0.07 : 0.04);
+    }
+  }
+}
+
 // ── mix ──
 const L = new Float32Array(N);
 const R = new Float32Array(N);
@@ -384,12 +464,12 @@ const sendR = new Float32Array(N);
 
 // music bus: fade in, darker at night (low-pass), ducked under hits
 const lp = new Biquad('lp', 9000, 0.6);
-const hits = TL.events.filter((e) => ['tape', 'drop', 'hit', 'bell', 'ding', 'pop'].includes(e.kind)).map((e) => e.t);
+const hits = TL.events.filter((e) => ['tape', 'drop', 'hit', 'bell', 'ding', 'pop', 'plop'].includes(e.kind)).map((e) => e.t);
 for (let i = 0; i < N; i++) {
   const t = i / SR;
   if (i % 128 === 0) {
     const night = t > TL.music.night[0] && t < TL.music.night[1];
-    lp.set(night ? 1400 : t < 2.2 ? 700 + 3000 * (t / 2.2) : 9000, 0.6);
+    lp.set(night ? 1400 : t < INTRO ? 700 + 3000 * (t / INTRO) : 9000, 0.6);
   }
   let duck = 1;
   for (const h of hits) if (t >= h && t < h + 0.5) duck = Math.min(duck, 1 - 0.45 * Math.exp(-(t - h) / 0.14));
@@ -481,7 +561,7 @@ header.writeUInt16LE(4, 32);
 header.writeUInt16LE(16, 34);
 header.write('data', 36);
 header.writeUInt32LE(data.length, 40);
-const outPath = path.join(here, '../public/audio/score.wav');
+const outPath = process.argv[3] ?? path.join(here, '../public/audio/score.wav');
 fs.mkdirSync(path.dirname(outPath), {recursive: true});
 fs.writeFileSync(outPath, Buffer.concat([header, data]));
-console.log(`score.wav: ${(N / SR).toFixed(1)} s, peak scaled by ${k.toFixed(2)}`);
+console.log(`${path.basename(outPath)}: ${(N / SR).toFixed(1)} s, peak scaled by ${k.toFixed(2)}`);

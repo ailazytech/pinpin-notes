@@ -11,23 +11,20 @@ import { cn } from "@/lib/utils";
 
 const TIER_ICONS = [Sticker, CupSoda, Coffee, Sun];
 
+const kofi = siteConfig.donate.kofi;
+
 export function DonateView() {
   const { dict } = useI18n();
   const d = dict.donate;
   const [custom, setCustom] = useState("");
 
-  const thank = (name: string) => {
-    const url =
-      name === "PayPal"
-        ? siteConfig.donate.paypal
-        : name === "Ko-fi"
-          ? siteConfig.donate.kofi
-          : siteConfig.donate.githubSponsors;
-    if (url) {
-      window.open(url, "_blank");
+  // Every button (tiers, custom amount, the method card) goes to Ko-fi.
+  const thank = () => {
+    if (kofi) {
+      window.open(kofi, "_blank");
       return;
     }
-    toast(dict.common.linkPending, { description: name });
+    toast(dict.common.linkPending, { description: "Ko-fi" });
   };
 
   return (
@@ -78,7 +75,7 @@ export function DonateView() {
                 <motion.button
                   type="button"
                   whileHover={{ y: -6, rotate: i % 2 === 0 ? -1 : 1 }}
-                  onClick={() => thank(d.methods[i % d.methods.length]?.name ?? "PayPal")}
+                  onClick={thank}
                   className={cn(
                     "paper-grain relative flex h-full w-full flex-col items-start gap-3 rounded-xl border p-5 text-start shadow-note transition-shadow hover:shadow-lift sm:p-6",
                     i === 1 ? "border-pin/40 bg-pin/[0.06]" : "border-line bg-card"
@@ -123,7 +120,7 @@ export function DonateView() {
               />
               <button
                 type="button"
-                onClick={() => thank("Ko-fi")}
+                onClick={thank}
                 className="inline-flex h-10 items-center rounded-full bg-ink px-5 text-[0.82rem] font-bold text-paper shadow-note transition-all hover:-translate-y-0.5 hover:shadow-lift"
               >
                 <Heart className="mr-1.5 size-4 fill-paper" />
@@ -141,12 +138,12 @@ export function DonateView() {
         </Reveal>
         <Reveal delay={0.06}>
           <div className="flex flex-col gap-3">
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:max-w-sm">
               {d.methods.map((m) => (
                 <button
                   key={m.name}
                   type="button"
-                  onClick={() => thank(m.name)}
+                  onClick={thank}
                   className="group flex items-center justify-between rounded-xl border border-line bg-card px-5 py-4 shadow-note transition-all hover:-translate-y-0.5 hover:shadow-lift"
                 >
                   <span className="flex items-center gap-3">
@@ -155,13 +152,15 @@ export function DonateView() {
                     </span>
                     <span className="text-[0.92rem] font-bold text-ink">{m.name}</span>
                   </span>
-                  <span className="rounded-full border border-dashed border-ink-mute/40 px-2.5 py-0.5 text-[0.64rem] font-semibold text-ink-mute">
-                    {m.note}
-                  </span>
+                  {!kofi && (
+                    <span className="rounded-full border border-dashed border-ink-mute/40 px-2.5 py-0.5 text-[0.64rem] font-semibold text-ink-mute">
+                      {m.note}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
-            <p className="text-[0.75rem] text-ink-mute">{d.methodsPending}</p>
+            {!kofi && <p className="text-[0.75rem] text-ink-mute">{d.methodsPending}</p>}
           </div>
         </Reveal>
       </div>

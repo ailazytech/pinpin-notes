@@ -85,7 +85,7 @@ export const en = {
   },
 
   marquee: {
-    label: "Some of the 146 built-in stickers",
+    label: "Some of the 148 built-in stickers",
     hint: "Drag one out and stick it anywhere · click it, then scroll to rotate, Shift + scroll to resize",
     reset: "Reset",
   },
@@ -108,7 +108,7 @@ export const en = {
     cards: [
       { id: "notes", title: "Paper notes", blurb: "17 colors, 7 textures" },
       { id: "todo", title: "Red-pen todos", blurb: "Strike it done, sweetly" },
-      { id: "shop", title: "Sticker Shop", blurb: "Pins, clips, tape & 146 friends" },
+      { id: "shop", title: "Sticker Shop", blurb: "Pins, clips, tape & 148 friends" },
       { id: "custom", title: "Custom stickers", blurb: "Any picture, die-cut" },
       { id: "handwriting", title: "Handwriting", blurb: "Four pens, real texture" },
       { id: "transparent", title: "Transparent paper", blurb: "Words on the wallpaper" },
@@ -156,9 +156,9 @@ export const en = {
       id: "shop",
       eyebrow: "03",
       title: "The Sticker Shop",
-      desc: "A little shop where everything is free: pins, clips, washi tape and 146 stickers in eight sets — everyday cuties, good fortune (with empty treasure bowls to fill with gold), lucky charms from around the world, houseplants, gold-calligraphy spring couplets, cat & dog breeds, little scooters and Taiwan favorites. New packs arrive online. Drag them onto notes, or straight onto the desktop.",
+      desc: "A little shop where everything is free: pins, clips, washi tape and 148 stickers in eight sets — everyday cuties, good fortune (with empty treasure bowls to fill with gold), lucky charms from around the world, houseplants, gold-calligraphy spring couplets, cat & dog breeds, little scooters and Taiwan favorites. New packs arrive online. Drag them onto notes, or straight onto the desktop.",
       bullets: [
-        "8 pins · 7 clips · 8 washi tapes · 146 stickers, all free",
+        "8 pins · 7 clips · 8 washi tapes · 148 stickers, all free",
         "Stickers can live on the desktop without any paper at all",
         "Drop animation lands with a squash and a bounce",
         "Rotate and scale handles; Shift snaps rotation to 15°",
@@ -466,9 +466,7 @@ export const en = {
     methodsTitle: "Pick a way to say thanks",
     methodsPending: "Payment links are being set up — they'll appear here soon.",
     methods: [
-      { name: "PayPal", note: "link coming soon" },
       { name: "Ko-fi", note: "link coming soon" },
-      { name: "GitHub Sponsors", note: "link coming soon" },
     ],
     otherTitle: "Other ways to help",
     others: [
