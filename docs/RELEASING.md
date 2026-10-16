@@ -106,7 +106,7 @@ pnpm exec vp preview
 
 圖示：`public/` 的 `favicon.ico`（16～256 多尺寸）、`favicon-32.png`、`icon-192.png`、`icon-512.png`（PWA）、`apple-touch-icon.png`（iOS 主畫面，要不透明底，用 `scripts/apple-touch-icon.ps1` 從 icon-512 產生）。
 
-社群分享預覽：`public/og/<語言>.png`（1200×630，六種語言各一張；`og.png` 是英文版的備份），用 `promo/remotion` 的 `node scripts/og.mjs` 從宣傳片片尾產生。`functions/_middleware.ts` 依 `?lang=` → 網站上選過的語言（cookie）→ 瀏覽器語言，在伺服器端換掉首頁的標題、描述、Open Graph／Twitter 標籤、canonical 和 hreflang，網址用請求本身的網域。要分享特定語言就用 `https://pinpin.fast01.net/?lang=ja` 這種網址。
+社群分享預覽：`public/og/<語言>.png`（1200×630，六種語言各一張；`og.png` 是英文版的備份），用 `promo/remotion` 的 `node scripts/og.mjs` 從宣傳片片尾產生。每種語言有自己的網址：`/`（英文）、`/zh-tw/`、`/zh-cn/`、`/ja/`、`/ko/`、`/ar/`；`/zh`、`/tw`、`/cn` 和舊的 `?lang=` 連結會 301 轉過去。`functions/_middleware.ts` 負責轉址、把 `/ja/…` 底下的資源對回根目錄的檔案，並在伺服器端換掉首頁的標題、描述、Open Graph／Twitter 標籤、canonical 和 hreflang（根目錄 `/` 依網站上選過的語言 → 瀏覽器語言），網址用請求本身的網域。要分享特定語言就用 `https://pinpin.fast01.net/zh-tw/` 這種網址。
 
 ## 熱修（hotfix）
 

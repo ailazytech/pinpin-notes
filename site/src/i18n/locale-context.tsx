@@ -9,7 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { LOCALE_META, STORAGE_KEY, isLocale, type Locale } from "./config";
+import { LOCALE_META, STORAGE_KEY, isLocale, localeFromSlug, localePath, type Locale } from "./config";
 import { en, type Dictionary } from "./locales/en";
 import { zhTW } from "./locales/zh-TW";
 import { zhCN } from "./locales/zh-CN";
@@ -53,6 +53,13 @@ export function I18nProvider({
       document.cookie = `${STORAGE_KEY}=${next};path=/;max-age=31536000;samesite=lax`;
     } catch {
       /* storage unavailable — keep going */
+    }
+    // Keep the address on the language's own path (/ja/…), so a copied link opens in this language.
+    // Production only: the Cloudflare middleware maps /ja/… back onto the real files; the local dev server doesn't.
+    const { pathname, hash } = window.location;
+    const first = pathname.split("/")[1] ?? "";
+    if (import.meta.env.PROD && (pathname === "/" || pathname === "/index.html" || localeFromSlug(first))) {
+      window.history.replaceState(window.history.state, "", localePath(next) + hash);
     }
   }, []);
 

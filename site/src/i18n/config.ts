@@ -33,3 +33,27 @@ export function matchBrowserLocale(tag: string | undefined | null): Locale | nul
 }
 
 export const STORAGE_KEY = "pinpin-site-locale";
+
+/** Each language lives under its own path: / (English), /zh-tw/, /zh-cn/, /ja/, /ko/, /ar/. */
+export const LOCALE_SLUG: Record<Locale, string> = {
+  en: "",
+  "zh-TW": "zh-tw",
+  "zh-CN": "zh-cn",
+  ja: "ja",
+  ko: "ko",
+  ar: "ar",
+};
+
+/** Short forms people type; the server redirects them to the real path. */
+export const SLUG_ALIASES: Record<string, Locale> = { zh: "zh-TW", tw: "zh-TW", "zh-hant": "zh-TW", cn: "zh-CN", "zh-hans": "zh-CN", en: "en" };
+
+/** The language a path's first segment names (real slug or alias), if any. */
+export function localeFromSlug(segment: string | undefined): Locale | null {
+  const s = (segment ?? "").toLowerCase();
+  if (!s) return null;
+  const real = (Object.keys(LOCALE_SLUG) as Locale[]).find((l) => LOCALE_SLUG[l] === s);
+  return real ?? SLUG_ALIASES[s] ?? null;
+}
+
+/** "/" for English, "/ja/" etc. for the rest */
+export const localePath = (locale: Locale) => (LOCALE_SLUG[locale] ? `/${LOCALE_SLUG[locale]}/` : "/");

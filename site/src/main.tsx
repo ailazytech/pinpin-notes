@@ -8,10 +8,12 @@ import "@fontsource-variable/caveat";
 import "./styles/globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteShell } from "@/components/site/site-shell";
-import { STORAGE_KEY, isLocale, matchBrowserLocale, type Locale } from "@/i18n/config";
+import { STORAGE_KEY, isLocale, localeFromSlug, matchBrowserLocale, type Locale } from "@/i18n/config";
 
-/** Language: ?lang= → what the visitor picked last time → the browser's language → English. */
+/** Language: the path (/ja/) → ?lang= → what the visitor picked last time → the browser's language → English. */
 function initialLocale(): Locale {
+  const fromPath = localeFromSlug(window.location.pathname.split("/")[1]);
+  if (fromPath) return fromPath;
   const fromUrl = new URLSearchParams(window.location.search).get("lang");
   if (isLocale(fromUrl)) return fromUrl;
   try {
