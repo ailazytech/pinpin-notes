@@ -11,7 +11,9 @@
 
 ## [Unreleased]
 
-第一個公開版本，預計發佈為 0.1.0。
+## [0.1.0] - 2026-10-16
+
+第一個公開版本。
 
 ### 變更
 
@@ -42,4 +44,5 @@
 - 新 Logo：笑臉便利貼（紅圖釘、薄荷紙膠帶、白邊、無底色）
 - 官網（`site/`）：功能介紹、互動 demo、訂製頁、問答、贊助，六語系；切頁是整張便利貼貼上再從右下角撕開，上方選單的紅筆底線會滑到目前的頁面或段落再重畫；跑馬燈的貼紙可以拖下來貼在網頁任何地方、點了用滾輪轉角度、Shift＋滾輪調大小（記在瀏覽器），一鍵全部歸位
 
-[Unreleased]: https://github.com/OWNER/pinpin-notes/commits/main
+[Unreleased]: https://github.com/ailazytech/pinpin-notes/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/ailazytech/pinpin-notes/releases/tag/v0.1.0
