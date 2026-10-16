@@ -1,19 +1,30 @@
 /**
- * Share previews per language.
+ * Language paths and share previews.
+ *
+ * Every language has its own address: / (English), /zh-tw/, /zh-cn/, /ja/, /ko/, /ar/.
+ * - /zh, /tw, /cn, /en/ … and old ?lang= links redirect (301) to the real path
+ * - /ja/<anything else> is served from /<anything else> (the page uses relative asset paths)
  *
  * The site is one page with hash routes, and link-preview crawlers (Facebook, Threads, LINE, X, Discord…)
  * don't run JavaScript — they only read the HTML. So for the page itself this rewrites <head> on the way
- * out: title, description, Open Graph and Twitter tags, canonical and hreflang links, in the visitor's
+ * out: title, description, Open Graph and Twitter tags, canonical and hreflang links, in the page's
  * language, with the matching share image (public/og/<lang>.png, made by promo/remotion/scripts/og.mjs).
  *
- * Language: ?lang= → the language picked on the site last time (cookie) → Accept-Language → English.
- * Share a language on purpose with e.g. https://pinpin.fast01.net/?lang=ja
- *
- * URLs are built from the request's own origin, so previews work on pinpin-notes.pages.dev and on the
- * custom domain alike. Everything else (assets, /feed.json, /api/…) passes straight through.
+ * Language of the page: the path → (at /) the language picked on the site last time (cookie) →
+ * Accept-Language → English. URLs are built from the request's own origin, so this works on
+ * pinpin-notes.pages.dev and on the custom domain alike. /feed.json, /api/… pass straight through.
  */
 
-import { LOCALES, LOCALE_META, STORAGE_KEY, isLocale, matchBrowserLocale, type Locale } from "../src/i18n/config";
+import {
+  LOCALES,
+  LOCALE_META,
+  STORAGE_KEY,
+  isLocale,
+  localeFromSlug,
+  localePath,
+  matchBrowserLocale,
+  type Locale,
+} from "../src/i18n/config";
 import { en } from "../src/i18n/locales/en";
 import { zhTW } from "../src/i18n/locales/zh-TW";
 import { zhCN } from "../src/i18n/locales/zh-CN";
@@ -56,9 +67,8 @@ const OG_LOCALE: Record<Locale, string> = {
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-function pickLocale(request: Request, url: URL): Locale {
-  const q = url.searchParams.get("lang");
-  if (isLocale(q)) return q;
+/** at the root: the visitor's saved choice, then their browser's language */
+function preferredLocale(request: Request): Locale {
   const cookie = request.headers.get("cookie") ?? "";
   const saved = cookie.match(new RegExp(`(?:^|;\\s*)${STORAGE_KEY}=([^;]+)`))?.[1];
   if (isLocale(saved)) return saved;
@@ -69,18 +79,15 @@ function pickLocale(request: Request, url: URL): Locale {
   return "en";
 }
 
-/** the page's address in one language (English is the plain root) */
-const pageUrl = (origin: string, lang: Locale) => (lang === "en" ? `${origin}/` : `${origin}/?lang=${lang}`);
-
 function headTags(origin: string, lang: Locale): string {
   const { title, description } = META[lang];
   const image = `${origin}/og/${lang}.png`;
-  const url = pageUrl(origin, lang);
+  const url = origin + localePath(lang);
   const tags = [
     `<meta name="description" content="${esc(description)}" />`,
     `<link rel="canonical" href="${esc(url)}" />`,
-    ...LOCALES.map((l) => `<link rel="alternate" hreflang="${l}" href="${esc(pageUrl(origin, l))}" />`),
-    `<link rel="alternate" hreflang="x-default" href="${esc(pageUrl(origin, "en"))}" />`,
+    ...LOCALES.map((l) => `<link rel="alternate" hreflang="${l}" href="${esc(origin + localePath(l))}" />`),
+    `<link rel="alternate" hreflang="x-default" href="${esc(origin + "/")}" />`,
     `<meta property="og:site_name" content="PinPin Notes" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:title" content="${esc(title)}" />`,
@@ -103,18 +110,8 @@ function headTags(origin: string, lang: Locale): string {
   return tags.join("\n    ");
 }
 
-interface Context {
-  request: Request;
-  next(): Promise<Response>;
-}
-
-export const onRequest = async ({ request, next }: Context) => {
-  const url = new URL(request.url);
-  const response = await next();
-  const isPage = request.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html");
-  if (!isPage || !(response.headers.get("content-type") ?? "").includes("text/html")) return response;
-
-  const lang = pickLocale(request, url);
+/** the HTML page with <head> (and <html lang dir>) in one language */
+function localize(page: Response, origin: string, lang: Locale, varies: boolean): Response {
   const rewritten = new HTMLRewriter()
     .on("html", {
       element: (el) => {
@@ -128,11 +125,56 @@ export const onRequest = async ({ request, next }: Context) => {
     .on('meta[name^="twitter:"]', { element: (el) => el.remove() })
     .on('link[rel="canonical"]', { element: (el) => el.remove() })
     .on('link[rel="alternate"]', { element: (el) => el.remove() })
-    .on("head", { element: (el) => el.append(`    ${headTags(url.origin, lang)}\n  `, { html: true }) })
-    .transform(response);
-
+    .on("head", { element: (el) => el.append(`    ${headTags(origin, lang)}\n  `, { html: true }) })
+    .transform(page);
   const headers = new Headers(rewritten.headers);
-  // the same URL now differs by cookie / Accept-Language; keep shared caches from mixing them up
-  headers.set("vary", [headers.get("vary"), "Cookie", "Accept-Language"].filter(Boolean).join(", "));
+  // the root's language depends on cookie / Accept-Language; keep shared caches from mixing them up
+  if (varies) headers.set("vary", [headers.get("vary"), "Cookie", "Accept-Language"].filter(Boolean).join(", "));
   return new Response(rewritten.body, { status: rewritten.status, statusText: rewritten.statusText, headers });
+}
+
+interface Context {
+  request: Request;
+  next(): Promise<Response>;
+  env: { ASSETS: { fetch(request: Request | string): Promise<Response> } };
+}
+
+const isHtml = (r: Response) => (r.headers.get("content-type") ?? "").includes("text/html");
+const redirect = (to: string) => new Response(null, { status: 301, headers: { location: to } });
+
+export const onRequest = async ({ request, next, env }: Context) => {
+  const url = new URL(request.url);
+  const { origin, pathname, search } = url;
+  const [, first = "", ...rest] = pathname.split("/");
+  const pathLang = localeFromSlug(first);
+
+  if (pathLang) {
+    const tail = rest.length ? "/" + rest.join("/") : "";
+    // aliases, wrong case, /en/ and a missing trailing slash go to the one real address
+    const real = localePath(pathLang);
+    if (first !== real.split("/")[1] || (pathLang === "en" && first === "en")) {
+      return redirect(origin + (pathLang === "en" ? tail || "/" : real.slice(0, -1) + (tail || "/")) + search);
+    }
+    if (tail === "") return redirect(origin + real + search);
+    if (request.method === "GET" && (tail === "/" || tail === "/index.html")) {
+      const page = await env.ASSETS.fetch(new Request(origin + "/", request));
+      return isHtml(page) ? localize(page, origin, pathLang, false) : page;
+    }
+    // relative asset paths from /ja/ (./assets/…, ./og/…, ./img/…) → the real files at the root
+    return env.ASSETS.fetch(new Request(origin + tail + search, request));
+  }
+
+  const isRoot = request.method === "GET" && (pathname === "/" || pathname === "/index.html");
+  if (isRoot) {
+    // old ?lang= links → the language's own path
+    const q = url.searchParams.get("lang");
+    if (isLocale(q)) {
+      url.searchParams.delete("lang");
+      const left = url.searchParams.toString();
+      return redirect(origin + localePath(q) + (left ? `?${left}` : ""));
+    }
+  }
+  const response = await next();
+  if (!isRoot || !isHtml(response)) return response;
+  return localize(response, origin, preferredLocale(request), true);
 };
