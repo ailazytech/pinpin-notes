@@ -30,8 +30,8 @@ Please include · 請附上：
 
 | | |
 |---|---|
-| Acknowledgement · 確認收到 | within 3 days · 3 天內 |
-| First assessment · 初步評估 | within 7 days · 7 天內 |
+| Acknowledgement · 確認收到 | within 2 weeks · 2 週內 |
+| First assessment · 初步評估 | within 3 weeks · 3 週內 |
 | Fix released · 發佈修正 | as soon as possible; critical issues are pushed as an automatic update · 越快越好，嚴重的問題會用自動更新推送 |
 
 We'll credit you in the release notes and the advisory unless you'd rather stay anonymous.
