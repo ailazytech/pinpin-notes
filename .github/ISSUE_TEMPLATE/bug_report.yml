@@ -14,7 +14,7 @@ body:
     attributes:
       label: 重現步驟 / Steps to reproduce
       placeholder: |
-        1. 系統匣右鍵 → 新增蕃茄鐘
+        1. 系統匣右鍵 → 新增番茄鐘
         2. 右鍵 → 樣式 → 沙漏
         3. …
     validations:

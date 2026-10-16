@@ -67,7 +67,7 @@ export const ko: Dictionary = {
     tagline: "바탕화면의 작은 메모가 늘 곁에 있어요.",
     sub: "Windows 바탕화면을 채우는 포근한 메모지 — 압정, 마스킹 테이프, 스티커, 손글씨, 투명 슬로건, 뽀모도로 타이머. 대기할 땐 CPU를 거의 쓰지 않아요.",
     download: "Windows용 다운로드",
-    downloadNote: "단일 .exe · 약 11 MB · 설치 불필요",
+    downloadNote: "단일 .exe · 약 12 MB · 설치 불필요",
     explore: "기능 둘러보기",
     downloadPending:
       "GitHub Releases 링크를 정리하고 있어요 — 링크가 뜨면 버튼이 눈을 뜰 거예요.",
@@ -374,7 +374,7 @@ export const ko: Dictionary = {
     stats: [
       { value: "0%", label: "대기 중 CPU" },
       { value: "≈ 15 MB", label: "메모리" },
-      { value: "11 MB", label: "단일 .exe" },
+      { value: "12 MB", label: "단일 .exe" },
       { value: "≤ 1", label: "회/일 업데이트 확인(끌 수 있음)" },
     ],
     footnote: "조용한 바탕화면과 메모지 몇 장으로 직접 측정했어요.",
@@ -416,7 +416,7 @@ export const ko: Dictionary = {
     title: "바탕화면으로 데려가세요",
     sub: "작은 파일 하나예요. 설치도, 계정도 없이 — 작은 구석에 조용히 머물며 당신을 따뜻하게 해 줘요.",
     button: "pinpin.exe 다운로드",
-    size: "약 11 MB",
+    size: "약 12 MB",
     pending: "GitHub Releases 링크를 정리하고 있어요 — 링크가 뜨면 버튼이 눈을 뜰 거예요.",
     reqTitle: "요구 사항과 알아둘 점",
     reqs: [
@@ -503,7 +503,7 @@ export const ko: Dictionary = {
       {
         cat: "general",
         q: "어떤 시스템에서 돌아가나요?",
-        a: "Windows 10과 Windows 11, 64비트예요. 약 11 MB짜리 pinpin.exe 하나예요 — 설치 프로그램도, .NET이나 다른 런타임도 필요 없어요. Mac, Linux, 휴대폰 버전은 계획에 없어요.",
+        a: "Windows 10과 Windows 11, 64비트예요. 약 12 MB짜리 pinpin.exe 하나예요 — 설치 프로그램도, .NET이나 다른 런타임도 필요 없어요. Mac, Linux, 휴대폰 버전은 계획에 없어요.",
       },
       {
         cat: "general",

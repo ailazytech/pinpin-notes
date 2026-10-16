@@ -65,7 +65,7 @@ export const ja: Dictionary = {
     tagline: "デスクトップの小さなメモが、いつもそばに。",
     sub: "Windows デスクトップをあたたかくする付箋——ピン、マスキングテープ、ステッカー、手書き、透明な紙のスローガン、ポモドーロタイマー。アイドル時の CPU はほぼゼロ。",
     download: "Windows 版をダウンロード",
-    downloadNote: "単一 .exe · 約 11 MB · インストーラー不要",
+    downloadNote: "単一 .exe · 約 12 MB · インストーラー不要",
     explore: "機能を見ていく",
     downloadPending:
       "GitHub Releases のリンクを準備中です——公開され次第、ボタンが目を覚まします。",
@@ -372,7 +372,7 @@ export const ja: Dictionary = {
     stats: [
       { value: "0%", label: "アイドル時 CPU" },
       { value: "≈ 15 MB", label: "メモリ" },
-      { value: "11 MB", label: "単一 .exe" },
+      { value: "12 MB", label: "単一 .exe" },
       { value: "≤ 1", label: "回/日の更新確認（オフ可）" },
     ],
     footnote: "静かなデスクトップに、数枚の付箋を留めた環境での実測。",
@@ -414,7 +414,7 @@ export const ja: Dictionary = {
     title: "デスクトップへ、お持ち帰り",
     sub: "小さなファイルがひとつ。インストーラーなし、アカウントなし——片隅で静かに、あなたをあたためています。",
     button: "pinpin.exe をダウンロード",
-    size: "約 11 MB",
+    size: "約 12 MB",
     pending: "GitHub Releases のリンクを準備中です——公開され次第、ボタンが目を覚まします。",
     reqTitle: "動作環境と事実",
     reqs: [
@@ -501,7 +501,7 @@ export const ja: Dictionary = {
       {
         cat: "general",
         q: "どのシステムで動きますか？",
-        a: "Windows 10 と Windows 11（64 ビット）です。単一の pinpin.exe（約 11 MB）——インストーラーも、.NET などのランタイムも不要。Mac、Linux、スマホ版の予定はありません。",
+        a: "Windows 10 と Windows 11（64 ビット）です。単一の pinpin.exe（約 12 MB）——インストーラーも、.NET などのランタイムも不要。Mac、Linux、スマホ版の予定はありません。",
       },
       {
         cat: "general",

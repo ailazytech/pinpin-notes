@@ -2,8 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   app:
@@ -14,7 +17,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - run: cargo test --release
-      - run: cargo build --release
+      - name: cargo build --release (no warnings)
+        env:
+          RUSTFLAGS: -D warnings
+        run: cargo build --release
 
   site:
     name: Site (vp build)

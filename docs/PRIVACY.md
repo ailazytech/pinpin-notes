@@ -8,6 +8,8 @@ PinPin makes **at most one request a day**: it fetches `https://pinpin.fast01.ne
 
 Turn it off: tray menu → Updates → *Check for updates automatically*. Then PinPin makes no requests at all (except when you click *Check for updates* yourself).
 
+When there is something new, the files themselves are downloaded too: a new version comes from the project's [GitHub Releases](https://github.com/ailazytech/pinpin-notes/releases), sticker packs and banners from the address listed in the feed. Every file is checked against the SHA-256 in the feed before it is used.
+
 ## Anonymous usage stats
 
 So we know roughly how many people use PinPin and which versions and languages to support, that same daily request carries four values:
@@ -35,5 +37,5 @@ Turn it off: tray menu → Updates → *Send anonymous usage stats*. The daily u
 ## 隱私（繁體中文摘要）
 
 - **便利貼的內容永遠不會離開你的電腦**，只存在 `%APPDATA%\PinPin\`。
-- 程式**一天最多連線一次**，抓 `feed.json` 檢查新版、新貼紙包；重開不會重算，網站連不上就照常離線使用。系統匣 → 更新 → 關掉「自動檢查更新」就完全不連線。
+- 程式**一天最多連線一次**，抓 `feed.json` 檢查新版、新貼紙包；重開不會重算，網站連不上就照常離線使用。系統匣 → 更新 → 關掉「自動檢查更新」就完全不連線。有新東西時才會下載檔案：新版從 GitHub Releases 下載，貼紙包和廣告圖從 feed 指定的網址下載，每個檔案都先核對 SHA-256 才使用。
 - **匿名使用統計**：同一個請求順便帶上程式版本、介面語言、Windows 組建號、一組本機隨機產生的安裝碼（和電腦、帳號、檔案無關）。網站只記這四項和 Cloudflare 判斷的國家，不存 IP、不存任何便利貼內容，只看總數。系統匣 → 更新 → 關掉「傳送匿名使用統計」即可。

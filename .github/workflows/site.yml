@@ -4,8 +4,8 @@ name: Site
 # (project pinpin-notes, root directory site/, see docs/RELEASING.md): every push to main redeploys it.
 #
 # Publishing a GitHub Release doesn't push to main, so this asks Cloudflare to rebuild through a
-# deploy hook. The build (site/scripts/fetch-release.mjs) then puts the new .exe on the website
-# and updates feed.json.
+# deploy hook. The build (site/scripts/fetch-release.mjs) then points the download button
+# and feed.json at the new release.
 #
 # Needs repository secret CLOUDFLARE_DEPLOY_HOOK (Cloudflare → pinpin-notes → Settings → Builds → Deploy hooks).
 

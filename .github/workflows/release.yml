@@ -1,7 +1,11 @@
 name: Release
 
-# 推 v* tag（例如 v0.2.0）時編譯，建立草稿 Release；說明從 CHANGELOG.md 貼上後再手動發佈。
-# 按下「發佈」會觸發 site.yml：把這版的 .exe 放上官網（/download/）、更新 feed.json、部署到 Cloudflare Pages。
+# 推 v* tag（例如 v0.2.0，打在 main 上）時編譯，建立草稿 Release；說明從 CHANGELOG.md 貼上後再手動發佈。
+# 按下「發佈」會觸發 site.yml：叫 Cloudflare 重建官網，下載按鈕和 feed.json 跟著換成這一版。
+#
+# 附檔：
+#   PinPin-Notes-<version>-x64.exe(.sha256)  線上更新（feed.json）用，固定版本
+#   PinPin-Notes-x64.exe                       官網下載按鈕用（releases/latest/download/… 永遠是最新版）
 on:
   push:
     tags: ["v*"]
@@ -14,6 +18,16 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Tag must be on main
+        shell: bash
+        run: |
+          git fetch origin main
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::${GITHUB_REF_NAME} is not on main — merge the release PR (dev → main) first, then tag main."
+            exit 1
+          fi
       - uses: dtolnay/rust-toolchain@stable
       - run: cargo test --release
       - run: cargo build --release
@@ -23,9 +37,11 @@ jobs:
           $version = "${{ github.ref_name }}".TrimStart("v")
           $name = "PinPin-Notes-$version-x64.exe"
           Copy-Item target/release/pinpin.exe $name
-          (Get-FileHash $name -Algorithm SHA256).Hash.ToLower() + "  $name" | Out-File "$name.sha256" -Encoding ascii
+          Copy-Item target/release/pinpin.exe PinPin-Notes-x64.exe
+          $hash = (Get-FileHash $name -Algorithm SHA256).Hash.ToLower()
+          "$hash  $name" | Out-File "$name.sha256" -Encoding ascii
           "ASSET=$name" | Out-File $env:GITHUB_ENV -Append
-          "### $name`n- sha256: $((Get-FileHash $name -Algorithm SHA256).Hash.ToLower())`n- 發佈這個草稿後，site.yml 會把它放上官網並更新 feed.json" | Out-File $env:GITHUB_STEP_SUMMARY -Append
+          "### $name`n- sha256: $hash`n- 發佈這個草稿後，site.yml 會叫 Cloudflare 重建官網，下載按鈕和 feed.json 會換成這一版" | Out-File $env:GITHUB_STEP_SUMMARY -Append
       - uses: softprops/action-gh-release@v2
         with:
           draft: true
@@ -33,3 +49,4 @@ jobs:
           files: |
             ${{ env.ASSET }}
             ${{ env.ASSET }}.sha256
+            PinPin-Notes-x64.exe

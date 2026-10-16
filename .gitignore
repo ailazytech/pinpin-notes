@@ -30,7 +30,7 @@ assets/deco-src/couplets/src
 # 給 AI 接手開發用的內部筆記（含本機路徑、個人偏好），不公開
 docs/HANDOFF.md
 
-# 網站的下載檔由 .github/workflows/site.yml 在部署時放進來
+# 舊做法（私人 repo 時由網站提供下載）留下的資料夾；現在下載直接走 GitHub Release
 site/public/download/
 
 # wrangler 本機模擬的暫存

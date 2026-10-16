@@ -61,7 +61,7 @@ export const zhCN: Dictionary = {
     tagline: "桌面上的小纸条，一直陪着你。",
     sub: "温暖可爱的 Windows 桌面便签——图钉、和纸胶带、贴纸、手写、透明标语、番茄钟，平时几乎不耗电。",
     download: "下载 Windows 版",
-    downloadNote: "单个 .exe · 约 11 MB · 免安装",
+    downloadNote: "单个 .exe · 约 12 MB · 免安装",
     explore: "探索功能",
     downloadPending:
       "下载链接整理中——先到 GitHub 点亮 ★ Star，发布时第一时间知道。",
@@ -368,7 +368,7 @@ export const zhCN: Dictionary = {
     stats: [
       { value: "0%", label: "空闲 CPU" },
       { value: "≈ 15 MB", label: "内存" },
-      { value: "11 MB", label: "单个 .exe" },
+      { value: "12 MB", label: "单个 .exe" },
       { value: "≤ 1", label: "次联网／天，可关闭" },
     ],
     footnote: "在安静的桌面、常驻几张便签的环境下实测。",
@@ -410,7 +410,7 @@ export const zhCN: Dictionary = {
     title: "带它回你的桌面",
     sub: "一个小文件。免安装、免账号——只是安静地待在小角落，温暖着你。",
     button: "下载 pinpin.exe",
-    size: "约 11 MB",
+    size: "约 12 MB",
     pending: "下载链接整理中——先到 GitHub 点亮 ★ Star，发布时第一时间知道。",
     reqTitle: "系统需求与隐私",
     reqs: [
@@ -497,7 +497,7 @@ export const zhCN: Dictionary = {
       {
         cat: "general",
         q: "支持哪些系统？",
-        a: "Windows 10 与 Windows 11（64 位）。它是单个 pinpin.exe（约 11 MB）——免安装、免 .NET 或其他运行时。目前专注于 Windows 原生体验，Mac、Linux 和手机版暂不在规划中。",
+        a: "Windows 10 与 Windows 11（64 位）。它是单个 pinpin.exe（约 12 MB）——免安装、免 .NET 或其他运行时。目前专注于 Windows 原生体验，Mac、Linux 和手机版暂不在规划中。",
       },
       {
         cat: "general",

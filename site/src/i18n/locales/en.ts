@@ -66,7 +66,7 @@ export const en = {
     tagline: "Little notes that stick with you.",
     sub: "Cozy sticky notes for your Windows desktop — pins, washi tape, stickers, handwriting, transparent slogans and pomodoro timers, with almost zero idle CPU.",
     download: "Download for Windows",
-    downloadNote: "Single .exe · about 11 MB · no installer",
+    downloadNote: "Single .exe · about 12 MB · no installer",
     explore: "Explore features",
     downloadPending:
       "GitHub Releases link is being finalized — star the repo to get notified on release.",
@@ -373,7 +373,7 @@ export const en = {
     stats: [
       { value: "0%", label: "idle CPU" },
       { value: "≈ 15 MB", label: "memory" },
-      { value: "11 MB", label: "single .exe" },
+      { value: "12 MB", label: "single .exe" },
       { value: "≤ 1", label: "update check a day (optional)" },
     ],
     footnote: "Measured on a quiet desktop with a few notes pinned.",
@@ -415,7 +415,7 @@ export const en = {
     title: "Take it to your desktop",
     sub: "One small file. No installer, no account — it just sits quietly in a little corner, keeping you warm.",
     button: "Download pinpin.exe",
-    size: "about 11 MB",
+    size: "about 12 MB",
     pending: "The GitHub Releases link is being finalized — the button wakes up the moment it lands.",
     reqTitle: "Requirements & privacy",
     reqs: [
@@ -502,7 +502,7 @@ export const en = {
       {
         cat: "general",
         q: "Which systems does it run on?",
-        a: "Windows 10 and Windows 11, 64-bit. It's a single pinpin.exe of about 11 MB — no installer, no .NET or other runtimes. Mac, Linux and phone versions aren't planned.",
+        a: "Windows 10 and Windows 11, 64-bit. It's a single pinpin.exe of about 12 MB — no installer, no .NET or other runtimes. Mac, Linux and phone versions aren't planned.",
       },
       {
         cat: "general",

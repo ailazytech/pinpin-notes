@@ -63,7 +63,7 @@
   "schema": 1,
   "app": {
     "version": "0.2.0",
-    "url": "https://github.com/OWNER/pinpin-notes/releases/download/v0.2.0/PinPin-Notes-0.2.0-x64.exe",
+    "url": "https://github.com/ailazytech/pinpin-notes/releases/download/v0.2.0/PinPin-Notes-0.2.0-x64.exe",
     "sha256": "（64 個小寫十六進位）",
     "critical": false,
     "min_version": "",

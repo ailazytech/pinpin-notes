@@ -1,84 +1,107 @@
-# 參與 PinPin
+# Contributing to PinPin
 
-謝謝你願意幫忙！這份文件說明怎麼回報問題、怎麼改程式、PR 要符合哪些條件。
+**English** · [繁體中文](CONTRIBUTING.zh-TW.md)
 
-## 回報問題、提建議
+Thanks for helping! This explains how to report problems, how to change the code, and what a pull request needs.
+Working with an AI agent? Point it at [AGENTS.md](AGENTS.md) first (the short version plus a security checklist).
 
-- Bug：用 GitHub 的「Bug 回報」範本，附上 Windows 版本、螢幕縮放比例、重現步驟；有的話附 `%APPDATA%\PinPin\pinpin.log`
-- 新功能：先開「功能建議」issue 討論，確定方向再動手，免得白做
-- 安全性問題（例如密碼便利貼的加密）：**不要開公開 issue**，寄信到 ailazytech@gmail.com
+By taking part you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
-## 開發環境
+## Reporting problems and ideas
 
-| 部分 | 需要 | 指令 |
+- Bugs: use the "Bug report" template with your Windows version, display scale and steps to reproduce; attach the end of `%APPDATA%\PinPin\pinpin.log` if you can
+- Features: open a "Feature request" first and agree on the direction before writing code
+- Translations: use the "Translation" template — which language, which strings
+- Security issues (password notes, update downloads…): **don't open a public issue** — follow [SECURITY.md](SECURITY.md)
+
+## Branches
+
+| Branch | Purpose |
+|---|---|
+| `main` | Released code. The website and the in-app updater follow it. Only release PRs from `dev` (or `hotfix/*`) |
+| `dev` | Integration branch. **Open every PR against `dev`** |
+| `feat/…`, `fix/…`, `docs/…` | Work branches cut from `dev`, one change each |
+
+Urgent fix: branch `hotfix/…` from `main`, PR into `main`; after the release `main` is merged back into `dev`.
+
+## Setup
+
+| Part | Needs | Commands |
 |---|---|---|
-| App | Windows 10/11、Rust 穩定版（MSVC） | `cargo test`、`cargo build --release` |
-| 官網 `site/` | Node 22+、[Vite+](https://viteplus.dev)（`vp`，會自動用 pnpm） | `vp install`、`vp dev`、`vp build` |
-| 宣傳影片 `promo/remotion/` | Node 22+ | `npm install`、`npm run render` |
+| App | Windows 10/11, stable Rust (MSVC) | `cargo test`, `cargo build --release` |
+| Website `site/` | Node 22+, pnpm | `pnpm install`, `pnpm exec vp dev`, `pnpm run build` |
+| Promo video `promo/remotion/` | Node 22+ | `npm install`, `npm run render` |
 
-## 程式結構（App）
+The code layout is in [AGENTS.md](AGENTS.md#layout) and, in more detail, in the [繁體中文 guide](CONTRIBUTING.zh-TW.md#程式結構app).
 
-```
-src/main.rs          進入點
-src/app.rs           單一執行個體、系統匣、設定、開發用參數、WM_COPYDATA
-src/i18n.rs          語言檔載入（locales/*.json 編譯時打包，%APPDATA% 可以覆蓋）
-src/theme.rs         選單、對話框的配色和外框
-src/notes/mod.rs     便利貼視窗：建立、滑鼠、選單、拖曳
-src/notes/render.rs  畫一張便利貼（逐像素的 Canvas，layered window）
-src/notes/store.rs   資料格式、讀寫 notes.json（見 docs/DATA.md）
-src/notes/assets.rs  內建素材表、解碼快取
-src/notes/stickers.rs 去背、白邊、自製貼紙與群組
-src/notes/shop.rs    貼紙小舖視窗
-src/notes/ink.rs     手寫
-src/notes/timer.rs   番茄鐘
-src/notes/crypto.rs  密碼便利貼（Windows CNG：PBKDF2 + AES-GCM）
-src/notes/backup.rs  匯出／匯入
-src/notes/promo.rs, sprites.rs  宣傳影片、網站截圖用的離屏繪圖
-```
+## Rules that keep PinPin PinPin
 
-## 一定要守的規矩
+A PR that breaks one of these won't be merged:
 
-這些是 PinPin 的核心承諾，PR 違反就不會合併：
+1. **No idle work** — no timers or polling while nothing changes; redraw only when something changes; animations use `SetCoalescableTimer` and stop when done
+2. **Low memory** — decode images at display size and cache that, never keep originals around
+3. **Never lose the user's things** — empty notes aren't auto-deleted; deleting always goes through the restorable trash
+4. **Strike-throughs are always red**
+5. **The `WM_COPYDATA` protocol is frozen** (`PinPin.Main`, `dwData = 0x50424E31`, JSON `cmd/text/source/x/y`); only add new `cmd`s or optional fields. New window classes start with `PinPin.`
+6. **Backward-compatible data** — old `notes.json` must load; format changes bump `store::VERSION` with a migration ([docs/DATA.md](docs/DATA.md))
+7. **Tests never touch the real desktop** — no simulated keyboard/mouse; verify visuals with `--render-notes` / `--render-shop` and `APPDATA` set to a scratch folder
+8. **No private data in commits** — no secrets, local paths or personal names in code, docs, images or test data
 
-1. **閒置不耗電**：不准有閒置時的計時器或輪詢。只在畫面真的要變時重畫；動畫用 `SetCoalescableTimer`，播完就關。番茄鐘只在跑的時候有計時器
-2. **低記憶體**：圖片依顯示大小解碼後快取，不要把原圖整張留在記憶體
-3. **不刪使用者的東西**：空白便利貼不會自動刪除；刪除一律先進垃圾桶（可以復原）
-4. **劃掉永遠是紅色**，不跟著文字顏色走
-5. **`WM_COPYDATA` 協議不能破壞**（視窗類別 `PinPin.Main`、`dwData = 0x50424E31`、JSON 欄位 `cmd/text/source/x/y`），Vibotype 依賴它。要擴充只能加新的 `cmd` 或選用欄位。新的視窗類別一律以 `PinPin.` 開頭（Vibotype 靠這個辨識我們的視窗）
-6. **資料格式向下相容**：舊的 `notes.json` 一定要讀得進來；改格式要提高 `store::VERSION` 並寫轉換（見 [docs/DATA.md](docs/DATA.md#版本與轉換)）
-7. **測試不碰使用者的桌面**：不要寫模擬鍵盤滑鼠的測試。畫面用離屏繪圖驗證（`--render-notes`、`--render-shop`），並設 `APPDATA` 到暫存資料夾隔開資料
+## UI text and translations
 
-## 介面文字與翻譯
+- Every visible string goes through `t("key")`
+- New keys go into **all six** `locales/*.json`; `cargo test` (`bundled_files_parse_and_have_same_keys`) checks they match
+- Don't speak a language? Put English in and say so in the PR
+- Website strings live in `site/src/i18n/locales/*.ts`; `en.ts` is the type source, a missing key fails the build
 
-- 介面上看得到的字一律走 `t("key")`，不要寫死在程式裡
-- 新增 key 時**六個語言檔都要加**（`locales/*.json`）；`cargo test` 裡的 `bundled_files_parse_and_have_same_keys` 會檢查 key 是否一致
-- 不會的語言可以先填英文，在 PR 裡註明，請懂的人補
-- 官網的字在 `site/src/i18n/locales/*.ts`，以 `en.ts` 為型別來源，其他語言少 key 會編譯失敗
+## Commit messages and PR titles
 
-## 送 PR 之前
-
-- [ ] `cargo test` 通過、`cargo build --release` 沒有警告
-- [ ] 改到畫面的話，附上離屏繪圖（`--render-notes` / `--render-shop`）前後對照
-- [ ] 改到官網的話，`vp build` 通過，附截圖
-- [ ] `CHANGELOG.md` 的 `[Unreleased]` 加上一行（純重構、文件、CI 可以不用）
-- [ ] 改了資料格式的話，更新 `docs/DATA.md` 並提高 `store::VERSION`
-
-## Commit 訊息
-
-用 [Conventional Commits](https://www.conventionalcommits.org/zh-hant/)，方便整理更新紀錄：
+[Conventional Commits](https://www.conventionalcommits.org). **PR titles must follow it too** — CI checks:
 
 ```
-feat(timer): 新增 LED 樣式
-fix(shop): 旋轉控制點 hover 時消失
-docs: 補資料格式說明
-refactor(render): 拆出紙質繪製
-chore(site): 升級 Vite+
+<type>(<scope>): <summary>
+
+feat(timer): add the LED style
+fix(shop): rotate handle vanished on hover
+docs: explain the data format
 ```
 
-常用類型：`feat`、`fix`、`perf`、`refactor`、`docs`、`test`、`chore`、`ci`。範圍（括號裡）用模組名稱：`notes`、`render`、`shop`、`stickers`、`ink`、`timer`、`crypto`、`i18n`、`site`、`promo`。
+| Type | For |
+|---|---|
+| `feat` | a new feature |
+| `fix` | a bug fix |
+| `perf` | performance |
+| `refactor` | restructuring, same behavior |
+| `docs` | documentation |
+| `test` | tests |
+| `build`, `ci` | build system, CI |
+| `chore` | everything else, dependency bumps |
+| `revert` | reverting a commit |
 
-## 程式風格
+Scopes (optional) are module names: `notes`, `render`, `shop`, `stickers`, `ink`, `timer`, `crypto`, `store`, `update`, `i18n`, `site`, `promo`, `ci`.
+Summaries may be in English or Chinese. Breaking changes get a `!` (`feat(store)!: …`) and a `BREAKING CHANGE:` line in the body.
 
-- `cargo fmt`；註解用繁體中文，寫「為什麼」而不是「做了什麼」
-- 盡量不加新的 crate；Windows 已經內建的（WIC、CNG、GDI）優先
-- 一個 PR 做一件事
+## Before opening a PR
+
+- [ ] The PR targets `dev` and its title follows Conventional Commits
+- [ ] `cargo test` passes and `cargo build --release` has no warnings
+- [ ] Visual change → offscreen render before/after attached
+- [ ] Website change → `pnpm run build` passes, screenshot attached
+- [ ] One line in `CHANGELOG.md` under `[Unreleased]` (written in 繁體中文 like the rest; skip for refactors, docs, CI)
+- [ ] Data format changed → `docs/DATA.md` updated and `store::VERSION` bumped
+- [ ] Touched input parsing, files, network, crypto or `unsafe` → went through the [security checklist](AGENTS.md#security-review-checklist)
+
+## Automated checks
+
+Every PR runs:
+
+- **CI**: `cargo test`, `cargo build`, website type check and build
+- **PR title**: Conventional Commits; PRs into `main` only from `dev` or `hotfix/*`
+- **Security**: CodeQL, `cargo audit` (RustSec advisories), `pnpm audit`, gitleaks (secret scan)
+- **Dependabot**: weekly dependency updates, opened against `dev`
+
+## Style
+
+- `cargo fmt`; comments in 繁體中文, explaining *why* rather than *what*
+- Avoid new crates; prefer what Windows already ships (WIC, CNG, GDI, WinHTTP)
+- One PR, one change

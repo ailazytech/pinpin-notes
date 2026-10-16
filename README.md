@@ -4,18 +4,18 @@
 
 **English** · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md)
 
-[![GitHub stars](https://img.shields.io/github/stars/ailazytech/pinpin-notes?style=flat&logo=github&label=Stars)](https://github.com/ailazytech/pinpin-notes/stargazers) [![GitHub watchers](https://img.shields.io/github/watchers/ailazytech/pinpin-notes?style=flat&logo=github&label=Watchers)](https://github.com/ailazytech/pinpin-notes/watchers) [![GitHub followers](https://img.shields.io/github/followers/ailazytech?style=flat&logo=github&label=Followers)](https://github.com/ailazytech) [![Latest release](https://img.shields.io/github/v/release/ailazytech/pinpin-notes?style=flat&label=Release)](https://pinpin.fast01.net) [![CI](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://pinpin.fast01.net) [![Rust](https://img.shields.io/badge/Rust-stable-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
+[![Latest release](https://img.shields.io/github/v/release/ailazytech/pinpin-notes?style=flat&label=Release&color=ff8a65)](https://github.com/ailazytech/pinpin-notes/releases/latest) [![Downloads](https://img.shields.io/github/downloads/ailazytech/pinpin-notes/total?style=flat&label=Downloads&color=4caf50)](https://github.com/ailazytech/pinpin-notes/releases) [![GitHub stars](https://img.shields.io/github/stars/ailazytech/pinpin-notes?style=flat&logo=github&label=Stars)](https://github.com/ailazytech/pinpin-notes/stargazers) [![CI](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml) [![Security](https://github.com/ailazytech/pinpin-notes/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/ailazytech/pinpin-notes/actions/workflows/security.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://pinpin.fast01.net) [![Rust](https://img.shields.io/badge/Rust-stable-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org) [![Stickers: 148](https://img.shields.io/badge/Stickers-148-ff6fa8)](docs/FEATURES.md) [![Languages: 6](https://img.shields.io/badge/Languages-6-8e7cc3)](locales/README.md) [![Idle CPU: 0%](https://img.shields.io/badge/Idle%20CPU-0%25-2e7d32)](CONTRIBUTING.md)
 
 > **Little notes that stick with you.**
 
 A cozy sticky-notes app for the Windows desktop — pins, washi tape, stickers, handwriting, transparent slogans and pomodoro timers, with almost zero idle CPU.
 
-- One `.exe` (about 11 MB), no installer, Windows 10 / 11
+- One `.exe` (about 12 MB), no installer, Windows 10 / 11
 - 0% CPU when idle, about 15 MB of memory (no idle timers at all — it only redraws when something changes)
 - Six languages: English, 繁體中文, 简体中文, 日本語, 한국어, العربية (right-to-left)
 - Open source (MIT); your notes stay on your own computer — at most one network request a day, optional anonymous usage stats ([privacy](docs/PRIVACY.md))
 
-🌐 Website: **[pinpin.fast01.net](https://pinpin.fast01.net)** · 📦 Download: [from the website](https://pinpin.fast01.net) (coming soon) · 📝 [Changelog](CHANGELOG.md)
+🌐 Website: **[pinpin.fast01.net](https://pinpin.fast01.net)** · 📦 Download: [latest release](https://github.com/ailazytech/pinpin-notes/releases/latest) · 📝 [Changelog](CHANGELOG.md)
 
 ## Features
 
@@ -96,7 +96,7 @@ The pre-rename `PinBoard.Main` window still answers for now. Vibotype uses this 
 
 ## Contributing
 
-Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md); releases are described in [docs/RELEASING.md](docs/RELEASING.md).
+Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) ([繁體中文](CONTRIBUTING.zh-TW.md)). Pull requests go to the `dev` branch; `main` is what has been released. Using an AI coding agent? Start it on [AGENTS.md](AGENTS.md). Security issues: please report privately, see [SECURITY.md](SECURITY.md). Releases are described in [docs/RELEASING.md](docs/RELEASING.md).
 
 Want your own pet stickers or timer character? See the custom page on [the website](https://pinpin.fast01.net/#/custom), or email ailazytech@gmail.com.
 

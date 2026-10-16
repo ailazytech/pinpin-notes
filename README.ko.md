@@ -4,18 +4,18 @@
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · **한국어** · [العربية](README.ar.md)
 
-[![GitHub stars](https://img.shields.io/github/stars/ailazytech/pinpin-notes?style=flat&logo=github&label=Stars)](https://github.com/ailazytech/pinpin-notes/stargazers) [![GitHub watchers](https://img.shields.io/github/watchers/ailazytech/pinpin-notes?style=flat&logo=github&label=Watchers)](https://github.com/ailazytech/pinpin-notes/watchers) [![GitHub followers](https://img.shields.io/github/followers/ailazytech?style=flat&logo=github&label=Followers)](https://github.com/ailazytech) [![Latest release](https://img.shields.io/github/v/release/ailazytech/pinpin-notes?style=flat&label=Release)](https://pinpin.fast01.net) [![CI](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://pinpin.fast01.net) [![Rust](https://img.shields.io/badge/Rust-stable-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
+[![Latest release](https://img.shields.io/github/v/release/ailazytech/pinpin-notes?style=flat&label=Release&color=ff8a65)](https://github.com/ailazytech/pinpin-notes/releases/latest) [![Downloads](https://img.shields.io/github/downloads/ailazytech/pinpin-notes/total?style=flat&label=Downloads&color=4caf50)](https://github.com/ailazytech/pinpin-notes/releases) [![GitHub stars](https://img.shields.io/github/stars/ailazytech/pinpin-notes?style=flat&logo=github&label=Stars)](https://github.com/ailazytech/pinpin-notes/stargazers) [![CI](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml) [![Security](https://github.com/ailazytech/pinpin-notes/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/ailazytech/pinpin-notes/actions/workflows/security.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://pinpin.fast01.net) [![Rust](https://img.shields.io/badge/Rust-stable-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org) [![Stickers: 148](https://img.shields.io/badge/Stickers-148-ff6fa8)](docs/FEATURES.md) [![Languages: 6](https://img.shields.io/badge/Languages-6-8e7cc3)](locales/README.md) [![Idle CPU: 0%](https://img.shields.io/badge/Idle%20CPU-0%25-2e7d32)](CONTRIBUTING.md)
 
 > **바탕화면의 작은 메모가 늘 곁에.**
 
 Windows 바탕화면 메모 앱. 압정, 마스킹 테이프, 스티커를 마음대로 붙이고, 손글씨, 투명 슬로건, 뽀모도로 타이머까지. 평소에는 전력을 거의 쓰지 않습니다.
 
-- `.exe` 하나(약 11 MB), 설치 필요 없음, Windows 10 / 11
+- `.exe` 하나(약 12 MB), 설치 필요 없음, Windows 10 / 11
 - 대기 중 CPU 0%, 메모리 약 15 MB(대기 타이머가 전혀 없고 화면이 바뀔 때만 다시 그림)
 - 6개 언어: English, 繁體中文, 简体中文, 日本語, 한국어, العربية(오른쪽에서 왼쪽)
 - 오픈 소스(MIT), 메모는 내 컴퓨터에만 저장. 네트워크 요청은 하루 최대 한 번, 익명 사용 통계는 끌 수 있음([개인정보](docs/PRIVACY.md))
 
-🌐 웹사이트: **[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 다운로드: [웹사이트](https://pinpin.fast01.net)(준비 중)　📝 [변경 기록](CHANGELOG.md)
+🌐 웹사이트: **[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 다운로드: [최신 버전](https://github.com/ailazytech/pinpin-notes/releases/latest)　📝 [변경 기록](CHANGELOG.md)
 
 ## 기능
 

@@ -17,14 +17,14 @@ export const siteConfig = {
   contactEmail: "ailazytech@gmail.com",
 
   /**
-   * Download link for the latest pinpin.exe. Filled in at build time by .github/workflows/site.yml,
-   * which copies the latest published release into public/download/ (the repo is private, so
-   * GitHub release assets aren't publicly downloadable). Empty = the button shows “coming soon”.
+   * Download link for the latest pinpin.exe. Filled in at build time by scripts/fetch-release.mjs
+   * (GitHub's releases/latest/download/… link of the latest published release). Empty = the button
+   * shows “coming soon”.
    */
   downloadUrl: (import.meta.env.VITE_DOWNLOAD_URL as string | undefined) ?? "",
 
-  /** TODO: source repository URL */
-  githubUrl: "",
+  /** Source repository */
+  githubUrl: "https://github.com/ailazytech/pinpin-notes",
 
   /** Donation link (Ko-fi). Empty string = “coming soon”. */
   donate: {

@@ -60,7 +60,7 @@ export const zhTW: Dictionary = {
     tagline: "桌面上的小紙條，一直陪著你。",
     sub: "溫暖可愛的 Windows 桌面便利貼——圖釘、紙膠帶、貼紙、手寫、透明標語、番茄鐘，平常幾乎不耗電。",
     download: "下載 Windows 版",
-    downloadNote: "單一 .exe · 約 11 MB · 免安裝",
+    downloadNote: "單一 .exe · 約 12 MB · 免安裝",
     explore: "探索功能",
     downloadPending: "下載連結整理中——先到 GitHub 點亮 ★ Star，發布時第一時間知道。",
     stats: [
@@ -366,7 +366,7 @@ export const zhTW: Dictionary = {
     stats: [
       { value: "0%", label: "閒置 CPU" },
       { value: "≈ 15 MB", label: "記憶體" },
-      { value: "11 MB", label: "單一 .exe" },
+      { value: "12 MB", label: "單一 .exe" },
       { value: "≤ 1", label: "次連線／天，可關閉" },
     ],
     footnote: "在安靜桌面、幾張便利貼常駐的環境下實測。",
@@ -408,7 +408,7 @@ export const zhTW: Dictionary = {
     title: "帶它回你的桌面",
     sub: "一個小檔案。免安裝、免帳號——只是安靜的待在小角落，溫暖著你。",
     button: "下載 pinpin.exe",
-    size: "約 11 MB",
+    size: "約 12 MB",
     pending: "下載連結整理中——先到 GitHub 點亮 ★ Star，發布時第一時間知道。",
     reqTitle: "系統需求與隱私",
     reqs: [
@@ -495,7 +495,7 @@ export const zhTW: Dictionary = {
       {
         cat: "general",
         q: "支援哪些系統？",
-        a: "Windows 10 與 Windows 11（64 位元）。它是單一的 pinpin.exe（約 11 MB）——免安裝、免 .NET 或其他執行環境。目前專注於 Windows 原生體驗，Mac、Linux 與手機版暫不在規劃中。",
+        a: "Windows 10 與 Windows 11（64 位元）。它是單一的 pinpin.exe（約 12 MB）——免安裝、免 .NET 或其他執行環境。目前專注於 Windows 原生體驗，Mac、Linux 與手機版暫不在規劃中。",
       },
       {
         cat: "general",

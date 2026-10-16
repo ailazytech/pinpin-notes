@@ -1,0 +1,45 @@
+name: 翻譯 / Translation
+description: 翻錯、不通順、缺字，或想加新語言 / A wrong or awkward translation, a missing string, or a new language
+labels: [i18n]
+body:
+  - type: dropdown
+    id: language
+    attributes:
+      label: 語言 / Language
+      options:
+        - English
+        - 繁體中文
+        - 简体中文
+        - 日本語
+        - 한국어
+        - العربية
+        - 新語言 / New language
+    validations:
+      required: true
+  - type: dropdown
+    id: where
+    attributes:
+      label: 在哪裡 / Where
+      options:
+        - App（locales/*.json）
+        - 官網 / Website（site/src/i18n）
+        - README / 文件 / Docs
+    validations:
+      required: true
+  - type: textarea
+    id: strings
+    attributes:
+      label: 現在的字和建議的字 / Current text and suggestion
+      description: 有 key 的話一起寫（例如 `menu.new_note`），可以附截圖。 / Include the key if you know it (e.g. `menu.new_note`); screenshots welcome.
+      placeholder: |
+        menu.new_note
+        現在 / now: …
+        建議 / suggested: …
+    validations:
+      required: true
+  - type: checkboxes
+    id: pr
+    attributes:
+      label: 要自己送 PR 嗎 / Will you open a PR?
+      options:
+        - label: 我可以送 PR（見 CONTRIBUTING） / I can open a PR (see CONTRIBUTING)

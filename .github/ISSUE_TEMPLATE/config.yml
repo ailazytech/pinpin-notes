@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 訂製貼紙、計時器角色 / Custom stickers & timer characters
-    url: mailto:ailazytech@gmail.com
-    about: 訂製服務請直接寄信 / Email us for custom work
   - name: 安全性問題 / Security issue
-    url: mailto:ailazytech@gmail.com
-    about: 請不要開公開 issue / Please don't open a public issue
+    url: https://github.com/ailazytech/pinpin-notes/security/advisories/new
+    about: 請私下回報，不要開公開 issue（見 SECURITY.md） / Report privately, not as a public issue (see SECURITY.md)
+  - name: 訂製貼紙、計時器角色 / Custom stickers & timer characters
+    url: https://pinpin.fast01.net/#/custom
+    about: 訂製服務請看官網或寄信 ailazytech@gmail.com / See the website or email ailazytech@gmail.com

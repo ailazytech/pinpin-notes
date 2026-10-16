@@ -1,0 +1,51 @@
+name: PR checks
+
+# PR titles become the squash-merge commit, so they follow Conventional Commits (see CONTRIBUTING.md).
+# main only takes release PRs from dev, or urgent fixes from hotfix/*.
+
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  title:
+    name: Conventional Commits title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            perf
+            refactor
+            docs
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+
+  branch:
+    name: Target branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: main only accepts dev or hotfix/*
+        env:
+          BASE: ${{ github.base_ref }}
+          HEAD: ${{ github.head_ref }}
+          SAME_REPO: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        run: |
+          if [ "$BASE" = "main" ]; then
+            case "$HEAD" in
+              dev|hotfix/*) [ "$SAME_REPO" = "true" ] && exit 0 ;;
+            esac
+            echo "::error::PRs into main come from dev (release) or hotfix/* only — please retarget this PR to dev. / PR 請改開到 dev。"
+            exit 1
+          fi

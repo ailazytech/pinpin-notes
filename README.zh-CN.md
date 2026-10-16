@@ -4,18 +4,18 @@
 
 [English](README.md) · [繁體中文](README.zh-TW.md) · **简体中文** · [日本語](README.ja.md) · [한국어](README.ko.md) · [العربية](README.ar.md)
 
-[![GitHub stars](https://img.shields.io/github/stars/ailazytech/pinpin-notes?style=flat&logo=github&label=Stars)](https://github.com/ailazytech/pinpin-notes/stargazers) [![GitHub watchers](https://img.shields.io/github/watchers/ailazytech/pinpin-notes?style=flat&logo=github&label=Watchers)](https://github.com/ailazytech/pinpin-notes/watchers) [![GitHub followers](https://img.shields.io/github/followers/ailazytech?style=flat&logo=github&label=Followers)](https://github.com/ailazytech) [![Latest release](https://img.shields.io/github/v/release/ailazytech/pinpin-notes?style=flat&label=Release)](https://pinpin.fast01.net) [![CI](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml/badge.svg)](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://pinpin.fast01.net) [![Rust](https://img.shields.io/badge/Rust-stable-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org)
+[![Latest release](https://img.shields.io/github/v/release/ailazytech/pinpin-notes?style=flat&label=Release&color=ff8a65)](https://github.com/ailazytech/pinpin-notes/releases/latest) [![Downloads](https://img.shields.io/github/downloads/ailazytech/pinpin-notes/total?style=flat&label=Downloads&color=4caf50)](https://github.com/ailazytech/pinpin-notes/releases) [![GitHub stars](https://img.shields.io/github/stars/ailazytech/pinpin-notes?style=flat&logo=github&label=Stars)](https://github.com/ailazytech/pinpin-notes/stargazers) [![CI](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ailazytech/pinpin-notes/actions/workflows/ci.yml) [![Security](https://github.com/ailazytech/pinpin-notes/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/ailazytech/pinpin-notes/actions/workflows/security.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![Windows 10 | 11](https://img.shields.io/badge/Windows-10%20%7C%2011-0078D6?logo=windows&logoColor=white)](https://pinpin.fast01.net) [![Rust](https://img.shields.io/badge/Rust-stable-DEA584?logo=rust&logoColor=white)](https://www.rust-lang.org) [![Stickers: 148](https://img.shields.io/badge/Stickers-148-ff6fa8)](docs/FEATURES.md) [![Languages: 6](https://img.shields.io/badge/Languages-6-8e7cc3)](locales/README.md) [![Idle CPU: 0%](https://img.shields.io/badge/Idle%20CPU-0%25-2e7d32)](CONTRIBUTING.md)
 
 > **桌面上的小纸条，一直陪着你。**
 
 Windows 桌面便利贴：图钉、纸胶带、贴纸拖来拖去，手写、透明标语、番茄钟，平时几乎不耗电。
 
-- 单个 `.exe`（约 11 MB）、免安装，Windows 10 / 11
+- 单个 `.exe`（约 12 MB）、免安装，Windows 10 / 11
 - 空闲时 0% CPU、约 15 MB 内存（没有任何空闲计时器，只在画面变化时重绘）
 - 六种语言：English、繁中、简中、日本語、한국어、العربية（从右到左）
 - 开源（MIT），便利贴只保存在自己的电脑上；每天最多联网一次，匿名使用统计可以关闭（[隐私说明](docs/PRIVACY.md)）
 
-🌐 官网：**[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 下载：[官网](https://pinpin.fast01.net)（准备中）　📝 [更新日志](CHANGELOG.md)
+🌐 官网：**[pinpin.fast01.net](https://pinpin.fast01.net)**　📦 下载：[最新版](https://github.com/ailazytech/pinpin-notes/releases/latest)　📝 [更新日志](CHANGELOG.md)
 
 ## 功能
 
@@ -46,7 +46,7 @@ Windows 桌面便利贴：图钉、纸胶带、贴纸拖来拖去，手写、透
 
 ## 开发者
 
-编译、开发用参数、项目结构以及其他程序如何调用 PinPin，请看[英文版 README](README.md#building)。欢迎提交 issue 和 PR，见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+编译、开发用参数、项目结构以及其他程序如何调用 PinPin，请看[英文版 README](README.md#building)。欢迎提交 issue 和 PR，见 [CONTRIBUTING.md](CONTRIBUTING.md)；PR 请提交到 `dev` 分支，`main` 是已发布的版本。用 AI agent 开发请先读 [AGENTS.md](AGENTS.md)。安全问题请私下报告，见 [SECURITY.md](SECURITY.md)。
 
 想要自己的宠物贴纸或计时器角色？见[官网定制页](https://pinpin.fast01.net/#/custom)，或发邮件到 ailazytech@gmail.com。
 

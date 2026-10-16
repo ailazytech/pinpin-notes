@@ -1,0 +1,48 @@
+# Weekly dependency updates, opened against dev (see CONTRIBUTING.md → Branches).
+# Security updates come as soon as an advisory is published, regardless of this schedule.
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      cargo:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /site
+    target-branch: dev
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore(site)
+    groups:
+      site:
+        patterns: ["*"]
+
+  - package-ecosystem: npm
+    directory: /promo/remotion
+    target-branch: dev
+    schedule:
+      interval: monthly
+    commit-message:
+      prefix: chore(promo)
+    groups:
+      remotion:
+        patterns: ["*"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]
