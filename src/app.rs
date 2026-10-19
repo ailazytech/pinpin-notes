@@ -175,11 +175,11 @@ pub fn run() {
                 return;
             }
         }
-        // `--export-sprites 資料夾`：宣傳影片的素材（開發用）
+        // `--export-sprites 資料夾 [原圖] [語言]`：宣傳影片的素材（開發用）
         if let Some(i) = std::env::args().position(|a| a == "--export-sprites") {
             let args: Vec<String> = std::env::args().collect();
             if let Some(dir) = args.get(i + 1) {
-                notes::export_sprites(dir, args.get(i + 2).map(|s| s.as_str()));
+                notes::export_sprites(dir, args.get(i + 2).map(|s| s.as_str()), args.get(i + 3).map_or("en", |s| s.as_str()));
             }
             return;
         }

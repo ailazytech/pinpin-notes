@@ -7,6 +7,7 @@
     "studio": "remotion studio",
     "sfx": "node scripts/sound.mjs",
     "render": "remotion render PinPinPromo out/pinpin-promo.mp4",
+    "render:zh-TW": "remotion render PinPinPromo out/pinpin-promo.zh-TW.mp4 --props=props/zh-TW.json",
     "stills": "node scripts/stills.mjs",
     "screens": "node scripts/screens.mjs"
   },

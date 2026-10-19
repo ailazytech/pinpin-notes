@@ -15,6 +15,8 @@
 | `scripts/sound.mjs` | 合成音效和配樂 → `public/audio/score.wav`（全部自己合成，沒有版權問題） |
 | `scripts/stills.mjs` | 挑幾個時間點輸出靜態畫面檢查 |
 | `public/sprites/` | PinPin 真正的畫面（透明 PNG，3 倍）＋ `sprites.json`（位置、文字行座標） |
+| `public/sprites-zh-TW/` | 同上，繁體中文版（便利貼上的字、番茄鐘等介面都是繁體） |
+| `props/zh-TW.json` | 輸出繁體中文版用的參數 `{"lang": "zh-TW"}` |
 | `public/wall-*.png` | 桌布（AI 生成） |
 
 ## 步驟
@@ -34,6 +36,21 @@ node scripts/stills.mjs 1.4 7.0 15.6
 
 # 5. 輸出（1080p30，含動態模糊；約十幾分鐘）
 npm run render
+```
+
+### 繁體中文版
+
+字幕、連切的計時器名稱、標語在 `src/Film.tsx` 的 `COPY`；便利貼上的字在 `src/notes/sprites.rs` 的 `words()`。時間、運鏡、聲音和英文版共用。
+
+```bash
+# 素材：第三個參數是語言
+pinpin.exe --export-sprites promo/remotion/public/sprites-zh-TW promo/corgi.png zh-TW
+
+# 檢查幾格 → out/still-zh-TW-*.png
+PROMO_LANG=zh-TW node scripts/stills.mjs 1.4 7.0 15.6
+
+# 輸出 → out/pinpin-promo.zh-TW.mp4，再複製到 site/public/promo/（官網的 /zh-tw/ 播這支）
+npm run render:zh-TW
 ```
 
 改時間：只改 `src/timeline.json`，畫面和聲音會一起跟著動。
