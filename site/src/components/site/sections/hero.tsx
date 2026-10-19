@@ -3,6 +3,7 @@
 import { Download, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/locale-context";
+import { siteConfig } from "@/lib/site-config";
 import { HeroScene } from "../demo/hero-scene";
 import { Reveal } from "../ui";
 import type { NavigateFn } from "../header";
@@ -86,7 +87,8 @@ export function Hero({
               </Button>
             </div>
             <p className="text-[0.78rem] text-ink-mute">
-              {dict.hero.downloadNote} · {dict.common.comingSoon}
+              {dict.hero.downloadNote}
+              {!siteConfig.downloadUrl && <> · {dict.common.comingSoon}</>}
             </p>
           </Reveal>
 
