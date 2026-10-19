@@ -381,7 +381,7 @@ export const zhTW: Dictionary = {
   langs: {
     eyebrow: "語言",
     title: "六種語言，賓至如歸",
-    desc: "內建 English、繁體中文、简体中文、日本語、한국어 與 العربية。阿拉伯文會把整個介面左右鏡像——選單、貼紙小舖，全部；便利貼內容則一行一行自動判斷方向，混著寫也正確。",
+    desc: "App 和官網都內建 English、繁體中文、简体中文、日本語、한국어 與 العربية，App 會自動跟著系統的語言。",
     customTitle: "帶上你自己的語言",
     customSub: "語言檔是平易近人的 JSON。複製範本、翻好右邊的值，存檔就出現在選單——不用重新編譯。",
     customSteps: [
@@ -398,9 +398,7 @@ export const zhTW: Dictionary = {
       '  "menu.sticker_shop": "Çıkartma dükkânı"',
       "}",
     ],
-    rtlTitle: "由右到左，做得完整",
-    rtlSample: "每一行都從右邊讀起——選單、紙膠帶，全部。",
-    lineDirection: "每一行自己找方向，混在一張便利貼裡也行。",
+    tryIt: "點一下，整個網站馬上換成那個語言。",
   },
 
   download: {

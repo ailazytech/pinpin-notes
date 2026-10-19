@@ -2,13 +2,13 @@
 
 import { FileJson, FolderOpen, Save, Wand2 } from "lucide-react";
 import { useI18n } from "@/i18n/locale-context";
-import { Reveal, SectionHeading, NotePaper } from "../ui";
+import { Reveal, SectionHeading } from "../ui";
 import { LOCALES, LOCALE_META } from "@/i18n/config";
 
 const STEP_ICONS = [FolderOpen, FileJson, Save, Wand2];
 
 export function LanguagesSection() {
-  const { dict, locale } = useI18n();
+  const { dict, locale, setLocale } = useI18n();
 
   return (
     <section id="langs" className="scroll-mt-20 bg-paper/50 py-16 sm:py-24">
@@ -22,44 +22,29 @@ export function LanguagesSection() {
         </Reveal>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          {/* language chips + RTL demo */}
+          {/* language chips: each one switches the whole site */}
           <Reveal className="flex flex-col gap-5">
             <div className="paper-grain rounded-2xl border border-line bg-card p-6 shadow-soft">
               <div className="flex flex-wrap gap-2.5">
                 {LOCALES.map((code) => (
-                  <span
+                  <button
                     key={code}
-                    className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[0.82rem] font-semibold ${
+                    type="button"
+                    onClick={() => setLocale(code)}
+                    aria-pressed={code === locale}
+                    lang={code}
+                    className={`inline-flex cursor-pointer items-center gap-2 rounded-full border px-3.5 py-1.5 text-[0.82rem] font-semibold transition-all hover:-translate-y-0.5 hover:shadow-note ${
                       code === locale
                         ? "border-pin/40 bg-pin/10 text-ink"
-                        : "border-line bg-paper text-ink-soft"
+                        : "border-line bg-paper text-ink-soft hover:text-ink"
                     }`}
                     dir={LOCALE_META[code].dir}
                   >
                     {LOCALE_META[code].label}
-                    {LOCALE_META[code].dir === "rtl" && (
-                      <span className="rounded bg-paper-deep px-1.5 py-0.5 text-[0.6rem] font-bold tracking-wide text-ink-mute">
-                        RTL
-                      </span>
-                    )}
-                  </span>
+                  </button>
                 ))}
               </div>
-
-              {/* RTL note demo */}
-              <div className="mt-6">
-                <p className="mb-2.5 text-[0.72rem] font-bold uppercase tracking-[0.16em] text-ink-mute">
-                  {dict.langs.rtlTitle}
-                </p>
-                <NotePaper color="oat" className="px-5 py-4">
-                  <p dir="rtl" className="text-end font-semibold leading-relaxed text-ink/85">
-                    {dict.langs.rtlSample}
-                  </p>
-                  <p className="mt-2 text-[0.72rem] text-ink-mute">
-                    {dict.langs.lineDirection}
-                  </p>
-                </NotePaper>
-              </div>
+              <p className="mt-4 text-[0.8rem] text-ink-mute">{dict.langs.tryIt}</p>
             </div>
           </Reveal>
 
