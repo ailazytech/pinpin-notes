@@ -388,7 +388,7 @@ export const en = {
   langs: {
     eyebrow: "Languages",
     title: "At home in six languages",
-    desc: "English, 繁體中文， 简体中文， 日本語， 한국어 and العربية ship built-in. Arabic mirrors the entire interface — menus, the Sticker Shop, everything — while note content detects its direction line by line, even when mixed.",
+    desc: "The app and this website both come in English, 繁體中文, 简体中文, 日本語, 한국어 and العربية — and the app picks your system language on its own.",
     customTitle: "Bring your own language",
     customSub: "The language file is a flat, friendly JSON. Copy the template, translate the values, and it appears in the menu — no recompiling.",
     customSteps: [
@@ -405,9 +405,7 @@ export const en = {
       '  "menu.sticker_shop": "Çıkartma dükkânı"',
       '}',
     ],
-    rtlTitle: "Right-to-left, properly",
-    rtlSample: "Everything reads from the right — menus, tapes and all.",
-    lineDirection: "Each line finds its own direction, even mixed in one note.",
+    tryIt: "Tap a language to switch this whole site to it.",
   },
 
   download: {

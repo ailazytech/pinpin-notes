@@ -383,7 +383,7 @@ export const zhCN: Dictionary = {
   langs: {
     eyebrow: "语言",
     title: "六种语言，宾至如归",
-    desc: "内置 English、繁体中文、简体中文、日本語、한국어 与 العربية。阿拉伯文会把整个界面左右镜像——菜单、贴纸商店，全部；便签内容则逐行自动判断方向，混着写也正确。",
+    desc: "App 和官网都内置 English、繁體中文、简体中文、日本語、한국어 与 العربية，App 会自动跟随系统语言。",
     customTitle: "带上你自己的语言",
     customSub: "语言文件是一份平易近人的 JSON。复制模板、翻译右边的值，保存后就会出现在菜单里——无需重新编译。",
     customSteps: [
@@ -400,9 +400,7 @@ export const zhCN: Dictionary = {
       '  "menu.sticker_shop": "Çıkartma dükkânı"',
       "}",
     ],
-    rtlTitle: "从右到左，同样到位",
-    rtlSample: "每一行都从右边读起——菜单、和纸胶带，全部。",
-    lineDirection: "每一行各自找到方向，混在一张便签里也没问题。",
+    tryIt: "点一下，整个网站马上换成那种语言。",
   },
 
   download: {

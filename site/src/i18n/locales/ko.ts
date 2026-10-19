@@ -389,7 +389,7 @@ export const ko: Dictionary = {
   langs: {
     eyebrow: "언어",
     title: "여섯 언어 안에서, 집처럼",
-    desc: "English, 繁體中文, 简体中文, 日本語, 한국어, العربية를 내장했어요. 아랍어는 인터페이스 전체를 좌우로 뒤집어요 — 메뉴, 스티커 가게, 전부요. 메모지 내용은 줄마다 방향을 스스로 찾아요, 한 메모지에 섞여 있어도요.",
+    desc: "앱과 이 웹사이트 모두 English, 繁體中文, 简体中文, 日本語, 한국어, العربية를 지원해요. 앱은 시스템 언어를 따라 자동으로 바뀌어요.",
     customTitle: "당신의 언어를 데려와요",
     customSub: "언어 파일은 구조가 단순해 다가가기 쉬운 JSON이에요. 템플릿을 복사해 값을 옮겨 쓰면 메뉴에 나타나요 — 다시 컴파일할 필요 없이.",
     customSteps: [
@@ -406,9 +406,7 @@ export const ko: Dictionary = {
       '  "menu.sticker_shop": "Çıkartma dükkânı"',
       "}",
     ],
-    rtlTitle: "오른쪽에서 왼쪽을, 제대로",
-    rtlSample: "모든 건 오른쪽부터 읽혀요 — 메뉴도, 테이프도, 전부요.",
-    lineDirection: "각 줄이 제 방향을 스스로 찾아요, 한 메모지에 섞여 있어도요.",
+    tryIt: "누르면 이 사이트 전체가 그 언어로 바뀌어요.",
   },
 
   download: {
