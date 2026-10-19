@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { useI18n } from "@/i18n/locale-context";
 import { Reveal, SectionHeading } from "../ui";
 import { LogoMark } from "../logo";
+import { GithubMark } from "../github-link";
+import { siteConfig } from "@/lib/site-config";
 
 const REQ_ICONS = [Monitor, null, WifiOff, FileLock2, Scale];
 
@@ -76,7 +78,15 @@ export function DownloadSection({ onDownload }: { onDownload: () => void }) {
                 <Scale className="size-4 text-ink-soft" aria-hidden />
                 {dict.download.license}
                 <span className="text-ink-mute/60">·</span>
-                {dict.download.sourcePending}
+                <a
+                  href={siteConfig.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 underline decoration-line underline-offset-4 transition-colors hover:text-ink"
+                >
+                  <GithubMark className="size-3.5" />
+                  {dict.download.sourceOnGithub}
+                </a>
               </p>
             </div>
           </div>

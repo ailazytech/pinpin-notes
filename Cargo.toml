@@ -3,7 +3,7 @@ name = "pinpin"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-description = "PinPin Notes（貼貼）：Windows 桌面便利貼。圖釘、紙膠帶、貼紙、密碼、多語系，平常幾乎不耗電。"
+description = "PinPin Notes（拼拼）：Windows 桌面便利貼。圖釘、紙膠帶、貼紙、密碼、多語系，平常幾乎不耗電。"
 
 [[bin]]
 name = "pinpin"

@@ -1,4 +1,4 @@
-// PinPin Notes（貼貼）：Windows 桌面便利貼。
+// PinPin Notes（拼拼）：Windows 桌面便利貼。
 // Release 版不要跳出黑色的主控台視窗；Debug 版保留，方便看 panic 訊息
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 

@@ -1,7 +1,7 @@
 {
   "_meta": { "code": "zh-TW", "name": "繁體中文", "rtl": false, "author": "PinPin Notes" },
 
-  "tray.tip": "貼貼 PinPin Notes · 桌面便利貼",
+  "tray.tip": "拼拼 PinPin Notes · 桌面便利貼",
   "tray.new": "新增便利貼",
   "tray.paste": "從剪貼簿新增（文字或圖片）",
   "tray.starred": "星號記事本",
@@ -384,8 +384,8 @@
   "shop.ad_custom_sub": "毛孩、Logo、手寫字都能做成割形貼紙，點這裡看方案 →",
   "shop.ad_new": "✦ 新上架：台灣小物、金字春聯",
   "shop.ad_new_sub": "珍奶、雞排、小綠人、大氣的金色毛筆春聯…點這裡逛逛 →",
-  "shop.ad_donate": "♥ 請貼貼喝杯珍奶",
-  "shop.ad_donate_sub": "貼貼免費又開源，喜歡的話歡迎小額贊助，讓圖釘繼續發亮 →",
+  "shop.ad_donate": "♥ 請拼拼喝杯珍奶",
+  "shop.ad_donate_sub": "拼拼免費又開源，喜歡的話歡迎小額贊助，讓圖釘繼續發亮 →",
   "shop.order": "專屬春聯訂製\n支持全球寄送 →",
   "tray.update": "更新",
   "tray.update_check": "檢查更新…",

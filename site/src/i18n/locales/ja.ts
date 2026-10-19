@@ -426,7 +426,7 @@ export const ja: Dictionary = {
       "MIT ライセンス——無料、永遠に",
     ],
     license: "MIT ライセンスで公開されています。",
-    sourcePending: "ソースコードのリンクは近日公開です。",
+    sourceOnGithub: "ソースコードは GitHub で公開中",
   },
 
   footer: {
@@ -441,7 +441,7 @@ export const ja: Dictionary = {
       qa: "Q&A",
       donate: "寄付",
       download: "ダウンロード",
-      source: "ソースコード（近日）",
+      source: "ソースコード",
       license: "MIT ライセンス",
     },
     copyright: "PinPin · MIT ライセンスのもと、自由で無料",

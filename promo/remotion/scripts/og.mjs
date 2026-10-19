@@ -20,7 +20,9 @@ fs.mkdirSync(out, {recursive: true});
 const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
 for (const lang of LANGS) {
   const raw = path.join(tmp, `${lang}.png`);
-  execFileSync(npx, ['remotion', 'still', `og-${lang}`, raw, '--log=error'], {cwd: root, stdio: 'inherit', shell: process.platform === 'win32'});
+  // a language with its own cut of the film (props/<lang>.json) also gets its own board in the picture
+  const props = fs.existsSync(path.join(root, 'props', `${lang}.json`)) ? [`--props=props/${lang}.json`] : [];
+  execFileSync(npx, ['remotion', 'still', `og-${lang}`, raw, '--log=error', ...props], {cwd: root, stdio: 'inherit', shell: process.platform === 'win32'});
   const png = path.join(out, `${lang}.png`);
   // 1920 × 1080 → the middle 1920 × 1008 (1.905:1, same as 1200 × 630, the size Facebook / Threads / X expect)
   execFileSync('ffmpeg', ['-loglevel', 'error', '-y', '-i', raw, '-vf', 'crop=1920:1008:0:36,scale=1200:630:flags=lanczos', png]);

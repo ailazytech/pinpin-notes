@@ -428,7 +428,7 @@ export const ko: Dictionary = {
       "MIT 라이선스 — 영원히 무료예요",
     ],
     license: "MIT 라이선스로 배포해요.",
-    sourcePending: "소스 코드 링크는 곧 공개할게요.",
+    sourceOnGithub: "소스 코드는 GitHub에 있어요",
   },
 
   footer: {
@@ -443,7 +443,7 @@ export const ko: Dictionary = {
       qa: "질문과 답변",
       donate: "후원",
       download: "다운로드",
-      source: "소스 코드(곧)",
+      source: "소스 코드",
       license: "MIT 라이선스",
     },
     copyright: "PinPin · MIT 오픈소스, 언제나 무료",

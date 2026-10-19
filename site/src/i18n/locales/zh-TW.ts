@@ -2,7 +2,7 @@ import type { Dictionary } from "./en";
 
 export const zhTW: Dictionary = {
   meta: {
-    title: "貼貼 PinPin Notes — 溫暖可愛的 Windows 桌面便利貼",
+    title: "拼拼 PinPin Notes — 溫暖可愛的 Windows 桌面便利貼",
     description:
       "在 Windows 桌面上釘圖釘、貼紙膠帶、玩貼紙、手寫、掛透明標語、跑番茄鐘——平常幾乎不耗電。免費開源。",
   },
@@ -69,7 +69,7 @@ export const zhTW: Dictionary = {
       { value: "17", label: "種紙色" },
       { value: "6", label: "種語言" },
     ],
-    sceneCaption: "貼貼的桌面一角",
+    sceneCaption: "拼拼的桌面一角",
     scroll: "向下捲動",
     note1: "下班後\n去喝珍奶 ♪",
     note2: "專注\n25:00",
@@ -162,7 +162,7 @@ export const zhTW: Dictionary = {
       id: "custom",
       eyebrow: "04",
       title: "任何圖片，都能變成貼紙",
-      desc: "貼上任何圖片，貼貼就幫你割好——完全離線、不用 AI，只靠細心的像素功夫——再補上一圈平滑的白色割邊，連凹進去的弧線都照顧到。",
+      desc: "貼上任何圖片，拼拼就幫你割好——完全離線、不用 AI，只靠細心的像素功夫——再補上一圈平滑的白色割邊，連凹進去的弧線都照顧到。",
       bullets: [
         "拖檔案進來、按 Ctrl+V，或從資料夾挑選",
         "依圖片邊緣顏色去背；背景太花的照片會做成圓角照片貼紙",
@@ -349,7 +349,7 @@ export const zhTW: Dictionary = {
       {
         id: "detail-context",
         title: "就在你手邊",
-        desc: "在系統匣打開「桌面右鍵選單」，桌面右鍵就能新增便利貼與番茄鐘；其他都在系統匣選單裡。開機啟動一樣一鍵開關（兩個預設都關著），而且永遠只有一個貼貼在跑。",
+        desc: "在系統匣打開「桌面右鍵選單」，桌面右鍵就能新增便利貼與番茄鐘；其他都在系統匣選單裡。開機啟動一樣一鍵開關（兩個預設都關著），而且永遠只有一個拼拼在跑。",
       },
       {
         id: "detail-langs",
@@ -420,7 +420,7 @@ export const zhTW: Dictionary = {
       "MIT 開源授權——永遠免費",
     ],
     license: "以 MIT 授權釋出。",
-    sourcePending: "原始碼連結即將公布。",
+    sourceOnGithub: "原始碼在 GitHub",
   },
 
   footer: {
@@ -435,17 +435,17 @@ export const zhTW: Dictionary = {
       qa: "問答",
       donate: "贊助",
       download: "下載",
-      source: "原始碼（即將）",
+      source: "原始碼",
       license: "MIT 授權",
     },
-    copyright: "貼貼 · MIT 授權，自由免費",
+    copyright: "拼拼 · MIT 授權，自由免費",
     crafted: "用心製作",
   },
 
   donate: {
     eyebrow: "贊助",
-    title: "請貼貼喝杯珍奶",
-    sub: "貼貼免費、開源，也會一直如此——沒有第三方廣告、沒有雲端費用、沒有帳號。如果它讓你的桌面更舒服，一份小點心能讓圖釘持續發亮。",
+    title: "請拼拼喝杯珍奶",
+    sub: "拼拼免費、開源，也會一直如此——沒有第三方廣告、沒有雲端費用、沒有帳號。如果它讓你的桌面更舒服，一份小點心能讓圖釘持續發亮。",
     tiersTitle: "挑一份點心",
     tiers: [
       { name: "一張小貼紙", amount: "$1", desc: "一顆小亮光——謝謝你的肯定！" },
@@ -489,7 +489,7 @@ export const zhTW: Dictionary = {
     items: [
       {
         cat: "general",
-        q: "貼貼真的免費嗎？",
+        q: "拼拼真的免費嗎？",
         a: "是的——MIT 開源授權。個人與商業使用、分享、修改都完全免費。沒有第三方廣告、不用帳號，也沒有任何付費解鎖。",
       },
       {
@@ -530,7 +530,7 @@ export const zhTW: Dictionary = {
       {
         cat: "notes",
         q: "可以自製貼紙嗎？",
-        a: "可以——把圖片拖進貼紙小舖、按 Ctrl+V，或挑選檔案。貼貼依邊緣顏色去背（在本機離線處理、不用 AI），再加上平滑的白色割邊，解析度最高保留到 4096 px。",
+        a: "可以——把圖片拖進貼紙小舖、按 Ctrl+V，或挑選檔案。拼拼依邊緣顏色去背（在本機離線處理、不用 AI），再加上平滑的白色割邊，解析度最高保留到 4096 px。",
       },
       {
         cat: "notes",
@@ -570,7 +570,7 @@ export const zhTW: Dictionary = {
       {
         cat: "general",
         q: "可以跟 Windows 一起開機啟動嗎？",
-        a: "可以，在系統匣選單一鍵開關（預設關閉）。同一時間只會有一個貼貼在跑——再開一次，等於幫你新增一張便利貼。",
+        a: "可以，在系統匣選單一鍵開關（預設關閉）。同一時間只會有一個拼拼在跑——再開一次，等於幫你新增一張便利貼。",
       },
       {
         cat: "general",
@@ -580,7 +580,7 @@ export const zhTW: Dictionary = {
       {
         cat: "notes",
         q: "Vibotype 是什麼？",
-        a: "同一位作者做的選取文字工具。在任何程式選取文字、按 ★，就會連同時間、來源程式和視窗標題，收進貼貼的星號記事本。",
+        a: "同一位作者做的選取文字工具。在任何程式選取文字、按 ★，就會連同時間、來源程式和視窗標題，收進拼拼的星號記事本。",
       },
     ],
   },
@@ -634,13 +634,13 @@ export const zhTW: Dictionary = {
       "包裹都附追蹤編號；台灣本島約 2–3 個工作天，海外約 7–14 個工作天（依目的地與物流而定，報價時會一併告知）。",
       "春節前是旺季：台灣請在除夕前 3 週、海外請在 6 週前下單；排滿會提早截止。",
     ],
-    mailSubject: "貼貼春聯訂製需求",
+    mailSubject: "拼拼春聯訂製需求",
   },
 
   commission: {
     "eyebrow": "客製貼紙・紙膠帶・計時器角色",
     "title": "把你的毛孩與畫作，貼上桌面",
-    "sub": "寄給我們一張照片、一張手繪塗鴉或只是一個想法，我們幫你做成專屬的割形貼紙、紙膠帶或番茄鐘角色，直接匯入貼貼就能用。",
+    "sub": "寄給我們一張照片、一張手繪塗鴉或只是一個想法，我們幫你做成專屬的割形貼紙、紙膠帶或番茄鐘角色，直接匯入拼拼就能用。",
     "packagesTitle": "挑選方案",
     "popular": "最受歡迎",
     "packages": [
@@ -727,7 +727,7 @@ export const zhTW: Dictionary = {
     "ctaButton": "寄信洽詢客製",
     "copy": "複製信箱",
     "copied": "已複製信箱地址",
-    "mailSubject": "貼貼客製貼紙需求洽詢",
-    "mailBody": "嗨貼貼！\n\n感興趣的方案：\n想客製的內容與想法：\n\n（請在此信附上照片或草圖）\n"
+    "mailSubject": "拼拼客製貼紙需求洽詢",
+    "mailBody": "嗨拼拼！\n\n感興趣的方案：\n想客製的內容與想法：\n\n（請在此信附上照片或草圖）\n"
   },
 };

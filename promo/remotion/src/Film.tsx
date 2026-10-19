@@ -463,8 +463,8 @@ export const Film: React.FC = () => {
 /** The end card's words in every website language; scripts/og.mjs renders one share image per language. */
 export const END_TEXT: Record<string, {tagline: string; sub: string; font: string}> = {
   en: {tagline: 'Little notes that stick with you.', sub: 'Free & open source · 6 languages · almost zero idle CPU', font: FONT},
-  'zh-TW': {tagline: '桌面上的小紙條，一直陪著你。', sub: '貼貼 · 免費開源 · 6 種語言 · 閒置幾乎不耗電', font: `"Microsoft JhengHei UI", "Microsoft JhengHei", ${FONT}`},
-  'zh-CN': {tagline: '桌面上的小纸条，一直陪着你。', sub: '贴贴 · 免费开源 · 6 种语言 · 闲置几乎不耗电', font: `"Microsoft YaHei UI", "Microsoft YaHei", ${FONT}`},
+  'zh-TW': {tagline: '桌面上的小紙條，一直陪著你。', sub: '拼拼 · 免費開源 · 6 種語言 · 閒置幾乎不耗電', font: `"Microsoft JhengHei UI", "Microsoft JhengHei", ${FONT}`},
+  'zh-CN': {tagline: '桌面上的小纸条，一直陪着你。', sub: '拼拼 · 免费开源 · 6 种语言 · 闲置几乎不耗电', font: `"Microsoft YaHei UI", "Microsoft YaHei", ${FONT}`},
   ja: {tagline: 'デスクトップの小さなメモが、いつもそばに。', sub: '無料・オープンソース · 6 言語 · アイドル時の CPU はほぼゼロ', font: `"Yu Gothic UI", "Meiryo UI", ${FONT}`},
   ko: {tagline: '바탕화면의 작은 메모가 늘 곁에 있어요.', sub: '무료 오픈소스 · 6개 언어 · 대기 중 CPU 거의 0%', font: `"Malgun Gothic", ${FONT}`},
   ar: {tagline: 'ملاحظات صغيرة تبقى معك.', sub: 'مجاني ومفتوح المصدر · 6 لغات · استهلاك شبه معدوم للمعالج', font: FONT},
