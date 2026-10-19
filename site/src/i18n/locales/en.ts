@@ -427,7 +427,7 @@ export const en = {
       "MIT License — free, forever",
     ],
     license: "Released under the MIT License.",
-    sourcePending: "Source code link coming soon.",
+    sourceOnGithub: "Source code on GitHub",
   },
 
   footer: {
@@ -442,7 +442,7 @@ export const en = {
       qa: "Q&A",
       donate: "Donate",
       download: "Download",
-      source: "Source code (soon)",
+      source: "Source code",
       license: "MIT License",
     },
     copyright: "PinPin · free and open source under MIT",

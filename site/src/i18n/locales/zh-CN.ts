@@ -2,7 +2,7 @@ import type { Dictionary } from "./en";
 
 export const zhCN: Dictionary = {
   meta: {
-    title: "贴贴 PinPin Notes — 温暖可爱的 Windows 桌面便签",
+    title: "拼拼 PinPin Notes — 温暖可爱的 Windows 桌面便签",
     description:
       "在 Windows 桌面上钉图钉、贴和纸胶带、玩贴纸、手写、挂透明标语、跑番茄钟——平时几乎不耗电。免费开源。",
   },
@@ -71,7 +71,7 @@ export const zhCN: Dictionary = {
       { value: "17", label: "种纸色" },
       { value: "6", label: "种语言" },
     ],
-    sceneCaption: "贴贴的桌面一角",
+    sceneCaption: "拼拼的桌面一角",
     scroll: "向下滚动",
     note1: "下班后\n去喝珍珠奶茶 ♪",
     note2: "专注\n25:00",
@@ -164,7 +164,7 @@ export const zhCN: Dictionary = {
       id: "custom",
       eyebrow: "04",
       title: "导入照片，一秒自制白边贴纸",
-      desc: "贴上任何图片，贴贴就帮你裁好——完全离线、不用 AI，只靠细致的像素功夫——再补上一圈平滑的白色裁边，连凹进去的弧线都照顾到。",
+      desc: "贴上任何图片，拼拼就帮你裁好——完全离线、不用 AI，只靠细致的像素功夫——再补上一圈平滑的白色裁边，连凹进去的弧线都照顾到。",
       bullets: [
         "把文件拖进来、按 Ctrl+V，或从文件夹挑选",
         "按图片边缘颜色抠图；背景太杂的照片会做成圆角照片贴纸",
@@ -351,7 +351,7 @@ export const zhCN: Dictionary = {
       {
         id: "detail-context",
         title: "就在你手边",
-        desc: "在托盘打开“桌面右键菜单”后，桌面右键就能新建便签与番茄钟；其余都在托盘菜单里。开机自启同样一键开关（两者默认关闭），而且永远只有一个贴贴在运行。",
+        desc: "在托盘打开“桌面右键菜单”后，桌面右键就能新建便签与番茄钟；其余都在托盘菜单里。开机自启同样一键开关（两者默认关闭），而且永远只有一个拼拼在运行。",
       },
       {
         id: "detail-langs",
@@ -422,7 +422,7 @@ export const zhCN: Dictionary = {
       "MIT 开源许可——永远自由免费",
     ],
     license: "以 MIT 许可证发布。",
-    sourcePending: "源代码链接即将公布。",
+    sourceOnGithub: "源代码在 GitHub",
   },
 
   footer: {
@@ -437,17 +437,17 @@ export const zhCN: Dictionary = {
       qa: "问答",
       donate: "赞助",
       download: "下载",
-      source: "源代码（即将）",
+      source: "源代码",
       license: "MIT 许可证",
     },
-    copyright: "贴贴 · MIT 许可，自由免费",
+    copyright: "拼拼 · MIT 许可，自由免费",
     crafted: "用心制作",
   },
 
   donate: {
     eyebrow: "赞助",
-    title: "请贴贴喝杯珍珠奶茶",
-    sub: "贴贴免费、开源，并将一直如此——没有第三方广告、没有云端费用、没有账号。如果它让你的桌面更舒服，一份小点心能让图钉一直发亮。",
+    title: "请拼拼喝杯珍珠奶茶",
+    sub: "拼拼免费、开源，并将一直如此——没有第三方广告、没有云端费用、没有账号。如果它让你的桌面更舒服，一份小点心能让图钉一直发亮。",
     tiersTitle: "挑一份点心",
     tiers: [
       { name: "一张小贴纸", amount: "$1", desc: "一点小闪光——谢谢你的肯定！" },
@@ -491,7 +491,7 @@ export const zhCN: Dictionary = {
     items: [
       {
         cat: "general",
-        q: "贴贴真的免费吗？",
+        q: "拼拼真的免费吗？",
         a: "是的——MIT 开源许可。个人与商业使用、分享、修改都完全免费。没有第三方广告、不用账号，也没有付费升级。",
       },
       {
@@ -532,7 +532,7 @@ export const zhCN: Dictionary = {
       {
         cat: "notes",
         q: "可以自制贴纸吗？",
-        a: "可以——把图片拖进贴纸小店、按 Ctrl+V，或挑选文件。贴贴按边缘颜色抠图（本地离线处理、不用 AI），再加上平滑的白色裁边，分辨率最高保留到 4096 px。",
+        a: "可以——把图片拖进贴纸小店、按 Ctrl+V，或挑选文件。拼拼按边缘颜色抠图（本地离线处理、不用 AI），再加上平滑的白色裁边，分辨率最高保留到 4096 px。",
       },
       {
         cat: "notes",
@@ -572,7 +572,7 @@ export const zhCN: Dictionary = {
       {
         cat: "general",
         q: "可以随 Windows 开机自启吗？",
-        a: "可以，在托盘菜单一键开关（默认关闭）。同一时间只会有一个贴贴在运行——再打开一次，等于新建一张便签。",
+        a: "可以，在托盘菜单一键开关（默认关闭）。同一时间只会有一个拼拼在运行——再打开一次，等于新建一张便签。",
       },
       {
         cat: "general",
@@ -582,7 +582,7 @@ export const zhCN: Dictionary = {
       {
         cat: "notes",
         q: "Vibotype 是什么？",
-        a: "同一位作者做的选取文字工具。在任何程序里选中文本、按下 ★，就会连同时间、来源程序和窗口标题，收进贴贴的星号笔记本。",
+        a: "同一位作者做的选取文字工具。在任何程序里选中文本、按下 ★，就会连同时间、来源程序和窗口标题，收进拼拼的星号笔记本。",
       },
     ],
   },
@@ -636,13 +636,13 @@ export const zhCN: Dictionary = {
       "包裹都附追踪单号；海外一般约 7–14 个工作日送达（依目的地与物流而定，报价时会一并告知）。",
       "春节前是旺季：寄往海外请在除夕前 6 周下单；排满会提前截止。",
     ],
-    mailSubject: "贴贴春联定制需求",
+    mailSubject: "拼拼春联定制需求",
   },
 
   commission: {
     "eyebrow": "定制贴纸・纸胶带・计时器角色",
     "title": "把你的毛孩子与画作，贴上桌面",
-    "sub": "发给我们一张照片、一幅手绘涂鸦或者只是一个想法，我们帮你做成专属的异形贴纸、和纸胶带或番茄钟角色，直接导入贴贴就能用。",
+    "sub": "发给我们一张照片、一幅手绘涂鸦或者只是一个想法，我们帮你做成专属的异形贴纸、和纸胶带或番茄钟角色，直接导入拼拼就能用。",
     "packagesTitle": "挑选方案",
     "popular": "最受欢迎",
     "packages": [
@@ -729,7 +729,7 @@ export const zhCN: Dictionary = {
     "ctaButton": "来信咨询定制",
     "copy": "复制邮箱",
     "copied": "已复制邮箱地址",
-    "mailSubject": "贴贴定制贴纸咨询",
-    "mailBody": "你好贴贴！\n\n感兴趣的方案：\n想定制的内容与想法：\n\n（请在此信附上照片或草图）\n"
+    "mailSubject": "拼拼定制贴纸咨询",
+    "mailBody": "你好拼拼！\n\n感兴趣的方案：\n想定制的内容与想法：\n\n（请在此信附上照片或草图）\n"
   },
 };

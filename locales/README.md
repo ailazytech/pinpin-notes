@@ -1,6 +1,6 @@
 # 語言檔 / Language files
 
-PinPin Notes（貼貼）的介面文字都在這裡，每個語言一個 JSON 檔。
+PinPin Notes（拼拼）的介面文字都在這裡，每個語言一個 JSON 檔。
 All UI text lives here, one JSON file per language.
 
 ## 自己加一個語言（不用重新編譯）/ Add a language without rebuilding

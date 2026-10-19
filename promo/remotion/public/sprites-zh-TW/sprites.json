@@ -1,0 +1,626 @@
+{
+  "scale": 3.0,
+  "sprites": {
+    "heart": {
+      "files": [
+        "heart-000.png",
+        "heart-001.png",
+        "heart-002.png",
+        "heart-003.png",
+        "heart-004.png",
+        "heart-005.png",
+        "heart-006.png",
+        "heart-007.png",
+        "heart-008.png",
+        "heart-009.png",
+        "heart-010.png",
+        "heart-011.png",
+        "heart-012.png",
+        "heart-013.png",
+        "heart-014.png",
+        "heart-015.png",
+        "heart-016.png",
+        "heart-017.png",
+        "heart-018.png",
+        "heart-019.png",
+        "heart-020.png",
+        "heart-021.png",
+        "heart-022.png",
+        "heart-023.png",
+        "heart-024.png"
+      ],
+      "h": 840,
+      "paper": [
+        54,
+        36,
+        954,
+        756
+      ],
+      "rows": [],
+      "w": 1020
+    },
+    "logo": {
+      "file": "logo.png",
+      "h": 512,
+      "scale": 2.0,
+      "w": 512
+    },
+    "note-call": {
+      "file": "note-call.png",
+      "h": 852,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        198,
+        774,
+        768
+      ],
+      "rows": [
+        [
+          150,
+          402,
+          324
+        ],
+        [
+          150,
+          552,
+          414
+        ]
+      ],
+      "w": 840
+    },
+    "note-oat": {
+      "file": "note-oat.png",
+      "h": 997,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        193,
+        954,
+        913
+      ],
+      "rows": [
+        [
+          150,
+          342,
+          308
+        ]
+      ],
+      "w": 1020
+    },
+    "note-oat-ink": {
+      "file": "note-oat-ink.png",
+      "h": 1201,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        193,
+        954,
+        913
+      ],
+      "rows": [
+        [
+          150,
+          342,
+          308
+        ]
+      ],
+      "w": 1020
+    },
+    "note-read": {
+      "file": "note-read.png",
+      "h": 954,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        300,
+        774,
+        870
+      ],
+      "rows": [
+        [
+          150,
+          324,
+          415
+        ],
+        [
+          150,
+          392,
+          484
+        ]
+      ],
+      "w": 840
+    },
+    "note-rose": {
+      "file": "note-rose.png",
+      "h": 720,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        36,
+        774,
+        636
+      ],
+      "rows": [
+        [
+          150,
+          252,
+          151
+        ],
+        [
+          150,
+          387,
+          220
+        ],
+        [
+          150,
+          342,
+          289
+        ]
+      ],
+      "w": 840
+    },
+    "note-sage": {
+      "file": "note-sage.png",
+      "h": 901,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        217,
+        774,
+        817
+      ],
+      "rows": [
+        [
+          150,
+          252,
+          332
+        ],
+        [
+          150,
+          297,
+          401
+        ],
+        [
+          150,
+          297,
+          470
+        ]
+      ],
+      "w": 840
+    },
+    "note-sale": {
+      "file": "note-sale.png",
+      "h": 761,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        167,
+        714,
+        677
+      ],
+      "rows": [
+        [
+          150,
+          567,
+          351
+        ]
+      ],
+      "w": 780
+    },
+    "note-todo": {
+      "file": "note-todo.png",
+      "h": 877,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        193,
+        774,
+        793
+      ],
+      "rows": [
+        [
+          150,
+          297,
+          308
+        ],
+        [
+          150,
+          342,
+          377
+        ],
+        [
+          150,
+          387,
+          446
+        ]
+      ],
+      "w": 840
+    },
+    "picture": {
+      "file": "picture.png",
+      "h": 1000,
+      "scale": 2.0,
+      "w": 800
+    },
+    "picture-sticker": {
+      "file": "picture-sticker.png",
+      "h": 1274,
+      "scale": 2.0,
+      "w": 915
+    },
+    "pin-gold": {
+      "file": "pin-gold.png",
+      "h": 87,
+      "scale": 2.0,
+      "w": 90
+    },
+    "polaroid": {
+      "file": "polaroid.png",
+      "h": 1154,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        170,
+        744,
+        1070
+      ],
+      "rows": [
+        [
+          150,
+          291,
+          285
+        ]
+      ],
+      "w": 810
+    },
+    "secret": {
+      "files": [
+        "secret-000.png",
+        "secret-001.png",
+        "secret-002.png",
+        "secret-003.png",
+        "secret-004.png",
+        "secret-005.png",
+        "secret-006.png",
+        "secret-007.png",
+        "secret-008.png",
+        "secret-009.png",
+        "secret-010.png",
+        "secret-011.png",
+        "secret-012.png",
+        "secret-013.png",
+        "secret-014.png",
+        "secret-015.png",
+        "secret-016.png",
+        "secret-017.png",
+        "secret-018.png",
+        "secret-019.png",
+        "secret-020.png"
+      ],
+      "h": 942,
+      "paper": [
+        54,
+        198,
+        954,
+        858
+      ],
+      "rows": [
+        [
+          150,
+          252,
+          313
+        ],
+        [
+          150,
+          342,
+          382
+        ],
+        [
+          150,
+          342,
+          451
+        ],
+        [
+          150,
+          342,
+          520
+        ]
+      ],
+      "w": 1020
+    },
+    "shiba-sticker": {
+      "file": "shiba-sticker.png",
+      "h": 149,
+      "scale": 2.0,
+      "w": 150
+    },
+    "shot": {
+      "file": "shot.png",
+      "h": 238,
+      "scale": 2.0,
+      "w": 270
+    },
+    "slogan": {
+      "file": "slogan.png",
+      "h": 720,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        36,
+        1974,
+        636
+      ],
+      "rows": [
+        [
+          150,
+          846,
+          248
+        ]
+      ],
+      "w": 2040
+    },
+    "st-boba": {
+      "file": "st-boba.png",
+      "h": 150,
+      "scale": 2.0,
+      "w": 100
+    },
+    "st-cat": {
+      "file": "st-cat.png",
+      "h": 133,
+      "scale": 2.0,
+      "w": 150
+    },
+    "st-coffee": {
+      "file": "st-coffee.png",
+      "h": 150,
+      "scale": 2.0,
+      "w": 138
+    },
+    "st-moon": {
+      "file": "st-moon.png",
+      "h": 150,
+      "scale": 2.0,
+      "w": 141
+    },
+    "st-rainbow": {
+      "file": "st-rainbow.png",
+      "h": 101,
+      "scale": 2.0,
+      "w": 150
+    },
+    "st-sakura": {
+      "file": "st-sakura.png",
+      "h": 142,
+      "scale": 2.0,
+      "w": 150
+    },
+    "st-sparkles": {
+      "file": "st-sparkles.png",
+      "h": 150,
+      "scale": 2.0,
+      "w": 143
+    },
+    "st-star": {
+      "file": "st-star.png",
+      "h": 146,
+      "scale": 2.0,
+      "w": 150
+    },
+    "st-sunflower": {
+      "file": "st-sunflower.png",
+      "h": 149,
+      "scale": 2.0,
+      "w": 150
+    },
+    "starred": {
+      "file": "starred.png",
+      "h": 1198,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        214,
+        864,
+        1114
+      ],
+      "rows": [
+        [
+          150,
+          477,
+          416
+        ],
+        [
+          150,
+          477,
+          485
+        ],
+        [
+          150,
+          252,
+          554
+        ]
+      ],
+      "w": 970
+    },
+    "tape": {
+      "file": "tape.png",
+      "h": 240,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        81,
+        159,
+        81,
+        159
+      ],
+      "rows": [],
+      "w": 672
+    },
+    "timer-alarm": {
+      "file": "timer-alarm.png",
+      "h": 708,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        36,
+        504,
+        624
+      ],
+      "rows": [],
+      "w": 570
+    },
+    "timer-cat": {
+      "file": "timer-cat.png",
+      "h": 708,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        36,
+        552,
+        624
+      ],
+      "rows": [],
+      "w": 618
+    },
+    "timer-dog": {
+      "file": "timer-dog.png",
+      "h": 708,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        36,
+        492,
+        624
+      ],
+      "rows": [],
+      "w": 558
+    },
+    "timer-hourglass": {
+      "file": "timer-hourglass.png",
+      "h": 720,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        36,
+        426,
+        636
+      ],
+      "rows": [],
+      "w": 492
+    },
+    "timer-led": {
+      "file": "timer-led.png",
+      "h": 408,
+      "off": [
+        0,
+        0
+      ],
+      "paper": [
+        54,
+        36,
+        606,
+        324
+      ],
+      "rows": [],
+      "w": 672
+    },
+    "tomato": {
+      "files": [
+        "tomato-000.png",
+        "tomato-001.png",
+        "tomato-002.png",
+        "tomato-003.png",
+        "tomato-004.png",
+        "tomato-005.png",
+        "tomato-006.png",
+        "tomato-007.png"
+      ],
+      "h": 588,
+      "paper": [
+        54,
+        36,
+        504,
+        504
+      ],
+      "rows": [],
+      "w": 570
+    },
+    "tomato-ring": {
+      "files": [
+        "tomato-ring-000.png",
+        "tomato-ring-001.png",
+        "tomato-ring-002.png",
+        "tomato-ring-003.png",
+        "tomato-ring-004.png",
+        "tomato-ring-005.png",
+        "tomato-ring-006.png",
+        "tomato-ring-007.png",
+        "tomato-ring-008.png",
+        "tomato-ring-009.png",
+        "tomato-ring-010.png",
+        "tomato-ring-011.png",
+        "tomato-ring-012.png",
+        "tomato-ring-013.png",
+        "tomato-ring-014.png",
+        "tomato-ring-015.png"
+      ],
+      "h": 588,
+      "paper": [
+        54,
+        36,
+        504,
+        504
+      ],
+      "rows": [],
+      "w": 570
+    }
+  }
+}

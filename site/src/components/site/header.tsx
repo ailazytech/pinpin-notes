@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { LogoMark, LogoWord } from "./logo";
 import { LanguageSwitcher } from "./language-switcher";
 import { ThemeToggle } from "./theme-toggle";
+import { GithubLink } from "./github-link";
 import { useI18n } from "@/i18n/locale-context";
 import type { View } from "./shell-types";
 import { cn } from "@/lib/utils";
@@ -104,6 +105,7 @@ export function Header({
         <div className="flex items-center gap-1">
           <LanguageSwitcher />
           <ThemeToggle />
+          <GithubLink />
           <Button
             size="sm"
             onClick={onDownload}

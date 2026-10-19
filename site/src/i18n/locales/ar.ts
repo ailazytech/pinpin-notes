@@ -428,7 +428,7 @@ export const ar: Dictionary = {
       "رخصة MIT — مجاني، إلى الأبد",
     ],
     license: "منشور برخصة MIT.",
-    sourcePending: "رابط الكود المصدري قريبًا.",
+    sourceOnGithub: "الكود المصدري على GitHub",
   },
 
   footer: {
@@ -443,7 +443,7 @@ export const ar: Dictionary = {
       qa: "الأسئلة والأجوبة",
       donate: "التبرع",
       download: "تنزيل",
-      source: "الكود المصدري (قريبًا)",
+      source: "الكود المصدري",
       license: "رخصة MIT",
     },
     copyright: "PinPin · مجاني ومفتوح المصدر برخصة MIT",

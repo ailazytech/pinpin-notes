@@ -6,12 +6,16 @@
 // a slogan, a blue pen circles a secret note — then pulls out while the rest of the board drops into place, and the
 // red pen signs the wordmark in the space that was left for it.
 // Everything is a pure function of time. UI pictures are real PinPin renders (`pinpin.exe --export-sprites`).
+//
+// Language: render with --props='{"lang":"zh-TW"}' for the Traditional Chinese cut — captions, labels and the
+// slogan come from COPY below, the PinPin pictures from public/sprites-zh-TW/ (exported with the zh-TW UI).
 
 import React from 'react';
-import {AbsoluteFill, Audio, Img, staticFile, useCurrentFrame, Easing} from 'remotion';
+import {AbsoluteFill, Audio, Img, getInputProps, staticFile, useCurrentFrame, Easing} from 'remotion';
 import {CameraMotionBlur} from '@remotion/motion-blur';
 import {evolvePath, getLength, getPointAtLength, getTangentAtLength} from '@remotion/paths';
-import manifest from '../public/sprites/sprites.json';
+import manifestEn from '../public/sprites/sprites.json';
+import manifestZhTW from '../public/sprites-zh-TW/sprites.json';
 import TL from './timeline.json';
 
 const T = TL.T as Record<string, any>;
@@ -24,10 +28,15 @@ const INK = '#2e2622';
 const PAPER = '#fbf6ee';
 const NIGHT = '#121a26';
 const FONT = '"Segoe UI Variable Display", "Segoe UI", sans-serif';
+const FONT_ZH_TW = `"Microsoft JhengHei UI", "Microsoft JhengHei", ${FONT}`;
+
+const LANG = ((getInputProps() as {lang?: string}).lang ?? 'en') === 'zh-TW' ? 'zh-TW' : 'en';
+const SPRITES = {en: {dir: 'sprites', manifest: manifestEn}, 'zh-TW': {dir: 'sprites-zh-TW', manifest: manifestZhTW}}[LANG];
+const sprite = (file: string) => staticFile(`${SPRITES.dir}/${file}`);
 
 type SpriteInfo = {file?: string; files?: string[]; w: number; h: number; paper?: number[]; rows?: number[][]; scale?: number};
-const S = (manifest as any).sprites as Record<string, SpriteInfo>;
-const SPRITE_SCALE = (manifest as any).scale as number;
+const S = (SPRITES.manifest as any).sprites as Record<string, SpriteInfo>;
+const SPRITE_SCALE = (SPRITES.manifest as any).scale as number;
 
 // ───────────────────────── curves ─────────────────────────
 
@@ -223,9 +232,62 @@ const KEYS_RAW: (Key & {right?: boolean})[] = [
 const FRAMED_RIGHT = [[0, 3.8], [4.4, 11.3], [12.3, 13.0], [16.3, 17.75]];
 const KEYS: Key[] = KEYS_RAW.map((k) => (FRAMED_RIGHT.some(([a, b]) => k.t >= a && k.t <= b) ? {...k, x: R(k.x, k.z)} : k));
 const BURST = ['hourglass', 'led', 'alarm', 'cat', 'dog'];
-const BURST_LABEL: Record<string, string> = {hourglass: 'Hourglass', led: 'LED clock', alarm: 'Alarm clock', cat: 'Cat', dog: 'Shiba'};
 const HOLDS = [[1.75, 2.0], [7.8, 8.1], [9.05, 11.25], [15.15, 15.8], [18.95, 24]];
-const SLOGAN = 'STAY FOCUSED';
+
+// ───────────────────────── words (per language) ─────────────────────────
+
+type Word = {big: string; small: string; t: number[]; tool: Tool};
+type Copy = {font: string; tracking: string; words: Word[]; burst: Record<string, string>; slogan: string; sloganFont: string};
+/** caption times and tools are shared; only the words change */
+const BEATS: {t: number[]; tool: Tool}[] = [
+  {t: [0.8, 1.95], tool: 'pen'},
+  {t: [2.68, 3.28], tool: 'pen'},
+  {t: [3.32, 3.86], tool: 'pen'},
+  {t: [4.5, 5.55], tool: 'scissors'},
+  {t: [6.7, 8.05], tool: 'crayon'},
+  {t: [9.05, 11.22], tool: 'crayon'},
+  {t: [14.15, 15.8], tool: 'chalk'},
+  {t: [16.4, 17.62], tool: 'lock'},
+];
+const words = (lines: [string, string][]): Word[] => lines.map(([big, small], i) => ({big, small, ...BEATS[i]}));
+const COPY: Record<'en' | 'zh-TW', Copy> = {
+  en: {
+    font: FONT,
+    tracking: '-0.04em',
+    words: words([
+      ['Cross it off.', 'Click a line — it gets a red stroke'],
+      ['Tape it.', 'Washi tape you can stretch'],
+      ['Stick it.', 'Pins, clips & stickers'],
+      ['Cut it out.', 'Any picture becomes a sticker'],
+      ['Draw.', 'Pen · marker · chalk · crayon'],
+      ['Focus.', 'Pomodoro timers in six styles'],
+      ['Say it big.', 'Transparent paper for desktop slogans'],
+      ['Keep it secret.', 'Locked notes show a harmless decoy'],
+    ]),
+    burst: {hourglass: 'Hourglass', led: 'LED clock', alarm: 'Alarm clock', cat: 'Cat', dog: 'Shiba'},
+    slogan: 'STAY FOCUSED',
+    sloganFont: 'Impact, sans-serif',
+  },
+  'zh-TW': {
+    font: FONT_ZH_TW,
+    tracking: '0.02em',
+    words: words([
+      ['劃掉', '點一下那一行，紅筆就劃過去'],
+      ['貼紙膠帶', '紙膠帶可以拉長'],
+      ['貼上去', '圖釘、夾子、貼紙'],
+      ['剪下來', '任何圖片都能變成貼紙'],
+      ['隨手畫', '筆 · 螢光筆 · 粉筆 · 蠟筆'],
+      ['專心', '六種造型的番茄鐘'],
+      ['大聲說', '透明紙，把標語掛在桌面'],
+      ['藏起來', '上鎖的便利貼只顯示偽裝內容'],
+    ]),
+    burst: {hourglass: '沙漏', led: 'LED 數字錶', alarm: '鬧鐘', cat: '抱時鐘的貓', dog: '抱時鐘的柴犬'},
+    slogan: '保持專注',
+    sloganFont: FONT_ZH_TW,
+  },
+};
+const C = COPY[LANG];
+const SLOGAN = C.slogan;
 const STAMP_AT = (i: number) => T.stamp[0] + i * 0.045;
 const IMPACTS: [number, number][] = [[2.7, 9], [3.43, 4], [3.68, 4], [6.28, 6], [8.9, 5], [12.3, 6], [16.35, 3], ...SLOGAN.split('').map((c, i): [number, number] => [STAMP_AT(i) + 0.09, c === ' ' ? 0 : 2.2])];
 
@@ -277,7 +339,7 @@ const Sprite: React.FC<SpriteProps> = ({name, x, y, cx, cy, height, index = 0, o
   const top = cy !== undefined ? cy - ((pt + pb) / 2) * f : (y ?? 0) - pt * f;
   return (
     <Img
-      src={staticFile('sprites/' + file)}
+      src={sprite(file)}
       style={{position: 'absolute', left, top: top + dy, width: s.w * f, height: s.h * f, opacity, transform: `rotate(${rotate}deg) scale(${scale})`, transformOrigin: `${((pl + pr) / 2) * f}px ${((pt + pb) / 2) * f}px`, ...style}}
     />
   );
@@ -355,28 +417,16 @@ const Padlock: React.FC<{x: number; y: number; t: number}> = ({x, y, t}) => {
 };
 
 // kinetic type: a big verb (letters spring in), a stroke in the tool's colour, a small line under it
-type Word = {big: string; small: string; t: number[]; tool: Tool};
-const WORDS: Word[] = [
-  {big: 'Cross it off.', small: 'Click a line — it gets a red stroke', t: [0.8, 1.95], tool: 'pen'},
-  {big: 'Tape it.', small: 'Washi tape you can stretch', t: [2.68, 3.28], tool: 'pen'},
-  {big: 'Stick it.', small: 'Pins, clips & stickers', t: [3.32, 3.86], tool: 'pen'},
-  {big: 'Cut it out.', small: 'Any picture becomes a sticker', t: [4.5, 5.55], tool: 'scissors'},
-  {big: 'Draw.', small: 'Pen · marker · chalk · crayon', t: [6.7, 8.05], tool: 'crayon'},
-  {big: 'Focus.', small: 'Pomodoro timers in six styles', t: [9.05, 11.22], tool: 'crayon'},
-  {big: 'Say it big.', small: 'Transparent paper for desktop slogans', t: [14.15, 15.8], tool: 'chalk'},
-  {big: 'Keep it secret.', small: 'Locked notes show a harmless decoy', t: [16.4, 17.62], tool: 'lock'},
-];
-
 const Words: React.FC<{t: number; night: boolean}> = ({t, night}) => (
   <>
-    {WORDS.map((w, i) => {
+    {C.words.map((w, i) => {
       if (t < w.t[0] - 0.02 || t > w.t[1] + 0.02) return null;
       const out = expoIn(prog(t, [w.t[1] - 0.16, w.t[1]]));
       const sub = cubicOut(prog(t, [w.t[0] + 0.16, w.t[0] + 0.42]));
       const bar = expoOut(prog(t, [w.t[0] + 0.08, w.t[0] + 0.45]));
       return (
-        <div key={i} style={{position: 'absolute', left: 120, top: 790, fontFamily: FONT, color: night ? PAPER : INK, opacity: 1 - out, transform: `translateY(${-out * 26}px)`, filter: out > 0 ? `blur(${out * 6}px)` : undefined}}>
-          <div style={{fontSize: 112, fontWeight: 800, letterSpacing: '-0.04em', lineHeight: 1, whiteSpace: 'pre'}}>
+        <div key={i} lang={LANG} style={{position: 'absolute', left: 120, top: 790, fontFamily: C.font, color: night ? PAPER : INK, opacity: 1 - out, transform: `translateY(${-out * 26}px)`, filter: out > 0 ? `blur(${out * 6}px)` : undefined}}>
+          <div style={{fontSize: 112, fontWeight: 800, letterSpacing: C.tracking, lineHeight: 1, whiteSpace: 'pre'}}>
             {w.big.split('').map((ch, k) => {
               const s = springAt(t, w.t[0] + k * 0.022, 20, 10);
               return (
@@ -400,9 +450,11 @@ export const Film: React.FC = () => {
   const frame = useCurrentFrame();
   return (
     <AbsoluteFill style={{backgroundColor: NIGHT}}>
-      <CameraMotionBlur shutterAngle={180} samples={6}>
-        <Scene t={frame / FPS} />
-      </CameraMotionBlur>
+      <EndLang.Provider value={LANG}>
+        <CameraMotionBlur shutterAngle={180} samples={6}>
+          <Scene t={frame / FPS} />
+        </CameraMotionBlur>
+      </EndLang.Provider>
       <Audio src={staticFile('audio/score.wav')} />
     </AbsoluteFill>
   );
@@ -411,8 +463,8 @@ export const Film: React.FC = () => {
 /** The end card's words in every website language; scripts/og.mjs renders one share image per language. */
 export const END_TEXT: Record<string, {tagline: string; sub: string; font: string}> = {
   en: {tagline: 'Little notes that stick with you.', sub: 'Free & open source · 6 languages · almost zero idle CPU', font: FONT},
-  'zh-TW': {tagline: '桌面上的小紙條，一直陪著你。', sub: '貼貼 · 免費開源 · 6 種語言 · 閒置幾乎不耗電', font: `"Microsoft JhengHei UI", "Microsoft JhengHei", ${FONT}`},
-  'zh-CN': {tagline: '桌面上的小纸条，一直陪着你。', sub: '贴贴 · 免费开源 · 6 种语言 · 闲置几乎不耗电', font: `"Microsoft YaHei UI", "Microsoft YaHei", ${FONT}`},
+  'zh-TW': {tagline: '桌面上的小紙條，一直陪著你。', sub: '拼拼 · 免費開源 · 6 種語言 · 閒置幾乎不耗電', font: `"Microsoft JhengHei UI", "Microsoft JhengHei", ${FONT}`},
+  'zh-CN': {tagline: '桌面上的小纸条，一直陪着你。', sub: '拼拼 · 免费开源 · 6 种语言 · 闲置几乎不耗电', font: `"Microsoft YaHei UI", "Microsoft YaHei", ${FONT}`},
   ja: {tagline: 'デスクトップの小さなメモが、いつもそばに。', sub: '無料・オープンソース · 6 言語 · アイドル時の CPU はほぼゼロ', font: `"Yu Gothic UI", "Meiryo UI", ${FONT}`},
   ko: {tagline: '바탕화면의 작은 메모가 늘 곁에 있어요.', sub: '무료 오픈소스 · 6개 언어 · 대기 중 CPU 거의 0%', font: `"Malgun Gothic", ${FONT}`},
   ar: {tagline: 'ملاحظات صغيرة تبقى معك.', sub: 'مجاني ومفتوح المصدر · 6 لغات · استهلاك شبه معدوم للمعالج', font: FONT},
@@ -497,7 +549,7 @@ const Scene: React.FC<{t: number}> = ({t}) => {
         const away = prog(t, [T.pop - 0.08, T.pop + 0.45]);
         return (
           <div style={{position: 'absolute', left: P.picture.cx - picW / 2 - 18, top: P.picture.cy - picH / 2 - 18 + a.dy + 160 * Easing.in(Easing.cubic)(away), width: picW + 36, height: picH + 36, borderRadius: 22, background: '#fff', boxShadow: '0 30px 60px -24px rgba(60,40,20,.45)', opacity: a.opacity * (1 - away), transform: `scale(${a.scale * (1 - 0.15 * away)})`}}>
-            <Img src={staticFile('sprites/picture.png')} style={{position: 'absolute', left: 18, top: 18, width: picW, height: picH, borderRadius: 10}} />
+            <Img src={sprite('picture.png')} style={{position: 'absolute', left: 18, top: 18, width: picW, height: picH, borderRadius: 10}} />
           </div>
         );
       })()}
@@ -525,7 +577,7 @@ const Scene: React.FC<{t: number}> = ({t}) => {
 
       {/* night: slogan revealed by the chalk, and the secret note */}
       {show(T.stamp[0]) && (
-        <div style={{position: 'absolute', left: sloganRow[0] + 3, top: sloganRow[2] - 64, fontFamily: 'Impact, sans-serif', fontSize: 100, lineHeight: '128px', color: '#f7cf3b', whiteSpace: 'pre', display: 'flex'}}>
+        <div lang={LANG} style={{position: 'absolute', left: sloganRow[0] + 3, top: sloganRow[2] - 64, fontFamily: C.sloganFont, fontWeight: LANG === 'en' ? undefined : 700, fontSize: 100, lineHeight: '128px', color: '#f7cf3b', whiteSpace: 'pre', display: 'flex'}}>
           {SLOGAN.split('').map((c, i) => {
             const u = prog(t, [STAMP_AT(i), STAMP_AT(i) + 0.1]);
             const k = expoOut(u);
@@ -590,8 +642,8 @@ const Scene: React.FC<{t: number}> = ({t}) => {
       })()}
       <Words t={t} night={night && t > T.iris[1] - 0.2} />
       {inBurst && (
-        <div style={{position: 'absolute', left: 0, right: 0, top: H - 150, textAlign: 'center', fontFamily: FONT, fontSize: 44, fontWeight: 700, color: INK}}>
-          {BURST_LABEL[BURST[Math.min(4, Math.floor((t - T.burst[0]) / 0.2))]]}
+        <div lang={LANG} style={{position: 'absolute', left: 0, right: 0, top: H - 150, textAlign: 'center', fontFamily: C.font, fontSize: 44, fontWeight: 700, color: INK}}>
+          {C.burst[BURST[Math.min(4, Math.floor((t - T.burst[0]) / 0.2))]]}
         </div>
       )}
       <EndCard t={t} />
@@ -620,7 +672,7 @@ const EndCard: React.FC<{t: number}> = ({t}) => {
       {/* a soft spotlight in the clear centre of the board */}
       <AbsoluteFill style={{background: `radial-gradient(ellipse 640px 360px at 50% 50%, rgba(18,26,38,${0.72 * veil}), rgba(18,26,38,${0.25 * veil}) 70%, rgba(18,26,38,${0.1 * veil}))`}} />
       <div style={{position: 'absolute', left: W / 2 - 95, top: 250 - 60 * (1 - logo), width: 190, height: 190, opacity: clamp01(logo * 2), transform: `scale(${0.85 + 0.15 * logo})`}}>
-        <Img src={staticFile('sprites/logo.png')} style={{width: 190, height: 190}} />
+        <Img src={sprite('logo.png')} style={{width: 190, height: 190}} />
       </div>
       <div style={{position: 'absolute', left: 0, right: 0, top: 440, textAlign: 'center', fontFamily: FONT, fontWeight: 800, fontSize: 136, letterSpacing: '-0.04em', color: PAPER, clipPath: `inset(-10% ${100 - write * 100}% -10% 0)`}}>
         PinPin Notes

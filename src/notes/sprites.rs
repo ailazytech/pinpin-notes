@@ -170,19 +170,77 @@ fn timer(style: TimerStyle, t: Timer) -> Note {
     Note { kind: Kind::Timer, w, h, timer: Some(Timer { style, ..t }), ..Default::default() }
 }
 
-/// `picture` = 拿來示範「任何圖片變貼紙」的原圖（可省略）。
-pub fn export(dir: &str, picture: Option<&str>) -> anyhow::Result<()> {
-    crate::i18n::set("en");
+/// 宣傳影片裡紙上寫的字，跟著影片的語言（英文、繁體中文）。
+struct Words {
+    todo: [&'static str; 3],
+    rose: [&'static str; 3],
+    sage: [&'static str; 3],
+    oat: &'static str,
+    secret: [&'static str; 3],
+    starred: [&'static str; 3],
+    pet: &'static str,
+    call: [&'static str; 2],
+    read: [&'static str; 2],
+    sale: &'static str,
+    slogan: &'static str,
+    /// 標語和 SALE 用的粗字型；Impact 本身就粗，中文改用正黑體粗體
+    loud: (&'static str, bool),
+    /// 手寫風（打給媽媽）、書本風（讀 20 頁）
+    hand: &'static str,
+    book: &'static str,
+}
+
+fn words(lang: &str) -> Words {
+    match lang {
+        "zh-TW" => Words {
+            todo: ["買牛奶", "回覆阿明", "把報告寫完"],
+            rose: ["週末", "逛農夫市集", "打給阿嬤"],
+            sage: ["點子", "種香草", "學水彩"],
+            oat: "我的貼紙",
+            secret: ["送小山的禮物", "黑膠唱盤", "演唱會門票"],
+            starred: ["每天進步一點點", "先上線，再打磨", "喝水"],
+            pet: "麻糬 ♡",
+            call: ["打給媽媽", "晚上 7 點健身"],
+            read: ["讀 20 頁", "幫植物澆水"],
+            sale: "特價！",
+            slogan: "保持專注",
+            loud: ("Microsoft JhengHei UI", true),
+            hand: "DFKai-SB",
+            book: "PMingLiU",
+        },
+        _ => Words {
+            todo: ["Buy milk", "Reply to Amy", "Finish the report"],
+            rose: ["Weekend", "Farmers market", "Call grandma"],
+            sage: ["Ideas", "Plant herbs", "Learn watercolor"],
+            oat: "My stickers",
+            secret: ["Gift ideas for Sam", "Vinyl player", "Concert tickets"],
+            starred: ["Small steps every day", "Ship it, then polish", "Drink water"],
+            pet: "Mochi ♡",
+            call: ["Call mom", "Gym 7pm"],
+            read: ["Read 20 pages", "Water the plants"],
+            sale: "SALE!",
+            slogan: "STAY FOCUSED",
+            loud: ("Impact", false),
+            hand: "Segoe Print",
+            book: "Georgia",
+        },
+    }
+}
+
+/// `picture` = 拿來示範「任何圖片變貼紙」的原圖（可省略）。`lang` = 紙上的字和介面的語言（"en"、"zh-TW"）。
+pub fn export(dir: &str, picture: Option<&str>, lang: &str) -> anyhow::Result<()> {
+    crate::i18n::set(lang);
+    let w = words(lang);
     let dir = Path::new(dir).to_path_buf();
     std::fs::create_dir_all(&dir)?;
     let mut kit = Kit { assets: assets::Cache::new(S), fonts: HashMap::new(), dir: dir.clone(), manifest: serde_json::Map::new(), last_off: (0, 0) };
     let o = Opts::default;
 
     // ── 便利貼 ──
-    kit.note("note-todo", &note(Paper::Yellow, Texture::Sticky, &["Buy milk", "Reply to Amy", "Finish the report"], vec![Attach::at("pin-red", 120.0, 2.0)], 240, 200), o())?;
-    kit.note("note-rose", &note(Paper::MorandiRose, Texture::Washi, &["Weekend", "Farmers market", "Call grandma"], vec![], 240, 200), o())?;
-    kit.note("note-sage", &note(Paper::Sage, Texture::Grid, &["Ideas", "Plant herbs", "Learn watercolor"], vec![Attach { asset: "clip-heart".into(), x: 200.0, y: 4.0, angle: 6.0, ..Default::default() }], 240, 200), o())?;
-    let oat = note(Paper::Oat, Texture::Dots, &["My stickers"], vec![Attach::at("pin-teal", 150.0, 2.0)], 300, 240);
+    kit.note("note-todo", &note(Paper::Yellow, Texture::Sticky, &w.todo, vec![Attach::at("pin-red", 120.0, 2.0)], 240, 200), o())?;
+    kit.note("note-rose", &note(Paper::MorandiRose, Texture::Washi, &w.rose, vec![], 240, 200), o())?;
+    kit.note("note-sage", &note(Paper::Sage, Texture::Grid, &w.sage, vec![Attach { asset: "clip-heart".into(), x: 200.0, y: 4.0, angle: 6.0, ..Default::default() }], 240, 200), o())?;
+    let oat = note(Paper::Oat, Texture::Dots, &[w.oat], vec![Attach::at("pin-teal", 150.0, 2.0)], 300, 240);
     kit.note("note-oat", &oat, o())?;
     kit.note("note-oat-ink", &oat, Opts { ink: Some(InkView { prefs: InkPrefs { tool: Tool::Crayon, color: 0xE21E24, size: 1 }, eraser: false, cur: None }), ..o() })?;
     // 蠟筆愛心一筆一筆畫出來（透明紙，和 note-oat 一樣大，疊上去剛好對齊）
@@ -251,12 +309,12 @@ pub fn export(dir: &str, picture: Option<&str>) -> anyhow::Result<()> {
     }
 
     // ── 透明標語 ──
-    let slogan = Note { paper: Paper::Clear, w: 640, h: 200, font: 3.8, face: Some("Impact".into()), color: Some(0xF7CF3B), lines: vec![Line::new("STAY FOCUSED")], ..Default::default() };
+    let slogan = Note { paper: Paper::Clear, w: 640, h: 200, font: 3.8, face: Some(w.loud.0.into()), bold: w.loud.1.then_some(true), color: Some(0xF7CF3B), lines: vec![Line::new(w.slogan)], ..Default::default() };
     kit.note("slogan", &slogan, o())?;
 
     // ── 密碼：偽裝內容亂碼變回真正的內容 ──
     let decoy: &'static [Line] = Box::leak(store::decoy(3).into_boxed_slice());
-    let real: &'static [Line] = Box::leak(["Gift ideas for Sam", "Vinyl player", "Concert tickets"].iter().map(|l| Line::new(*l)).collect::<Vec<_>>().into_boxed_slice());
+    let real: &'static [Line] = Box::leak(w.secret.iter().map(|l| Line::new(*l)).collect::<Vec<_>>().into_boxed_slice());
     kit.sequence("secret", 21, |i| {
         let mut n = note(Paper::MorandiLilac, Texture::Plain, &[], vec![Attach::at("pin-heart", 150.0, 2.0)], 300, 220);
         let t = i as f32 / 20.0;
@@ -269,29 +327,30 @@ pub fn export(dir: &str, picture: Option<&str>) -> anyhow::Result<()> {
     let mut starred = Note { kind: Kind::Starred, paper: Paper::White, texture: Texture::Lined, w: 270, h: 300, v: store::VERSION, ..Default::default() };
     starred.items = vec![Attach { asset: "star".into(), x: 256.0, y: 4.0, angle: 10.0, ..Default::default() }];
     starred.lines = vec![
-        Line { text: "Small steps every day".into(), done: false, meta: "10/12 09:12 · chrome".into() },
-        Line { text: "Ship it, then polish".into(), done: false, meta: "10/12 13:40 · notion".into() },
-        Line { text: "Drink water".into(), done: true, meta: "10/12 15:05 · slack".into() },
+        Line { text: w.starred[0].into(), done: false, meta: "10/12 09:12 · chrome".into() },
+        Line { text: w.starred[1].into(), done: false, meta: "10/12 13:40 · notion".into() },
+        Line { text: w.starred[2].into(), done: true, meta: "10/12 15:05 · slack".into() },
     ];
     kit.note("starred", &starred, o())?;
     if let Some(path) = picture {
         let mut photo = Note { kind: Kind::Image, paper: Paper::White, w: 230, h: 300, v: store::VERSION, ..Default::default() };
         photo.items = vec![Attach::tape("tape-dusty", 60.0, 2.0, 170.0, -4.0)];
-        photo.lines = vec![Line::new("Mochi ♡")];
+        photo.lines = vec![Line::new(w.pet)];
         kit.note("polaroid", &photo, Opts { image: Some(image::decode_file(Path::new(path))?), ..o() })?;
     }
-    let mut call = note(Paper::MorandiBlue, Texture::Lined, &["Call mom", "Gym 7pm"], vec![Attach::at("pin-pearl", 120.0, 2.0)], 240, 190);
-    call.face = Some("Segoe Print".into());
+    let mut call = note(Paper::MorandiBlue, Texture::Lined, &w.call, vec![Attach::at("pin-pearl", 120.0, 2.0)], 240, 190);
+    call.face = Some(w.hand.into());
     call.color = Some(0x2F6FDB);
     call.font = 1.3;
     kit.note("note-call", &call, o())?;
-    let mut sale = note(Paper::Yellow, Texture::Sticky, &["SALE!"], vec![Attach::tape("tape-stars", 70.0, 0.0, 170.0, -3.0)], 220, 170);
-    sale.face = Some("Impact".into());
+    let mut sale = note(Paper::Yellow, Texture::Sticky, &[w.sale], vec![Attach::tape("tape-stars", 70.0, 0.0, 170.0, -3.0)], 220, 170);
+    sale.face = Some(w.loud.0.into());
+    sale.bold = w.loud.1.then_some(true);
     sale.color = Some(0xE21E24);
     sale.font = 3.0;
     kit.note("note-sale", &sale, o())?;
-    let mut shop = note(Paper::MilkTea, Texture::Fiber, &["Read 20 pages", "Water the plants"], vec![Attach { asset: "clip-binder".into(), x: 46.0, y: -12.0, ..Default::default() }], 240, 190);
-    shop.face = Some("Georgia".into());
+    let mut shop = note(Paper::MilkTea, Texture::Fiber, &w.read, vec![Attach { asset: "clip-binder".into(), x: 46.0, y: -12.0, ..Default::default() }], 240, 190);
+    shop.face = Some(w.book.into());
     shop.color = Some(0x8A5CD6);
     shop.bold = Some(true);
     kit.note("note-read", &shop, o())?;

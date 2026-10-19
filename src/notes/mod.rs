@@ -3001,9 +3001,9 @@ pub fn render_promo(video: bool, out: &str, light: &str, dark: &str) {
     }
 }
 
-/// `--export-sprites 資料夾`：宣傳影片（Remotion）用的透明素材和 sprites.json（開發用）。
-pub fn export_sprites(dir: &str, picture: Option<&str>) {
-    match sprites::export(dir, picture) {
+/// `--export-sprites 資料夾 [原圖] [語言]`：宣傳影片（Remotion）用的透明素材和 sprites.json（開發用）。
+pub fn export_sprites(dir: &str, picture: Option<&str>, lang: &str) {
+    match sprites::export(dir, picture, lang) {
         Ok(()) => crate::base::log_info(format!("export-sprites：{dir}")),
         Err(e) => crate::base::log_error(format!("export-sprites：{e:#}")),
     }

@@ -5,8 +5,10 @@
  * Screenshots: drop WebP files into public/img/screens/ using the ids below
  *              (e.g. notes.webp, todo.webp, shop.webp …). Until a file
  *              exists, its slot shows the hand-built demo instead.
- * Video:       drop the film at public/promo/pinpin-promo.mp4.
+ * Video:       drop the film at public/promo/pinpin-promo.mp4 (and its translated cuts, see media.videoByLocale).
  */
+import type { Locale } from "@/i18n/config";
+
 export const siteConfig = {
   name: "PinPin Notes",
 
@@ -42,10 +44,19 @@ export const siteConfig = {
   /** Media slots — files are optional until you drop them in. */
   media: {
     videoSrc: "promo/pinpin-promo.mp4",
+    /** The film cut in another language (captions and PinPin's own UI); other locales get videoSrc. */
+    videoByLocale: {
+      "zh-TW": "promo/pinpin-promo.zh-TW.mp4",
+    } as Partial<Record<Locale, string>>,
     screenshotBase: "img/screens",
     screenshotExtension: ".webp",
   },
 } as const;
+
+/** The promo film for a locale (falls back to the English cut). */
+export function videoPath(locale: Locale): string {
+  return siteConfig.media.videoByLocale[locale] ?? siteConfig.media.videoSrc;
+}
 
 export function screenshotPath(id: string): string {
   return asset(`${siteConfig.media.screenshotBase}/${id}${siteConfig.media.screenshotExtension}`);

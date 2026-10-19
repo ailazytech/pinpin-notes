@@ -1,4 +1,4 @@
-# PinPin Notes（貼貼）
+# PinPin Notes（拼拼）
 
 <img src="assets/logo/pinpin-256.png" width="112" align="right" alt="PinPin Notes">
 
