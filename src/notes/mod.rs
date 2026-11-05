@@ -999,6 +999,15 @@ fn set_password(hwnd: HWND, password: &str) {
     }
 }
 
+/// 有密碼而且還沒解開（看到的是表層）。
+fn locked_view(hwnd: HWND) -> bool {
+    with(|m| {
+        let unlocked = m.win(hwnd).is_some_and(|w| w.unlocked.is_some());
+        m.note_of(hwnd).is_some_and(|n| n.locked()) && !unlocked
+    })
+    .unwrap_or(false)
+}
+
 /// 用密碼解開；密碼錯就搖一搖。
 fn unlock(hwnd: HWND, password: &str) -> bool {
     let Some((secret, decoy)) = with(|m| m.note_of(hwnd).and_then(|n| Some((n.secret.clone()?, n.lines.clone())))).flatten() else {
@@ -1723,16 +1732,8 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
             if let Some(line) = hit_bullet(hwnd, pt) {
                 toggle_line(hwnd, line);
             } else if hit_button(hwnd, pt).is_none() && hit_item(hwnd, pt).is_none() {
-                let (locked, unlocked, kind) = with(|m| {
-                    let u = m.win(hwnd).is_some_and(|w| w.unlocked.is_some());
-                    m.note_of(hwnd).map(|n| (n.locked(), u, n.kind))
-                })
-                .flatten()
-                .unwrap_or((false, false, Kind::Text));
-                if kind == Kind::Sticker {
-                } else if locked && !unlocked {
-                    edit::prompt(hwnd, edit::PromptMode::Unlock);
-                } else {
+                // 密碼便利貼鎖著時改的是表層，跟普通便利貼一樣，別人看不出這張有密碼
+                if kind_of(hwnd) != Some(Kind::Sticker) {
                     edit::begin(hwnd);
                 }
             }
@@ -1833,6 +1834,11 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
                 VK_C if ctrl => copy(hwnd),
                 VK_N if ctrl => on_button(hwnd, Btn::New),
                 VK_L if ctrl => lock(hwnd),
+                VK_U if ctrl => {
+                    if locked_view(hwnd) {
+                        edit::prompt(hwnd, edit::PromptMode::Unlock);
+                    }
+                }
                 VK_OEM_PLUS | VK_ADD if ctrl => zoom(hwnd, 0.1),
                 VK_OEM_MINUS | VK_SUBTRACT if ctrl => zoom(hwnd, -0.1),
                 _ => {}
@@ -2110,11 +2116,11 @@ fn context_menu(hwnd: HWND) {
     ];
     if !sticker {
         let locked_view = note.locked() && !unlocked;
-        items.push(if locked_view {
-            MenuItem::item(M_UNLOCK, t("menu.unlock"))
-        } else {
-            MenuItem::item(M_EDIT, if image { t("menu.edit_caption") } else { t("menu.edit") })
-        });
+        // 鎖著時「編輯」改的是表層；裡層要先輸入密碼
+        items.push(MenuItem::item(M_EDIT, if image { t("menu.edit_caption") } else { t("menu.edit") }));
+        if locked_view {
+            items.push(MenuItem::item(M_UNLOCK, t("menu.unlock")));
+        }
         if note.kind == Kind::Text && !note.locked() {
             items.push(MenuItem::checked(M_INK, t("menu.ink"), ink_on(hwnd)));
         }
@@ -2169,7 +2175,8 @@ fn context_menu(hwnd: HWND) {
                     MenuItem::item(M_REMOVE_PW, t("menu.remove_password")),
                 ]
             } else {
-                vec![MenuItem::item(M_UNLOCK, t("menu.unlock"))]
+                // 表層也可以換回一份內建的偽裝內容
+                vec![MenuItem::item(M_UNLOCK, t("menu.unlock")), MenuItem::item(M_DECOY, t("menu.decoy"))]
             };
             items.push(MenuItem::Submenu { text: t("menu.password"), items: pw });
         }

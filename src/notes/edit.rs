@@ -91,16 +91,8 @@ pub fn begin(hwnd: HWND) {
     .flatten() else {
         return;
     };
-    // 有密碼又沒解開：不能直接改偽裝內容，改問密碼
-    if note.locked() && with(|m| m.win(hwnd).is_some_and(|w| w.unlocked.is_none())).unwrap_or(true) {
-        with(|m| {
-            if let Some(w) = m.win(hwnd) {
-                w.editing = false;
-            }
-        });
-        prompt(hwnd, PromptMode::Unlock);
-        return;
-    }
+    // 有密碼又沒解開：改的是表層（偽裝內容，別人看到的那層；存檔時本來就是明文），裡層原封不動。
+    // 要看、要改裡層得先輸入密碼（右鍵「輸入密碼…」或 Ctrl+U）。
     redraw(hwnd);
     let multi = note.kind != Kind::Image;
     let text = if multi { store::Note::text_of(&lines) } else { lines.first().map(|l| l.text.clone()).unwrap_or_default() };

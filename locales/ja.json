@@ -20,7 +20,7 @@
   "desktop_menu.label": "新しい付箋",
   "menu.pin_desktop": "デスクトップに留める（すべてのウィンドウの下）",
   "menu.pin_top": "常に手前に表示",
-  "menu.unlock": "パスワードを入力…",
+  "menu.unlock": "パスワードを入力…\tCtrl+U",
   "menu.edit": "編集\tF2",
   "menu.edit_caption": "キャプションを編集\tF2",
   "menu.done_all": "すべて線で消す",

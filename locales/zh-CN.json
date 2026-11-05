@@ -20,7 +20,7 @@
   "desktop_menu.label": "新建便利贴",
   "menu.pin_desktop": "钉在桌面（在所有窗口下面）",
   "menu.pin_top": "始终置顶",
-  "menu.unlock": "输入密码…",
+  "menu.unlock": "输入密码…\tCtrl+U",
   "menu.edit": "编辑\tF2",
   "menu.edit_caption": "编辑图说\tF2",
   "menu.done_all": "全部划掉",

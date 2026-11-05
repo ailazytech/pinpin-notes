@@ -20,7 +20,7 @@
   "desktop_menu.label": "新增便利貼",
   "menu.pin_desktop": "釘在桌面（在所有視窗下面）",
   "menu.pin_top": "永遠在最上層",
-  "menu.unlock": "輸入密碼…",
+  "menu.unlock": "輸入密碼…\tCtrl+U",
   "menu.edit": "編輯\tF2",
   "menu.edit_caption": "編輯圖說\tF2",
   "menu.done_all": "全部劃掉",

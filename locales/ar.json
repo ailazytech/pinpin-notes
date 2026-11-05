@@ -20,7 +20,7 @@
   "desktop_menu.label": "ملاحظة لاصقة جديدة",
   "menu.pin_desktop": "تثبيت على سطح المكتب (تحت كل النوافذ)",
   "menu.pin_top": "دائمًا في المقدمة",
-  "menu.unlock": "أدخل كلمة المرور…",
+  "menu.unlock": "أدخل كلمة المرور…\tCtrl+U",
   "menu.edit": "تحرير\tF2",
   "menu.edit_caption": "تحرير التعليق\tF2",
   "menu.done_all": "شطب الكل",

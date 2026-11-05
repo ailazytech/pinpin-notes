@@ -20,7 +20,7 @@
   "desktop_menu.label": "새 메모",
   "menu.pin_desktop": "바탕화면에 고정 (모든 창 아래)",
   "menu.pin_top": "항상 위에 표시",
-  "menu.unlock": "비밀번호 입력…",
+  "menu.unlock": "비밀번호 입력…\tCtrl+U",
   "menu.edit": "편집\tF2",
   "menu.edit_caption": "캡션 편집\tF2",
   "menu.done_all": "모두 줄 긋기",

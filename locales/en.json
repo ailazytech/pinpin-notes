@@ -20,7 +20,7 @@
   "desktop_menu.label": "New sticky note",
   "menu.pin_desktop": "Pin to desktop (below all windows)",
   "menu.pin_top": "Always on top",
-  "menu.unlock": "Enter password…",
+  "menu.unlock": "Enter password…\tCtrl+U",
   "menu.edit": "Edit\tF2",
   "menu.edit_caption": "Edit caption\tF2",
   "menu.done_all": "Cross out all",
