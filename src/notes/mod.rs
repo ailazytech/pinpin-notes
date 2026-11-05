@@ -1365,6 +1365,7 @@ fn on_button(hwnd: HWND, btn: Btn) {
         Btn::Bigger => zoom(hwnd, 0.1),
         Btn::Ink => set_ink(hwnd, true),
         Btn::Reset => timer::reset(hwnd),
+        Btn::Skip => timer::skip(hwnd),
         Btn::Turn => set_angle(hwnd, 0.0, true),
     }
 }
@@ -1558,6 +1559,9 @@ unsafe extern "system" fn note_proc(hwnd: HWND, msg: u32, wp: WPARAM, lp: LPARAM
                 Some(IDC_SIZENWSE)
             } else if hit_item(hwnd, pt).is_some() {
                 Some(IDC_SIZEALL)
+            } else if kind_of(hwnd) == Some(Kind::Timer) {
+                // 蕃茄鐘整顆都是「點一下開始／暫停」：手指游標，和狀態字的底線一起像超連結
+                Some(IDC_HAND)
             } else {
                 None
             };
@@ -2551,6 +2555,16 @@ pub fn render_preview(path: &str) {
         let (w, h) = timer::size_of(style);
         tiles.push((Note { kind: Kind::Timer, w, h, timer: Some(t), ..Default::default() }, ""));
     }
+    // 滑過時狀態字像超連結：在「下一段」鈕上（輪巡中的蕃茄、字要縮小的 LED）、在錶上（暫停在半路的鬧鐘、沙漏）；輪巡中沒滑過的貓
+    let cycling = store::Timer { end_ms: now + 754_400, done: 3, cycle: true, ..Default::default() };
+    let paused = store::Timer { style: store::TimerStyle::Alarm, left_ms: 12 * 60_000, done: 1, ..Default::default() };
+    let led = store::Timer { style: store::TimerStyle::Led, ..cycling.clone() };
+    let glass = store::Timer { style: store::TimerStyle::Hourglass, ..cycling.clone() };
+    let cat = store::Timer { style: store::TimerStyle::Cat, ..cycling.clone() };
+    for (t, state) in [(cycling, "hover-skip"), (paused, "hover-link"), (led, "hover-skip"), (glass, "hover-link"), (cat, "")] {
+        let (w, h) = timer::size_of(t.style);
+        tiles.push((Note { kind: Kind::Timer, w, h, timer: Some(t), ..Default::default() }, state));
+    }
     // 文字樣式：紅色粗體大字標語、手寫風字型
     let mut banner = Note { paper: Paper::Clear, w: 320, h: 150, font: 3.0, color: Some(0xE21E24), bold: Some(true), face: Some("Impact".into()), ..Default::default() };
     banner.lines = vec![Line::new("FOCUS!")];
@@ -2656,10 +2670,11 @@ pub fn render_preview(path: &str) {
                 note,
                 lines: &note.lines,
                 scale,
-                hover: matches!(*state, "hover" | "lift" | "dark" | "hover-turn"),
+                hover: matches!(*state, "hover" | "lift" | "dark" | "hover-turn" | "hover-skip" | "hover-link"),
                 hot: match *state {
                     "hover" => Some(Btn::Menu),
                     "hover-turn" => Some(Btn::Turn),
+                    "hover-skip" => Some(Btn::Skip),
                     _ => None,
                 },
                 lift: if *state == "lift" { 1.0 } else { 0.0 },

@@ -244,11 +244,15 @@ pub struct Timer {
     pub finished: bool,
     /// 今天完成了幾個蕃茄
     pub done: u32,
+    /// 輪巡：時間到就自動接下一段（專注 → 休息 → 專注…），直到暫停或重來。
+    /// 舊檔沒有這欄 → false（serde(default)），沒開就不寫出來，所以不用升資料版本。
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    pub cycle: bool,
 }
 
 impl Default for Timer {
     fn default() -> Self {
-        Timer { style: TimerStyle::Tomato, focus: 25, rest: 5, phase: Phase::Focus, end_ms: 0, left_ms: 25 * 60_000, finished: false, done: 0 }
+        Timer { style: TimerStyle::Tomato, focus: 25, rest: 5, phase: Phase::Focus, end_ms: 0, left_ms: 25 * 60_000, finished: false, done: 0, cycle: false }
     }
 }
 
@@ -259,6 +263,37 @@ impl Timer {
     }
     pub fn running(&self) -> bool {
         self.end_ms > 0
+    }
+    /// 這一段時間到：換到下一段（專注結束算完成一個）。
+    /// 輪巡、而且是準時到的（不是程式關著時過掉的）就接著跑，回傳 true；否則停在下一段的開頭。
+    /// 關著程式時過掉的不接：回來時不會冒出一串沒人在場的「完成」，也不會正在半路上。
+    pub fn finish(&mut self, on_time: bool) -> bool {
+        let prev_end = self.end_ms;
+        if self.phase == Phase::Focus {
+            self.done += 1;
+            self.phase = Phase::Break;
+        } else {
+            self.phase = Phase::Focus;
+        }
+        self.left_ms = self.total_ms();
+        if self.cycle && on_time && prev_end > 0 {
+            // 從上一段「該結束的時間」接著算：計時器晚醒幾十毫秒，一輪輪下來也不會越漂越後面
+            self.end_ms = prev_end + self.left_ms;
+            self.finished = false;
+            true
+        } else {
+            self.end_ms = 0;
+            self.finished = true;
+            false
+        }
+    }
+    /// 直接跳到下一段。輪巡中而且正在跑：下一段馬上開始跑；否則停在下一段的開頭。
+    pub fn skip(&mut self, now: u64) {
+        let keep = self.cycle && self.running();
+        self.phase = if self.phase == Phase::Focus { Phase::Break } else { Phase::Focus };
+        self.finished = false;
+        self.left_ms = self.total_ms();
+        self.end_ms = if keep { now + self.left_ms } else { 0 };
     }
     /// 剩下的毫秒。
     pub fn left(&self, now: u64) -> u64 {
@@ -578,6 +613,47 @@ mod tests {
         assert_eq!(lines[0].meta, "m");
         assert!(lines[1].done);
         assert!(!lines[2].done);
+    }
+
+    #[test]
+    fn timer_cycle_keeps_going_until_stopped() {
+        // 舊檔沒有 cycle：讀進來是 false，存回去也不多寫這欄
+        let old: Timer = serde_json::from_str(r#"{"style":"tomato","focus":25,"rest":5,"phase":"focus","end_ms":0,"left_ms":1500000,"finished":false,"done":1}"#).unwrap();
+        assert!(!old.cycle);
+        assert!(!serde_json::to_string(&old).unwrap().contains("cycle"));
+
+        // 沒開輪巡：時間到停在休息的開頭
+        let start = 1_000_000_000;
+        let mut t = Timer { end_ms: start + 25 * 60_000, ..Default::default() };
+        assert!(!t.finish(true));
+        assert_eq!((t.phase, t.end_ms, t.finished, t.done), (Phase::Break, 0, true, 1));
+
+        // 輪巡：專注 25 → 休息 5 → 專注 25，接著上一段該結束的時間算
+        let mut t = Timer { end_ms: start + 25 * 60_000, cycle: true, ..Default::default() };
+        assert!(serde_json::to_string(&t).unwrap().contains("\"cycle\":true"));
+        assert!(t.finish(true));
+        assert_eq!((t.phase, t.end_ms, t.finished, t.done), (Phase::Break, start + 30 * 60_000, false, 1));
+        assert!(t.finish(true));
+        assert_eq!((t.phase, t.end_ms, t.done), (Phase::Focus, start + 55 * 60_000, 1));
+
+        // 程式關著時過掉的：不接著跑，停在下一段開頭
+        assert!(!t.finish(false));
+        assert_eq!((t.phase, t.end_ms, t.finished, t.done), (Phase::Break, 0, true, 2));
+    }
+
+    #[test]
+    fn timer_skip_keeps_running_only_when_cycling() {
+        let now = 5_000_000;
+        let mut t = Timer { end_ms: now + 60_000, ..Default::default() };
+        t.skip(now);
+        assert_eq!((t.phase, t.end_ms, t.left_ms), (Phase::Break, 0, 5 * 60_000));
+        let mut t = Timer { end_ms: now + 60_000, cycle: true, ..Default::default() };
+        t.skip(now);
+        assert_eq!((t.phase, t.end_ms), (Phase::Break, now + 5 * 60_000));
+        // 輪巡但停著：跳過去也是停著
+        let mut t = Timer { cycle: true, phase: Phase::Break, ..Default::default() };
+        t.skip(now);
+        assert_eq!((t.phase, t.end_ms, t.done), (Phase::Focus, 0, 0));
     }
 
     #[test]

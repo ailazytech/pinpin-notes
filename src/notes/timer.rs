@@ -116,20 +116,11 @@ pub fn on_clock(hwnd: HWND) {
 }
 
 fn finish(hwnd: HWND, quiet: bool) {
-    let Some(t) = update(hwnd, |t| {
-        let was = t.phase;
-        t.end_ms = 0;
-        if was == Phase::Focus {
-            t.done += 1;
-            t.phase = Phase::Break;
-        } else {
-            t.phase = Phase::Focus;
-        }
-        t.left_ms = t.total_ms();
-        t.finished = true;
-    }) else {
+    let mut goes_on = false;
+    let Some(t) = update(hwnd, |t| goes_on = t.finish(!quiet)) else {
         return;
     };
+    // 輪巡接著跑的話，這裡就排好下一段的走秒
     schedule(hwnd);
     if quiet {
         redraw(hwnd);
@@ -137,7 +128,13 @@ fn finish(hwnd: HWND, quiet: bool) {
     }
     let sound = with(|m| m.board.timer_sound.clone()).unwrap_or_default();
     play(&sound);
-    let msg = if t.phase == Phase::Break { tx("timer.focus_done") } else { tx("timer.break_done") };
+    let msg = match (t.phase, goes_on) {
+        (Phase::Break, false) => tx("timer.focus_done"),
+        (Phase::Focus, false) => tx("timer.break_done"),
+        // 輪巡：提示已經自動開始的是哪一段、多久
+        (Phase::Break, true) => tf("timer.focus_done_cycle", &[("n", &t.rest.to_string())]),
+        (Phase::Focus, true) => tf("timer.break_done_cycle", &[("n", &t.focus.to_string())]),
+    };
     crate::toast::show(msg, false, 4);
     start_anim(hwnd, AnimKind::Ring);
 }
@@ -180,15 +177,17 @@ pub fn reset(hwnd: HWND) {
     redraw(hwnd);
 }
 
-/// 直接跳到下一段（專注 ↔ 休息）。
-fn skip(hwnd: HWND) {
-    update(hwnd, |t| {
-        t.phase = if t.phase == Phase::Focus { Phase::Break } else { Phase::Focus };
-        t.end_ms = 0;
-        t.finished = false;
-        t.left_ms = t.total_ms();
-    });
+/// 直接跳到下一段（專注 ↔ 休息）：右鍵選單、滑過時右上角的「下一段」鈕。
+pub fn skip(hwnd: HWND) {
+    let now = store::now_ms();
+    update(hwnd, |t| t.skip(now));
     schedule(hwnd);
+    redraw(hwnd);
+}
+
+/// 輪巡開關（每顆蕃茄鐘各自記住）。
+fn toggle_cycle(hwnd: HWND) {
+    update(hwnd, |t| t.cycle = !t.cycle);
     redraw(hwnd);
 }
 
@@ -247,6 +246,7 @@ const T_CLEAR_COUNT: u32 = 4;
 const T_PIN_DESKTOP: u32 = 5;
 const T_PIN_TOP: u32 = 6;
 const T_DELETE: u32 = 7;
+const T_CYCLE: u32 = 8;
 const T_STYLE: u32 = 10;
 const T_FOCUS: u32 = 20;
 const T_REST: u32 = 40;
@@ -283,6 +283,7 @@ pub fn menu(hwnd: HWND) {
         MenuItem::item(T_TOGGLE, if t.running() { tx("timer.pause") } else { tx("timer.start") }),
         MenuItem::item(T_RESET, tx("timer.reset")),
         MenuItem::item(T_SKIP, if t.phase == Phase::Focus { tx("timer.skip_to_break") } else { tx("timer.skip_to_focus") }),
+        MenuItem::checked(T_CYCLE, tx("timer.cycle"), t.cycle),
         MenuItem::Separator,
         MenuItem::Submenu { text: tx("timer.focus_len"), items: minutes(T_FOCUS, &FOCUS_CHOICES, t.focus) },
         MenuItem::Submenu { text: tx("timer.rest_len"), items: minutes(T_REST, &REST_CHOICES, t.rest) },
@@ -302,6 +303,7 @@ pub fn menu(hwnd: HWND) {
         T_TOGGLE => toggle(hwnd),
         T_RESET => reset(hwnd),
         T_SKIP => skip(hwnd),
+        T_CYCLE => toggle_cycle(hwnd),
         T_CLEAR_COUNT => {
             update(hwnd, |t| t.done = 0);
             redraw(hwnd);
@@ -455,10 +457,10 @@ pub unsafe fn draw(hdc: HDC, canvas: &mut Canvas, scene: &mut Scene, paper: RECT
             }
         }
     }
-    // 滑過時右上角：重來、選單
+    // 滑過時右上角：重來、選單、跳到下一段
     if scene.hover && scene.lift <= 0.0 {
         let x = paper.right as f32 - 13.0 * s;
-        for (i, (btn, glyph)) in [(Btn::Reset, "\u{E72C}"), (Btn::Menu, "\u{E712}")].into_iter().enumerate() {
+        for (i, (btn, glyph)) in [(Btn::Reset, "\u{E72C}"), (Btn::Menu, "\u{E712}"), (Btn::Skip, "\u{E893}")].into_iter().enumerate() {
             let y = paper.top as f32 + (13.0 + i as f32 * 27.0) * s;
             let hot = scene.hot == Some(btn);
             canvas.disc(x, y + 1.0 * s, 11.5 * s, Rgb(0, 0, 0), 0.18);
@@ -476,6 +478,24 @@ pub unsafe fn draw(hdc: HDC, canvas: &mut Canvas, scene: &mut Scene, paper: RECT
     }
 }
 
+/// 圓角膠囊（逐點算、邊緣反鋸齒）。
+fn pill(canvas: &mut Canvas, rc: RECT, color: Rgb, alpha: f32) {
+    let (pl, pt, pr, pb) = (rc.left as f32, rc.top as f32, rc.right as f32, rc.bottom as f32);
+    let r = (pb - pt) / 2.0;
+    for y in rc.top.max(0)..rc.bottom.min(canvas.h) {
+        for x in rc.left.max(0)..rc.right.min(canvas.w) {
+            let (px, py) = (x as f32 + 0.5, y as f32 + 0.5);
+            let qx = (px - px.clamp(pl + r, pr - r)).abs();
+            let qy = py - (pt + pb) / 2.0;
+            let d = (qx * qx + qy * qy).sqrt() - r;
+            let cov = (0.5 - d).clamp(0.0, 1.0);
+            if cov > 0.0 {
+                canvas.over(x, y, [color.2 as f32, color.1 as f32, color.0 as f32, 1.0], cov * alpha);
+            }
+        }
+    }
+}
+
 /// 剩下的時間 → "24:59"（超過一小時 "1:05:00"）。
 fn clock_text(ms: u64) -> String {
     let secs = ms.div_ceil(1000);
@@ -483,16 +503,89 @@ fn clock_text(ms: u64) -> String {
     if h > 0 { format!("{h}:{m:02}:{s:02}") } else { format!("{m:02}:{s:02}") }
 }
 
+/// 滑鼠在蕃茄鐘上時，點下去會做的事：狀態字換成它、加底線，像超連結。
+/// 在「重來」「下一段」鈕上就說那顆鈕會做什麼（不另外浮字：蕃茄鐘很小，浮字一定會蓋到時間）；
+/// 滑鼠不在上面、或在選單鈕上 → None，照平常顯示。
+fn action_hint(scene: &Scene, t: &Timer) -> Option<String> {
+    if !scene.hover || scene.lift > 0.0 {
+        return None;
+    }
+    let phase = if t.phase == Phase::Focus { tx("timer.focus") } else { tx("timer.rest") };
+    match scene.hot {
+        None if t.running() => Some(tx("timer.hint_pause")),
+        None if paused_midway(t, scene.now_ms) => Some(tf("timer.hint_resume", &[("phase", &phase)])),
+        None => Some(tf("timer.click_to_start", &[("phase", &phase)])),
+        Some(Btn::Skip) => Some(if t.phase == Phase::Focus { tx("timer.skip_to_break") } else { tx("timer.skip_to_focus") }),
+        // 選單上的字後面帶著快捷鍵（\tR），這裡只要前半
+        Some(Btn::Reset) => tx("timer.reset").split('\t').next().map(str::to_string),
+        _ => None,
+    }
+}
+
+/// 停在一段的中間（暫停過）：還沒走完、也不是剛結束。
+fn paused_midway(t: &Timer, now: u64) -> bool {
+    !t.running() && t.left(now) < t.total_ms() && !t.finished
+}
+
 /// 狀態那一行：專注・第 3 個／休息／點一下開始。
 fn status_text(t: &Timer, now: u64) -> String {
     let phase = if t.phase == Phase::Focus { tx("timer.focus") } else { tx("timer.rest") };
     if t.running() {
         phase
-    } else if t.left(now) < t.total_ms() && !t.finished {
+    } else if paused_midway(t, now) {
         tf("timer.paused", &[("phase", &phase)])
     } else {
         tf("timer.click_to_start", &[("phase", &phase)])
     }
+}
+
+/// 字的寬度（像素）。
+unsafe fn text_width(hdc: HDC, font: HFONT, text: &str) -> i32 {
+    SelectObject(hdc, font.into());
+    let wide: Vec<u16> = text.encode_utf16().collect();
+    let mut size = SIZE::default();
+    let _ = GetTextExtentPoint32W(hdc, &wide, &mut size);
+    size.cx
+}
+
+/// 狀態那一行的畫法：置中或靠左；underline = 滑過時像超連結；cycle = 輪巡中，後面跟一個「重複」圖示。
+/// 各語言的字長短不一（韓文、阿拉伯文常比較長）：放不下就把字縮小，最小 8px，不會被切掉。
+#[allow(clippy::too_many_arguments)]
+unsafe fn status_line(hdc: HDC, canvas: &mut Canvas, text: &str, rc: RECT, size: f32, underline: bool, cycle: bool, color: Rgb, centered: bool, s: f32) {
+    let avail = rc.right - rc.left;
+    let (icon_w, gap) = if cycle { ((size * 1.1) as i32, (3.0 * s) as i32) } else { (0, 0) };
+    let room = avail - icon_w - gap;
+    let mut font = ui_font(size, underline);
+    let mut tw = text_width(hdc, font, text);
+    // 只超出一點點的照舊畫、不縮（例如柴犬的「▶ 開始專注」本來就比框寬一兩點，看起來是完整的）
+    let slack = (4.0 * s) as i32;
+    if !cycle && tw <= avail + slack {
+        // 平常的樣子：跟以前一模一樣的畫法
+        if centered {
+            text_at(hdc, canvas, text, rc, font, color);
+        } else {
+            text_left(hdc, canvas, text, rc, font, color);
+        }
+        let _ = DeleteObject(font.into());
+        return;
+    }
+    if tw > room + slack && tw > 0 {
+        let smaller = ui_font((size * room as f32 / tw as f32).max(8.0 * s), underline);
+        SelectObject(hdc, smaller.into());
+        let _ = DeleteObject(font.into());
+        font = smaller;
+        tw = text_width(hdc, font, text).min(room);
+    }
+    let x0 = if centered { rc.left + (avail - tw - gap - icon_w) / 2 } else { rc.left };
+    text_left(hdc, canvas, text, RECT { left: x0, right: x0 + tw + 1, ..rc }, font, color);
+    if cycle {
+        // Segoe MDL2 的「全部重複」：↻ 在中文字型裡太小、糊成一個勾
+        let icon = CreateFontW(-((size * 0.95).round() as i32), 0, 0, 0, 400, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, 0, w!("Segoe MDL2 Assets"));
+        let ix = x0 + tw + gap;
+        text_left(hdc, canvas, "\u{E8EE}", RECT { left: ix, right: ix + icon_w + 2, ..rc }, icon, color);
+        let _ = DeleteObject(icon.into());
+    }
+    let _ = DeleteObject(font.into());
 }
 
 /// 字（GDI）。GDI 會把畫到的地方 alpha 清成 0，所以先記下原本的 alpha、畫完放回去（字要畫在不透明的東西上）。
@@ -531,9 +624,10 @@ fn make_font(size: f32, weight: i32) -> HFONT {
     }
 }
 
-fn ui_font(size: f32) -> HFONT {
+/// 介面字；underline = 滑過時像超連結
+fn ui_font(size: f32, underline: bool) -> HFONT {
     unsafe {
-        CreateFontW(-(size.round() as i32), 0, 0, 0, 600, 0, 0, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, 0, w!("Microsoft JhengHei UI"))
+        CreateFontW(-(size.round() as i32), 0, 0, 0, 600, 0, underline as u32, 0, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, 0, w!("Microsoft JhengHei UI"))
     }
 }
 
@@ -636,14 +730,14 @@ unsafe fn draw_tomato(hdc: HDC, canvas: &mut Canvas, scene: &Scene, t: &Timer, p
     // 字
     {
         let big = make_font(31.0 * s, 700);
-        let small = ui_font(11.5 * s);
         let time_rc = RECT { left: (cx - 50.0 * s) as i32, top: (cy - 22.0 * s) as i32, right: (cx + 50.0 * s) as i32, bottom: (cy + 14.0 * s) as i32 };
         let label_rc = RECT { left: (cx - 46.0 * s) as i32, top: (cy + 14.0 * s) as i32, right: (cx + 46.0 * s) as i32, bottom: (cy + 30.0 * s) as i32 };
         let shown = if t.finished && !t.running() { t.total_ms() } else { left };
         text_at(hdc, canvas, &clock_text(shown), time_rc, big, Rgb(255, 255, 255));
-        text_at(hdc, canvas, &status_text(t, now), label_rc, small, Rgb(255, 246, 240));
+        let hint = action_hint(scene, t);
+        let label = hint.clone().unwrap_or_else(|| status_text(t, now));
+        status_line(hdc, canvas, &label, label_rc, 11.5 * s, hint.is_some(), t.cycle, Rgb(255, 246, 240), true, s);
         let _ = DeleteObject(big.into());
-        let _ = DeleteObject(small.into());
     }
     // 完成的蕃茄數：底下一排小點
     let count = t.done.min(8);
@@ -749,32 +843,23 @@ unsafe fn draw_hourglass(hdc: HDC, canvas: &mut Canvas, scene: &Scene, t: &Timer
         }
     }
     // 底下的時間牌子
-    let pill = RECT { left: (cx - 54.0 * s) as i32, top: paper.bottom - (28.0 * s) as i32, right: (cx + 54.0 * s) as i32, bottom: paper.bottom - (4.0 * s) as i32 };
-    let (pl, pt, pr, pb) = (pill.left as f32, pill.top as f32, pill.right as f32, pill.bottom as f32);
-    let pr_r = (pb - pt) / 2.0;
-    for y in pill.top.max(0)..pill.bottom.min(canvas.h) {
-        for x in pill.left.max(0)..pill.right.min(canvas.w) {
-            let (px, py) = (x as f32 + 0.5, y as f32 + 0.5);
-            let qx = (px - px.clamp(pl + pr_r, pr - pr_r)).abs();
-            let qy = py - (pt + pb) / 2.0;
-            let d = (qx * qx + qy * qy).sqrt() - pr_r;
-            let cov = (0.5 - d).clamp(0.0, 1.0);
-            if cov > 0.0 {
-                let c = if focus { [60.0, 56.0, 64.0] } else { [70.0, 110.0, 60.0] };
-                canvas.over(x, y, [c[0], c[1], c[2], 1.0], cov);
-            }
-        }
-    }
+    let plate = RECT { left: (cx - 54.0 * s) as i32, top: paper.bottom - (28.0 * s) as i32, right: (cx + 54.0 * s) as i32, bottom: paper.bottom - (4.0 * s) as i32 };
+    pill(canvas, plate, if focus { Rgb(64, 56, 60) } else { Rgb(60, 110, 70) }, 1.0);
     let left = if t.finished && !t.running() { t.total_ms() } else { t.left(now) };
-    let label = format!("{}  {}", clock_text(left), if t.running() { if focus { tx("timer.focus") } else { tx("timer.rest") } } else { "▶".into() });
-    let font = ui_font(13.0 * s);
-    text_at(hdc, canvas, &label, pill, font, Rgb(255, 255, 255));
-    let _ = DeleteObject(font.into());
+    let hint = action_hint(scene, t);
+    let label = match (&hint, scene.hot) {
+        // 在按鈕上：整塊牌子說那顆鈕會做什麼
+        (Some(h), Some(_)) => h.clone(),
+        // 牌子窄，滑在沙漏上只把後半換成符號（Ⅱ 暫停、▶ 開始），時間照樣看得到
+        (Some(_), None) => format!("{}  {}", clock_text(left), if t.running() { "Ⅱ" } else { "▶" }),
+        (None, _) => format!("{}  {}", clock_text(left), if !t.running() { "▶".into() } else if focus { tx("timer.focus") } else { tx("timer.rest") }),
+    };
+    status_line(hdc, canvas, &label, plate, 13.0 * s, hint.is_some(), t.cycle, Rgb(255, 255, 255), true, s);
     // 完成的蕃茄數
     let count = t.done.min(8);
     for i in 0..count {
         let x = cx + (i as f32 - (count as f32 - 1.0) / 2.0) * 9.0 * s;
-        canvas.disc(x, pill.top as f32 - 6.0 * s, 3.0 * s, Rgb(226, 66, 52), 1.0);
+        canvas.disc(x, plate.top as f32 - 6.0 * s, 3.0 * s, Rgb(226, 66, 52), 1.0);
     }
 }
 
@@ -869,23 +954,26 @@ unsafe fn draw_led(hdc: HDC, canvas: &mut Canvas, scene: &Scene, t: &Timer, pape
         }
         x += dw + gap;
     }
+    // 滑過時左下角換成「點了會怎樣」：角落太窄放不下，這時先收起小燈，讓字用整個底列（大數字還看得到時間）
+    let hint = action_hint(scene, t);
     // 底下一排小燈：剩下多少
     let frac = (left as f32 / t.total_ms() as f32).clamp(0.0, 1.0);
     let n = 14;
     let row_y = screen.3 - 9.0 * s;
     let dots_right = screen.2 - 10.0 * s;
-    for k in 0..n {
-        let cx = dots_right - (n - 1 - k) as f32 * 7.0 * s;
-        let on = (k as f32) < (frac * n as f32).ceil();
-        canvas.disc(cx, row_y, 2.0 * s, glow, if on { 0.9 * lit.max(0.4) } else { 0.12 });
+    if hint.is_none() {
+        for k in 0..n {
+            let cx = dots_right - (n - 1 - k) as f32 * 7.0 * s;
+            let on = (k as f32) < (frac * n as f32).ceil();
+            canvas.disc(cx, row_y, 2.0 * s, glow, if on { 0.9 * lit.max(0.4) } else { 0.12 });
+        }
     }
     // 左下角：專注／休息
-    let font = ui_font(10.5 * s);
-    let label = if focus { tx("timer.focus") } else { tx("timer.rest") };
-    let rc = RECT { left: (screen.0 + 8.0 * s) as i32, top: (row_y - 8.0 * s) as i32, right: (screen.0 + 70.0 * s) as i32, bottom: (row_y + 8.0 * s) as i32 };
+    let label = hint.clone().unwrap_or_else(|| if focus { tx("timer.focus") } else { tx("timer.rest") });
+    let right = if hint.is_some() { screen.2 - 24.0 * s } else { screen.0 + 70.0 * s };
+    let rc = RECT { left: (screen.0 + 8.0 * s) as i32, top: (row_y - 8.0 * s) as i32, right: right as i32, bottom: (row_y + 8.0 * s) as i32 };
     let dim = |v: u8| (v as f32 * 0.8) as u8;
-    text_left(hdc, canvas, &label, rc, font, Rgb(dim(glow.0), dim(glow.1), dim(glow.2)));
-    let _ = DeleteObject(font.into());
+    status_line(hdc, canvas, &label, rc, 10.5 * s, hint.is_some(), t.cycle, Rgb(dim(glow.0), dim(glow.1), dim(glow.2)), false, s);
     // 完成的蕃茄數：右上角小紅點
     for i in 0..t.done.min(8) {
         canvas.disc(screen.2 - 8.0 * s - i as f32 * 7.0 * s, screen.1 + 6.0 * s, 2.2 * s, Rgb(255, 92, 70), 0.85);
@@ -995,14 +1083,14 @@ unsafe fn draw_art(hdc: HDC, canvas: &mut Canvas, scene: &mut Scene, t: &Timer, 
     }
     // 時間和狀態
     let big = make_font(fr * 0.5, 700);
-    let small = ui_font((fr * 0.2).max(10.0 * s));
     let ty = if alarm { fy + fr * 0.08 } else { fy - fr * 0.08 };
     let time_rc = RECT { left: (fx - fr * 0.86) as i32, top: (ty - fr * 0.3) as i32, right: (fx + fr * 0.86) as i32, bottom: (ty + fr * 0.22) as i32 };
     let label_rc = RECT { left: (fx - fr * 0.72) as i32, top: (ty + fr * 0.2) as i32, right: (fx + fr * 0.72) as i32, bottom: (ty + fr * 0.52) as i32 };
     text_at(hdc, canvas, &clock_text(left), time_rc, big, Rgb(76, 56, 44));
-    text_at(hdc, canvas, &status_text(t, now), label_rc, small, Rgb(150, 120, 100));
+    let hint = action_hint(scene, t);
+    let label = hint.clone().unwrap_or_else(|| status_text(t, now));
+    status_line(hdc, canvas, &label, label_rc, (fr * 0.2).max(10.0 * s), hint.is_some(), t.cycle, Rgb(150, 120, 100), true, s);
     let _ = DeleteObject(big.into());
-    let _ = DeleteObject(small.into());
     // 完成的蕃茄數
     let count = t.done.min(8);
     for i in 0..count {
